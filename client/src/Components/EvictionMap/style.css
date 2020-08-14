@@ -1,0 +1,7 @@
+#map-container {
+    position: absolute;
+    top: 10vh;
+    height: 85vh;
+    width: 100%;
+    background-color: seashell;
+}
