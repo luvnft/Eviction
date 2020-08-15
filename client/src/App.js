@@ -28,7 +28,17 @@ const App = () => {
             <div id='viz-box'>
                 {
                     vizView === 'map' ?
-                        <EvictionMap/> 
+                        <EvictionMap
+                            // style={style} 
+                            // year={year}
+                            // data={data1}
+                            // name={'left'}
+                            // minvalue={minValue}
+                            // maxvalue={maxValue}
+                            // mapbounds={mapBounds}
+                            // setMapBounds={setMapBounds}
+                            // geojson={geoJSON}                           
+                        /> 
                     : <EvictionChart/>
                 }
 
