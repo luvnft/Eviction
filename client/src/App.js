@@ -8,7 +8,7 @@ import './App.css'
 const App = () => {
     const [ data, setData ] = useState();
     const [ geoJSONs, setGeoJSONs ] = useState();
-    const [ vizView, setVizView ] = useState('chart');
+    const [ vizView, setVizView ] = useState('map');
 
     return (
         <div id='eviction-tracker'>

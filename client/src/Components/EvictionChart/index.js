@@ -10,72 +10,23 @@ import {
   Area,
   ResponsiveContainer,
 } from 'recharts';
-import './style.css';
 import { csv } from 'd3';
+// stylesheet
+import './style.css';
 
-const csvData = '../../Test-data/test-data.csv';
+const csvData = require('../../Test-data/test-data.csv');
 
 const EvictionChart = (props) => {
-
   const [caseData, setCaseData] = useState([]);
 
   useEffect(() => {
-    csv(csvData).then((data) => {
-      console.log(data);
-    }).catch(err => console.log(err))
+    csv(csvData)
+      .then((data) => {
+        // console.log('data: ', data);
+        setCaseData(data);
+      })
+      .catch((err) => console.log(err));
   }, []);
-
-  
-
-  // console.log(Data);
-  // Data.map(() => {
-
-  // })
-
-  const data = [
-    {
-      fileDate: 'Page A',
-      open: 4000,
-      closed: 2400,
-      amt: 2400,
-    },
-    {
-      fileDate: 'Page B',
-      open: 3000,
-      closed: 1398,
-      amt: 2210,
-    },
-    {
-      fileDate: 'Page C',
-      open: 2000,
-      closed: 9800,
-      amt: 2290,
-    },
-    {
-      fileDate: 'Page D',
-      open: 2780,
-      closed: 3908,
-      amt: 2000,
-    },
-    {
-      fileDate: 'Page E',
-      open: 1890,
-      closed: 4800,
-      amt: 2181,
-    },
-    {
-      fileDate: 'Page F',
-      open: 2390,
-      closed: 3800,
-      amt: 2500,
-    },
-    {
-      fileDate: 'Page G',
-      open: 3490,
-      closed: 4300,
-      amt: 2100,
-    },
-  ];
 
   return (
     <ResponsiveContainer
@@ -87,7 +38,7 @@ const EvictionChart = (props) => {
         className="barChart"
         width={1200}
         height={750}
-        data={data}
+        data={caseData}
         margin={{
           top: 40,
           right: 30,
@@ -96,13 +47,13 @@ const EvictionChart = (props) => {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="fileDate" />
+        <XAxis dataKey="FILE DATE" />
         <YAxis />
         <Tooltip />
         <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
         <Legend />
-        <Bar dataKey="open" stackId="a" fill="#8884d8" />
-        <Bar dataKey="closed" stackId="a" fill="#82ca9d" />
+        <Bar dataKey="OPEN" stackId="a" fill="#8884d8" />
+        <Bar dataKey="CLOSED" stackId="a" fill="#82ca9d" />
       </BarChart>
     </ResponsiveContainer>
   );

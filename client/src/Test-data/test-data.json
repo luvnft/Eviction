@@ -1,0 +1,653 @@
+[{
+    "FILE DATE": "1/1/20"
+    "CLOSED": 4,
+    "OPEN": '',
+}, {
+    "FILE DATE": "1/2/20"
+    "CLOSED": 56,
+    "OPEN": 2,
+}, {
+    "FILE DATE": "1/3/20"
+    "CLOSED": 43,
+    "OPEN": '',
+}, {
+    "FILE DATE": "1/6/20"
+    "CLOSED": 81,
+    "OPEN": 2,
+}, {
+    "FILE DATE": "1/7/20"
+    "CLOSED": 146,
+    "OPEN": 2,
+}, {
+    "FILE DATE": "1/8/20"
+    "CLOSED": 87,
+    "OPEN": 1,
+}, {
+    "FILE DATE": "1/9/20"
+    "CLOSED": 93,
+    "OPEN": 5,
+}, {
+    "FILE DATE": "1/10/20",
+    "CLOSED": 180,
+    "OPEN": 7,
+}, {
+    "FILE DATE": "1/13/20",
+    "CLOSED": 1130,
+    "OPEN": 16,
+}, {
+    "FILE DATE": "1/14/20",
+    "CLOSED": 338,
+    "OPEN": 12,
+}, {
+    "FILE DATE": "1/15/20",
+    "CLOSED": 342,
+    "OPEN": 13,
+}, {
+    "FILE DATE": "1/16/20",
+    "CLOSED": 414,
+    "OPEN": 14,
+}, {
+    "FILE DATE": "1/17/20",
+    "CLOSED": 227,
+    "OPEN": 35,
+}, {
+    "FILE DATE": "1/20/20",
+    "CLOSED": 90,
+    "OPEN": 18,
+}, {
+    "FILE DATE": "1/21/20",
+    "CLOSED": 141,
+    "OPEN": 27,
+}, {
+    "FILE DATE": "1/22/20",
+    "CLOSED": 105,
+    "OPEN": 26,
+}, {
+    "FILE DATE": "1/23/20",
+    "CLOSED": 78,
+    "OPEN": 15,
+}, {
+    "FILE DATE": "1/24/20",
+    "CLOSED": 81,
+    "OPEN": 16,
+}, {
+    "FILE DATE": "1/27/20",
+    "CLOSED": 113,
+    "OPEN": 32,
+}, {
+    "FILE DATE": "1/28/20",
+    "CLOSED": 85,
+    "OPEN": 15,
+}, {
+    "FILE DATE": "1/29/20",
+    "CLOSED": 19,
+    "OPEN": 6,
+}, {
+    "FILE DATE": "1/30/20",
+    "CLOSED": 31,
+    "OPEN": 7,
+}, {
+    "FILE DATE": "1/31/20",
+    "CLOSED": 50,
+    "OPEN": 24,
+}, {
+    "FILE DATE": "2/3/20"
+    "CLOSED": 56,
+    "OPEN": 22,
+}, {
+    "FILE DATE": "2/4/20"
+    "CLOSED": 15,
+    "OPEN": 9,
+}, {
+    "FILE DATE": "2/5/20"
+    "CLOSED": 26,
+    "OPEN": 10,
+}, {
+    "FILE DATE": "2/6/20"
+    "CLOSED": 49,
+    "OPEN": 12,
+}, {
+    "FILE DATE": "2/7/20"
+    "CLOSED": 38,
+    "OPEN": 7,
+}, {
+    "FILE DATE": "2/10/20",
+    "CLOSED": 421,
+    "OPEN": 60,
+}, {
+    "FILE DATE": "2/11/20",
+    "CLOSED": 508,
+    "OPEN": 104,
+}, {
+    "FILE DATE": "2/12/20",
+    "CLOSED": 461,
+    "OPEN": 82,
+}, {
+    "FILE DATE": "2/13/20",
+    "CLOSED": 293,
+    "OPEN": 70,
+}, {
+    "FILE DATE": "2/14/20",
+    "CLOSED": 150,
+    "OPEN": 45,
+}, {
+    "FILE DATE": "2/17/20",
+    "CLOSED": 270,
+    "OPEN": 103,
+}, {
+    "FILE DATE": "2/18/20",
+    "CLOSED": 206,
+    "OPEN": 76,
+}, {
+    "FILE DATE": "2/19/20",
+    "CLOSED": 196,
+    "OPEN": 96,
+}, {
+    "FILE DATE": "2/20/20",
+    "CLOSED": 57,
+    "OPEN": 49,
+}, {
+    "FILE DATE": "2/21/20",
+    "CLOSED": 71,
+    "OPEN": 47,
+}, {
+    "FILE DATE": "2/24/20",
+    "CLOSED": 59,
+    "OPEN": 39,
+}, {
+    "FILE DATE": "2/25/20",
+    "CLOSED": 63,
+    "OPEN": 58,
+}, {
+    "FILE DATE": "2/26/20",
+    "CLOSED": 40,
+    "OPEN": 27,
+}, {
+    "FILE DATE": "2/27/20",
+    "CLOSED": 20,
+    "OPEN": 42,
+}, {
+    "FILE DATE": "2/28/20",
+    "CLOSED": 14,
+    "OPEN": 33,
+}, {
+    "FILE DATE": "3/2/20"
+    "CLOSED": 13,
+    "OPEN": 39,
+}, {
+    "FILE DATE": "3/3/20"
+    "CLOSED": 22,
+    "OPEN": 31,
+}, {
+    "FILE DATE": "3/4/20",
+    "CLOSED": 8,
+    "OPEN": 39,
+}, {
+    "FILE DATE": "3/5/20",
+    "CLOSED": 9,
+    "OPEN": 17,
+}, {
+    "FILE DATE": "3/6/20",
+    "CLOSED": 7,
+    "OPEN": 36,
+}, {
+    "FILE DATE": "3/9/20",
+    "CLOSED": 84,
+    "OPEN": 78,
+}, {
+    "FILE DATE": "3/10/20",
+    "CLOSED": 198,
+    "OPEN": 119,
+}, {
+    "FILE DATE": "3/11/20",
+    "CLOSED": 261,
+    "OPEN": 178,
+}, {
+    "FILE DATE": "3/12/20",
+    "CLOSED": 195,
+    "OPEN": 132,
+}, {
+    "FILE DATE": "3/13/20",
+    "CLOSED": 127,
+    "OPEN": 65,
+}, {
+    "FILE DATE": "3/16/20",
+    "CLOSED": 104,
+    "OPEN": 100,
+}, {
+    "FILE DATE": "3/17/20",
+    "CLOSED": 144,
+    "OPEN": 109,
+}, {
+    "FILE DATE": "3/18/20",
+    "CLOSED": 76,
+    "OPEN": 51,
+}, {
+    "FILE DATE": "3/19/20",
+    "CLOSED": 18,
+    "OPEN": 32,
+}, {
+    "FILE DATE": "3/20/20",
+    "CLOSED": 23,
+    "OPEN": 23,
+}, {
+    "FILE DATE": "3/23/20",
+    "CLOSED": 26,
+    "OPEN": 34,
+}, {
+    "FILE DATE": "3/24/20",
+    "CLOSED": 39,
+    "OPEN": 37,
+}, {
+    "FILE DATE": "3/25/20",
+    "CLOSED": 23,
+    "OPEN": 25,
+}, {
+    "FILE DATE": "3/26/20",
+    "CLOSED": 10,
+    "OPEN": 14,
+}, {
+    "FILE DATE": "3/27/20",
+    "CLOSED": 13,
+    "OPEN": 18,
+}, {
+    "FILE DATE": "3/30/20",
+    "CLOSED": 11,
+    "OPEN": 16,
+}, {
+    "FILE DATE": "3/31/20",
+    "CLOSED": 14,
+    "OPEN": 4,
+}, {
+    "FILE DATE": "4/1/20",
+    "CLOSED": 7,
+    "OPEN": 8,
+}, {
+    "FILE DATE": "4/2/20",
+    "CLOSED": 7,
+    "OPEN": 1,
+}, {
+    "FILE DATE": "4/3/20",
+    "CLOSED": 3,
+    "OPEN": 5,
+}, {
+    "FILE DATE": "4/6/20",
+    "CLOSED": 4,
+    "OPEN": 8,
+}, {
+    "FILE DATE": "4/7/20",
+    "CLOSED": '',
+    "OPEN": 7,
+}, {
+    "FILE DATE": "4/8/20",
+    "CLOSED": 1,
+    "OPEN": 3,
+}, {
+    "FILE DATE": "4/9/20",
+    "CLOSED": 2,
+    "OPEN": 7,
+}, {
+    "FILE DATE": "4/10/20",
+    "CLOSED": 1,
+    "OPEN": '',
+}, {
+    "FILE DATE": "4/13/20",
+    "CLOSED": 29,
+    "OPEN": 15,
+}, {
+    "FILE DATE": "4/14/20",
+    "CLOSED": 12,
+    "OPEN": 10,
+}, {
+    "FILE DATE": "4/15/20",
+    "CLOSED": 20,
+    "OPEN": 16,
+}, {
+    "FILE DATE": "4/16/20",
+    "CLOSED": 2,
+    "OPEN": 8,
+}, {
+    "FILE DATE": "4/17/20",
+    "CLOSED": 4,
+    "OPEN": 29,
+}, {
+    "FILE DATE": "4/20/20",
+    "CLOSED": 6,
+    "OPEN": 6,
+}, {
+    "FILE DATE": "4/21/20",
+    "CLOSED": 2,
+    "OPEN": 11,
+}, {
+    "FILE DATE": "4/22/20",
+    "CLOSED": 4,
+    "OPEN": 9,
+}, {
+    "FILE DATE": "4/23/20",
+    "CLOSED": 1,
+    "OPEN": 6,
+}, {
+    "FILE DATE": "4/24/20",
+    "CLOSED": 1,
+    "OPEN": 6,
+}, {
+    "FILE DATE": "4/27/20",
+    "CLOSED": 7,
+    "OPEN": 28,
+}, {
+    "FILE DATE": "4/28/20",
+    "CLOSED": 2,
+    "OPEN": 13,
+}, {
+    "FILE DATE": "4/29/20",
+    "CLOSED": '',
+    "OPEN": 8,
+}, {
+    "FILE DATE": "4/30/20",
+    "CLOSED": 13,
+    "OPEN": 8,
+}, {
+    "FILE DATE": "5/1/20"
+    "CLOSED": 12,
+    "OPEN": 7,
+}, {
+    "FILE DATE": "5/4/20"
+    "CLOSED": 1,
+    "OPEN": 18,
+}, {
+    "FILE DATE": "5/5/20"
+    "CLOSED": '',
+    "OPEN": 14,
+}, {
+    "FILE DATE": "5/6/20"
+    "CLOSED": 8,
+    "OPEN": 18,
+}, {
+    "FILE DATE": "5/7/20"
+    "CLOSED": 2,
+    "OPEN": 9,
+}, {
+    "FILE DATE": "5/8/20"
+    "CLOSED": '',
+    "OPEN": 11,
+}, {
+    "FILE DATE": "5/11/20",
+    "CLOSED": 1,
+    "OPEN": 17,
+}, {
+    "FILE DATE": "5/12/20",
+    "CLOSED": 1,
+    "OPEN": 13,
+}, {
+    "FILE DATE": "5/13/20",
+    "CLOSED": 2,
+    "OPEN": 9,
+}, {
+    "FILE DATE": "5/14/20",
+    "CLOSED": 4,
+    "OPEN": 7,
+}, {
+    "FILE DATE": "5/15/20",
+    "CLOSED": 6,
+    "OPEN": 42,
+}, {
+    "FILE DATE": "5/18/20",
+    "CLOSED": '',
+    "OPEN": 9,
+}, {
+    "FILE DATE": "5/19/20",
+    "CLOSED": 7,
+    "OPEN": 12,
+}, {
+    "FILE DATE": "5/20/20",
+    "CLOSED": 1,
+    "OPEN": 10,
+}, {
+    "FILE DATE": "5/21/20",
+    "CLOSED": '',
+    "OPEN": 14,
+}, {
+    "FILE DATE": "5/22/20",
+    "CLOSED": 2,
+    "OPEN": 7,
+}, {
+    "FILE DATE": "5/25/20",
+    "CLOSED": '',
+    "OPEN": 1,
+}, {
+    "FILE DATE": "5/26/20",
+    "CLOSED": 2,
+    "OPEN": 14,
+}, {
+    "FILE DATE": "5/27/20",
+    "CLOSED": 1,
+    "OPEN": 20,
+}, {
+    "FILE DATE": "5/28/20",
+    "CLOSED": '',
+    "OPEN": 7,
+}, {
+    "FILE DATE": "5/29/20",
+    "CLOSED": 2,
+    "OPEN": 15,
+}, {
+    "FILE DATE": "6/1/20"
+    "CLOSED": 5,
+    "OPEN": 19,
+}, {
+    "FILE DATE": "6/2/20"
+    "CLOSED": 1,
+    "OPEN": 12,
+}, {
+    "FILE DATE": "6/3/20"
+    "CLOSED": 17,
+    "OPEN": 24,
+}, {
+    "FILE DATE": "6/4/20"
+    "CLOSED": 13,
+    "OPEN": 20,
+}, {
+    "FILE DATE": "6/5/20"
+    "CLOSED": 1,
+    "OPEN": 10,
+}, {
+    "FILE DATE": "6/8/20"
+    "CLOSED": 1,
+    "OPEN": 17,
+}, {
+    "FILE DATE": "6/9/20"
+    "CLOSED": 3,
+    "OPEN": 28,
+}, {
+    "FILE DATE": "6/10/20",
+    "CLOSED": 5,
+    "OPEN": 21,
+}, {
+    "FILE DATE": "6/11/20",
+    "CLOSED": 4,
+    "OPEN": 41,
+}, {
+    "FILE DATE": "6/12/20",
+    "CLOSED": 8,
+    "OPEN": 31,
+}, {
+    "FILE DATE": "6/15/20",
+    "CLOSED": '',
+    "OPEN": 32,
+}, {
+    "FILE DATE": "6/16/20",
+    "CLOSED": 7,
+    "OPEN": 35,
+}, {
+    "FILE DATE": "6/17/20",
+    "CLOSED": 27,
+    "OPEN": 56,
+}, {
+    "FILE DATE": "6/18/20",
+    "CLOSED": 5,
+    "OPEN": 20,
+}, {
+    "FILE DATE": "6/19/20",
+    "CLOSED": 9,
+    "OPEN": 25,
+}, {
+    "FILE DATE": "6/22/20",
+    "CLOSED": 5,
+    "OPEN": 31,
+}, {
+    "FILE DATE": "6/23/20",
+    "CLOSED": 9,
+    "OPEN": 57,
+}, {
+    "FILE DATE": "6/24/20",
+    "CLOSED": 5,
+    "OPEN": 18,
+}, {
+    "FILE DATE": "6/25/20",
+    "CLOSED": 11,
+    "OPEN": 19,
+}, {
+    "FILE DATE": "6/26/20",
+    "CLOSED": 4,
+    "OPEN": 17,
+}, {
+    "FILE DATE": "6/29/20",
+    "CLOSED": 4,
+    "OPEN": 17,
+}, {
+    "FILE DATE": "6/30/20",
+    "CLOSED": 42,
+    "OPEN": 56,
+}, {
+    "FILE DATE": "7/1/20"
+    "CLOSED": 5,
+    "OPEN": 26,
+}, {
+    "FILE DATE": "7/2/20"
+    "CLOSED": '',
+    "OPEN": 23,
+}, {
+    "FILE DATE": "7/3/20"
+    "CLOSED": '',
+    "OPEN": 2,
+}, {
+    "FILE DATE": "7/6/20"
+    "CLOSED": 3,
+    "OPEN": 24,
+}, {
+    "FILE DATE": "7/7/20"
+    "CLOSED": 3,
+    "OPEN": 18,
+}, {
+    "FILE DATE": "7/8/20"
+    "CLOSED": 9,
+    "OPEN": 39,
+}, {
+    "FILE DATE": "7/9/20"
+    "CLOSED": 3,
+    "OPEN": 27,
+}, {
+    "FILE DATE": "7/10/20",
+    "CLOSED": 7,
+    "OPEN": 19,
+}, {
+    "FILE DATE": "7/13/20",
+    "CLOSED": 5,
+    "OPEN": 36,
+}, {
+    "FILE DATE": "7/14/20",
+    "CLOSED": 5,
+    "OPEN": 16,
+}, {
+    "FILE DATE": "7/15/20",
+    "CLOSED": 7,
+    "OPEN": 21,
+}, {
+    "FILE DATE": "7/16/20",
+    "CLOSED": 6,
+    "OPEN": 13,
+}, {
+    "FILE DATE": "7/17/20",
+    "CLOSED": 3,
+    "OPEN": 16,
+}, {
+    "FILE DATE": "7/20/20",
+    "CLOSED": 4,
+    "OPEN": 28,
+}, {
+    "FILE DATE": "7/21/20",
+    "CLOSED": 10,
+    "OPEN": 33,
+}, {
+    "FILE DATE": "7/22/20",
+    "CLOSED": 2,
+    "OPEN": 21,
+}, {
+    "FILE DATE": "7/23/20",
+    "CLOSED": 11,
+    "OPEN": 30,
+}, {
+    "FILE DATE": "7/24/20",
+    "CLOSED": 2,
+    "OPEN": 19,
+}, {
+    "FILE DATE": "7/27/20",
+    "CLOSED": 2,
+    "OPEN": 17,
+}, {
+    "FILE DATE": "7/28/20",
+    "CLOSED": 9,
+    "OPEN": 25,
+}, {
+    "FILE DATE": "7/29/20",
+    "CLOSED": 1,
+    "OPEN": 15,
+}, {
+    "FILE DATE": "7/30/20",
+    "CLOSED": '',
+    "OPEN": 20,
+}, {
+    "FILE DATE": "7/31/20",
+    "CLOSED": 1,
+    "OPEN": 27,
+}, {
+    "FILE DATE": "8/3/20"
+    "CLOSED": '',
+    "OPEN": 32,
+}, {
+    "FILE DATE": "8/4/20"
+    "CLOSED": '',
+    "OPEN": 30,
+}, {
+    "FILE DATE": "8/5/20"
+    "CLOSED": '',
+    "OPEN": 12,
+}, {
+    "FILE DATE": "8/6/20"
+    "CLOSED": '',
+    "OPEN": 19,
+}, {
+    "FILE DATE": "8/7/20"
+    "CLOSED": '',
+    "OPEN": 44,
+}, {
+    "FILE DATE": "8/10/20",
+    "CLOSED": '',
+    "OPEN": 40,
+}, {
+    "FILE DATE": "8/11/20",
+    "CLOSED": '',
+    "OPEN": 31,
+}, {
+    "FILE DATE": "8/12/20",
+    "CLOSED": 1,
+    "OPEN": 39,
+}, {
+    "FILE DATE": "8/13/20",
+    "CLOSED": '',
+    "OPEN": 72,
+}, {
+    "FILE DATE": "8/14/20",
+    "CLOSED": '',
+    "OPEN": 30,
+} ]
