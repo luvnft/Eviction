@@ -1,24 +1,37 @@
-import React, { PureComponent, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   Area,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
 import './style.css';
-import { Container } from 'semantic-ui-react';
+import { csv } from 'd3';
 
-// const [globalTrigger, setGlobalTrigger] = useState();
-// const [caseData, setCaseData] = useState();
+const csvData = '../../Test-data/test-data.csv';
 
 const EvictionChart = (props) => {
-  //   static jsfiddleUrl = 'https://jsfiddle.net/alidingling/90v76x08/';
+
+  const [caseData, setCaseData] = useState([]);
+
+  useEffect(() => {
+    csv(csvData).then((data) => {
+      console.log(data);
+    }).catch(err => console.log(err))
+  }, []);
+
+  
+
+  // console.log(Data);
+  // Data.map(() => {
+
+  // })
+
   const data = [
     {
       fileDate: 'Page A',
@@ -65,14 +78,21 @@ const EvictionChart = (props) => {
   ];
 
   return (
-    <ResponsiveContainer width="95%" height={750}>
+    <ResponsiveContainer
+      className="chart-responsive-container"
+      width="95%"
+      height="100%"
+    >
       <BarChart
-        id="barChart"
+        className="barChart"
         width={1200}
         height={750}
         data={data}
-        style={{
-          margin: '0 auto',
+        margin={{
+          top: 40,
+          right: 30,
+          left: 20,
+          bottom: 20,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />

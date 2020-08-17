@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { Radio } from 'semantic-ui-react';
 import EvictionMap from './Components/EvictionMap';
 import EvictionChart from './Components/EvictionChart';
@@ -7,7 +8,7 @@ import './App.css'
 const App = () => {
     const [ data, setData ] = useState();
     const [ geoJSONs, setGeoJSONs ] = useState();
-    const [ vizView, setVizView ] = useState('map');
+    const [ vizView, setVizView ] = useState('chart');
 
     return (
         <div id='eviction-tracker'>

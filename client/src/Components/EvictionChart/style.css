@@ -1,7 +1,8 @@
-
-
-
-
-#BarChart {
+.chart-responsive-container {
     margin: 0 auto;
+}
+
+
+.BarChart {
+    margin: 50px
 }
