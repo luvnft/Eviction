@@ -9,8 +9,10 @@ import {
   Tooltip,
   Legend,
   Area,
+  ResponsiveContainer
 } from 'recharts';
 import './style.css';
+import { Container } from 'semantic-ui-react';
 
 // const [globalTrigger, setGlobalTrigger] = useState();
 // const [caseData, setCaseData] = useState();
@@ -63,24 +65,26 @@ const EvictionChart = (props) => {
   ];
 
   return (
-    <BarChart
-      id="barChart"
-      width={1200}
-      height={750}
-      data={data}
-      style={{
-        margin: '0 auto',
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="fileDate" />
-      <YAxis />
-      <Tooltip />
-      <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-      <Legend />
-      <Bar dataKey="open" stackId="a" fill="#8884d8" />
-      <Bar dataKey="closed" stackId="a" fill="#82ca9d" />
-    </BarChart>
+    <ResponsiveContainer width="95%" height={750}>
+      <BarChart
+        id="barChart"
+        width={1200}
+        height={750}
+        data={data}
+        style={{
+          margin: '0 auto',
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="fileDate" />
+        <YAxis />
+        <Tooltip />
+        <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        <Legend />
+        <Bar dataKey="open" stackId="a" fill="#8884d8" />
+        <Bar dataKey="closed" stackId="a" fill="#82ca9d" />
+      </BarChart>
+    </ResponsiveContainer>
   );
 };
 
