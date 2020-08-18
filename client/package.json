@@ -5,7 +5,7 @@
   "engines": {
     "node": "12.4.1"
   },
-  "proxy": "http://localhost:3001/",
+  "proxy": "http://localhost:3000/",
   "dependencies": {
     "d3": "^5.16.0",
     "leaflet": "^1.6.0",
