@@ -10,7 +10,7 @@ import {
   Area,
   ResponsiveContainer,
 } from 'recharts';
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, Button } from 'semantic-ui-react';
 import { csv } from 'd3';
 // STYLESHEET
 import './style.css';
@@ -33,19 +33,17 @@ const EvictionChart = (props) => {
       .catch((err) => console.log(err));
   }, []);
 
-
-  const applyFilter = (props) => {
-    switch (chartFilter) {
-      case "All" :
-        caseData.filter()
-      case "DAILY":
-      case "MONTHLY":
-    }
-  }
+  const countyOptions = [
+    { key: '063', text: 'Clayton County', value: '63' },
+    { key: '067', text: 'Cobb County', value: '67' },
+    { key: '089', text: 'Dekalb County', value: '89' },
+    { key: '121', text: 'Fulton County', value: '121' },
+    { key: '135', text: 'Gwinnett County', value: '135' },
+  ];
 
   return (
     <>
-      <Dropdown
+      {/* <Dropdown
         text="Filter"
         icon="filter"
         floating
@@ -58,27 +56,34 @@ const EvictionChart = (props) => {
           <Dropdown.Divider />
           <Dropdown.Item
             onClick={() => {
-              setChartFilter('DAILY');
+              setChartFilter('DAILY DATA');
             }}
           >
-            DAILY
+            DAILY DATA
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
-              setChartFilter('MONTHLY');
+              setChartFilter('MONTHLY DATA');
             }}
           >
-            MONTHLY
+            MONTHLY DATA
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
-              setChartFilter('ALL');
+              setChartFilter('ALL DATA');
             }}
-          >
-            ALL DATA
-          </Dropdown.Item>
+          ></Dropdown.Item>
         </Dropdown.Menu>
-      </Dropdown>
+      </Dropdown> */}
+
+      <Dropdown
+        className="icon chart-dropdown"
+        placeholder="County Options"
+        fluid
+        multiple
+        selection
+        options={countyOptions}
+      />
 
       <ResponsiveContainer
         className="chart-responsive-container"
@@ -109,6 +114,11 @@ const EvictionChart = (props) => {
           <Bar dataKey="CLOSED" stackId="a" fill="#82ca9d" />
         </BarChart>
       </ResponsiveContainer>
+      <Button.Group className="button-group">
+        <Button>One</Button>
+        <Button>Two</Button>
+        <Button>Three</Button>
+      </Button.Group>
     </>
   );
 };

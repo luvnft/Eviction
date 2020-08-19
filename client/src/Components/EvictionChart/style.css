@@ -15,17 +15,32 @@
 }
 
 /* chart dropdown, giving filter perimeters */
-.ui.labeled.icon.button {
+.ui.fluid.dropdown {
     justify-content: center;
     display: flex;
     width: 25%;
     margin: 0 auto;
     margin-top: 1em;
+    
+}
+/* text for the dropdown */
+.ui.dropdown:not(.button)>.default.text {
+    font-weight: 700;
+    font-family: monospace;
+    color: black;
 }
 
+/* the dropdown options/items */
 .ui.dropdown .menu>.item {
     text-align: center;
     font-size: x-large;
     font-weight: 500;
     font-family: monospace;
+}
+
+/* BUTTON GROUP */
+.button-group {
+    margin: 10px;
+    display: flex;
+    justify-content: end;
 }
