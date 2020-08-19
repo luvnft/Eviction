@@ -21,8 +21,8 @@ const EvictionChart = (props) => {
   // case data for csv test cases;
   const [caseData, setCaseData] = useState([]);
   // filter options;
-  const [countyFilter, setCountyFilter] = useState('ALL');
-  const [selectedCounties, setSelectedCounties] = useState([63])
+  const [countyFilter, setCountyFilter] = useState(['63']);
+  // const [selectedCounties, setSelectedCounties] = useState([63])
   console.log('countyFilter: ', countyFilter);
 
   useEffect(() => {
@@ -31,9 +31,9 @@ const EvictionChart = (props) => {
         console.log('data: ', data);
         const dataObject = {};
         data
-        // .filter(item => 
-        //   selectedCounties
-        //   .includes(item['COUNTYFP10']))
+        .filter(item => 
+          // c
+            countyFilter.includes(item['COUNTYFP10']))
           .map(item => 
             // item['Count'] !== '' ?
             dataObject[item['File.Date']] = dataObject[item['File.Date']] ? 
@@ -41,18 +41,19 @@ const EvictionChart = (props) => {
           : parseFloat(item['Count']));
         console.log(dataObject); 
         // const dataArray = 
-        const dataArray = Object.entries(dataObject).map(([key,value]) => ({
-          "File.Date": key,
-          "Count" : value
-        }));
+        const dataArray = Object.entries(dataObject).map(([key,value]) => 
+          ({
+            "File.Date": key,
+            "Count" : value
+          })
+        );
 
         console.log(dataArray);
-
         setCaseData(dataArray);
 
       })
       .catch((err) => console.log(err));
-  }, [selectedCounties]);
+  }, [countyFilter]);
 
   const countyOptions = [
     { key: '063', text: 'Clayton County', value: '63' },
@@ -72,7 +73,6 @@ const EvictionChart = (props) => {
         selection
         options={countyOptions}
         onClick={() => {
-          
         }}
       />
 
@@ -83,8 +83,8 @@ const EvictionChart = (props) => {
       >
         <BarChart
           className="barChart"
-          width={1200}
-          height={750}
+          // width={1200}
+          // height={750}
           data={caseData}
           margin={{
             top: 15,
