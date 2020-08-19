@@ -15,23 +15,44 @@ import { csv } from 'd3';
 // STYLESHEET
 import './style.css';
 // CSV TEST-DATA IMPORT
-const csvData = require('../../Test-data/AllCountyEvictionCaseFilings-as-of-8-14-20.csv');
+const csvData = require('../../TEST-DATA/AllCountyEvictionCaseFilings-as-of-8-14-20.csv');
 
 const EvictionChart = (props) => {
   // case data for csv test cases;
   const [caseData, setCaseData] = useState([]);
   // filter options;
   const [countyFilter, setCountyFilter] = useState('ALL');
+  const [selectedCounties, setSelectedCounties] = useState([63])
   console.log('countyFilter: ', countyFilter);
 
   useEffect(() => {
     csv(csvData)
       .then((data) => {
         console.log('data: ', data);
-        setCaseData(data);
+        const dataObject = {};
+        data
+        // .filter(item => 
+        //   selectedCounties
+        //   .includes(item['COUNTYFP10']))
+          .map(item => 
+            // item['Count'] !== '' ?
+            dataObject[item['File.Date']] = dataObject[item['File.Date']] ? 
+            dataObject[item['File.Date']] + parseFloat(item['Count']) 
+          : parseFloat(item['Count']));
+        console.log(dataObject); 
+        // const dataArray = 
+        const dataArray = Object.entries(dataObject).map(([key,value]) => ({
+          "File.Date": key,
+          "Count" : value
+        }));
+
+        console.log(dataArray);
+
+        setCaseData(dataArray);
+
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [selectedCounties]);
 
   const countyOptions = [
     { key: '063', text: 'Clayton County', value: '63' },
