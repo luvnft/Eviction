@@ -21,8 +21,9 @@
     width: 25%;
     margin: 0 auto;
     margin-top: 1em;
-    
+
 }
+
 /* text for the dropdown */
 .ui.dropdown:not(.button)>.default.text {
     font-weight: 700;
@@ -39,8 +40,11 @@
 }
 
 /* BUTTON GROUP */
-.button-group {
-    margin: 10px;
-    display: flex;
-    justify-content: end;
+.button-group-container {
+    text-align: center;
+}
+
+/* daily, weekly, monthly buttons */
+.ui.buttons .button {
+    margin: 0 10px 0 10px;
 }

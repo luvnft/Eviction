@@ -10,24 +10,24 @@ import {
   Area,
   ResponsiveContainer,
 } from 'recharts';
-import { Dropdown, Button } from 'semantic-ui-react';
+import { Dropdown, Button, Container } from 'semantic-ui-react';
 import { csv } from 'd3';
 // STYLESHEET
 import './style.css';
 // CSV TEST-DATA IMPORT
-const csvData = require('../../Test-data/test-data.csv');
+const csvData = require('../../Test-data/AllCountyEvictionCaseFilings-as-of-8-14-20.csv');
 
 const EvictionChart = (props) => {
   // case data for csv test cases;
   const [caseData, setCaseData] = useState([]);
   // filter options;
-  const [chartFilter, setChartFilter] = useState('ALL');
-  console.log('chartFilter: ', chartFilter);
+  const [countyFilter, setCountyFilter] = useState('ALL');
+  console.log('countyFilter: ', countyFilter);
 
   useEffect(() => {
     csv(csvData)
       .then((data) => {
-        // console.log('data: ', data);
+        console.log('data: ', data);
         setCaseData(data);
       })
       .catch((err) => console.log(err));
@@ -43,39 +43,6 @@ const EvictionChart = (props) => {
 
   return (
     <>
-      {/* <Dropdown
-        text="Filter"
-        icon="filter"
-        floating
-        labeled
-        button
-        className="icon chart-dropdown"
-      >
-        <Dropdown.Menu>
-          <Dropdown.Header icon="filter" content="Filter by date selection" />
-          <Dropdown.Divider />
-          <Dropdown.Item
-            onClick={() => {
-              setChartFilter('DAILY DATA');
-            }}
-          >
-            DAILY DATA
-          </Dropdown.Item>
-          <Dropdown.Item
-            onClick={() => {
-              setChartFilter('MONTHLY DATA');
-            }}
-          >
-            MONTHLY DATA
-          </Dropdown.Item>
-          <Dropdown.Item
-            onClick={() => {
-              setChartFilter('ALL DATA');
-            }}
-          ></Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown> */}
-
       <Dropdown
         className="icon chart-dropdown"
         placeholder="County Options"
@@ -83,12 +50,15 @@ const EvictionChart = (props) => {
         multiple
         selection
         options={countyOptions}
+        onClick={() => {
+          
+        }}
       />
 
       <ResponsiveContainer
         className="chart-responsive-container"
         width="95%"
-        height="90%"
+        height="85%"
       >
         <BarChart
           className="barChart"
@@ -103,22 +73,23 @@ const EvictionChart = (props) => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="FILE DATE" />
+          <XAxis dataKey="File.Date" />
           <YAxis />
           <Tooltip />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-
           <Legend />
-
-          <Bar dataKey="OPEN" stackId="a" fill="#8884d8" />
-          <Bar dataKey="CLOSED" stackId="a" fill="#82ca9d" />
+          <Bar dataKey="Count" stackId="a" fill="#8884d8" />
+          {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}
         </BarChart>
       </ResponsiveContainer>
-      <Button.Group className="button-group">
-        <Button>One</Button>
-        <Button>Two</Button>
-        <Button>Three</Button>
-      </Button.Group>
+
+      <Container className="button-group-container">
+        <Button.Group className="button-group">
+          <Button>Daily Cases</Button>
+          <Button>Weekly Cases</Button>
+          <Button>Monthly Cases</Button>
+        </Button.Group>
+      </Container>
     </>
   );
 };
