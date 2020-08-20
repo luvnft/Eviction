@@ -4,13 +4,13 @@
 }
 
 /* the total chart div */
-.BarChart {
+/* .BarChart {
     margin: 0 50px 50px 50px;
-}
+} */
 
 /* icons displaying wether the case is open or closed */
 .recharts-legend-item {
-    font-size: x-large;
+    font-size: large;
     margin-top: 20px;
 }
 
@@ -23,6 +23,10 @@
     margin-top: 1em;
 }
 
+.divider.text {
+    font-size: x-large;
+}
+
 /* text for the dropdown */
 .ui.dropdown:not(.button)>.default.text {
     font-weight: 700;
@@ -33,7 +37,7 @@
 /* the dropdown options/items */
 .ui.dropdown .menu>.item {
     text-align: center;
-    font-size: x-large;
+    font-size: large;
     font-weight: 500;
     font-family: monospace;
 }
@@ -45,5 +49,5 @@
 
 /* daily, weekly, monthly buttons */
 .ui.buttons .button {
-    margin: 0 10px 0 10px;
+    margin: 0 2px 0 2px;
 }
