@@ -17,18 +17,25 @@ import './style.css';
 // CSV TEST-DATA IMPORT
 const csvData = require('../../TEST-DATA/AllCountyEvictionCaseFilings-as-of-8-14-20.csv');
 
+// function to sort by date;
+function sortByDate(a, b) {
+  var dateA = new Date(a['File.Date']).getTime();
+  var dateB = new Date(b['File.Date']).getTime();
+  return dateA > dateB ? 1 : -1;
+}
+
 const EvictionChart = (props) => {
   // case data for csv test cases;
   const [caseData, setCaseData] = useState([]);
   // filter options;
   const [countyFilter, setCountyFilter] = useState(['63']);
-  // const [selectedCounties, setSelectedCounties] = useState([63])
+  // const [selectedCounties, setSelectedCounties] = useState([63]);
   console.log('countyFilter: ', countyFilter);
 
   useEffect(() => {
     csv(csvData)
       .then((data) => {
-        console.log('data: ', data);
+        // console.log('data: ', data);
         const dataObject = {};
         data
         .filter(item => 
@@ -50,10 +57,11 @@ const EvictionChart = (props) => {
 
         console.log(dataArray);
         setCaseData(dataArray);
-
       })
       .catch((err) => console.log(err));
   }, [countyFilter]);
+
+  // console.log(`caseData: ${caseData}`);
 
   const countyOptions = [
     { key: '063', text: 'Clayton County', value: '63' },
@@ -83,8 +91,6 @@ const EvictionChart = (props) => {
       >
         <BarChart
           className="barChart"
-          // width={1200}
-          // height={750}
           data={caseData}
           margin={{
             top: 15,
