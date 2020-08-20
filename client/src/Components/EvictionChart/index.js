@@ -22,7 +22,7 @@ const EvictionChart = (props) => {
   const [caseData, setCaseData] = useState([]);
   // filter options;
   const [countyFilter, setCountyFilter] = useState('ALL');
-  const [selectedCounties, setSelectedCounties] = useState([63])
+  const [selectedCounties, setSelectedCounties] = useState([63]);
   console.log('countyFilter: ', countyFilter);
 
   useEffect(() => {
@@ -31,28 +31,43 @@ const EvictionChart = (props) => {
         console.log('data: ', data);
         const dataObject = {};
         data
-        // .filter(item => 
-        //   selectedCounties
-        //   .includes(item['COUNTYFP10']))
-          .map(item => 
-            // item['Count'] !== '' ?
-            dataObject[item['File.Date']] = dataObject[item['File.Date']] ? 
-            dataObject[item['File.Date']] + parseFloat(item['Count']) 
-          : parseFloat(item['Count']));
-        console.log(dataObject); 
-        // const dataArray = 
-        const dataArray = Object.entries(dataObject).map(([key,value]) => ({
-          "File.Date": key,
-          "Count" : value
-        }));
+          // .filter(item =>
+          //   selectedCounties
+          //   .includes(item['COUNTYFP10']))
+          .map(
+            (item) =>
+              // item['Count'] !== '' ?
+              (dataObject[item['File.Date']] = dataObject[item['File.Date']]
+                ? dataObject[item['File.Date']] + parseFloat(item['Count'])
+                : parseFloat(item['Count']))
+          );
+        // ***** NOT FIGURING OUT WHAT THE COUNT IS; TOTAL OPEN CASES FOR THE DATE?
+        console.log('dataObject: ', dataObject);
 
-        console.log(dataArray);
+        const dataArray = Object.entries(dataObject).map(
+          ([key, value]) => (
+            console.log(`key: ${key} || value: ${value}`),
+            {
+              'File.Date': key,
+              Count: value,
+            }
+          )
+        );
+            // * SORT THEN RETURN THE ARRAY;
+        function sortFunction(a, b) {
+          var dateA = new Date(a['File.Date']).getTime();
+          var dateB = new Date(b['File.Date']).getTime();
+          return dateA > dateB ? 1 : -1;
+        }
+        dataArray.sort(sortFunction);
+        console.log('dataArray: ', dataArray);
 
         setCaseData(dataArray);
-
       })
       .catch((err) => console.log(err));
   }, [selectedCounties]);
+
+  console.log('caseData: ', caseData);
 
   const countyOptions = [
     { key: '063', text: 'Clayton County', value: '63' },
@@ -71,9 +86,7 @@ const EvictionChart = (props) => {
         multiple
         selection
         options={countyOptions}
-        onClick={() => {
-          
-        }}
+        onClick={() => {}}
       />
 
       <ResponsiveContainer
@@ -83,8 +96,6 @@ const EvictionChart = (props) => {
       >
         <BarChart
           className="barChart"
-          width={1200}
-          height={750}
           data={caseData}
           margin={{
             top: 15,
