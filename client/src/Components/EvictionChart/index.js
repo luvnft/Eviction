@@ -17,6 +17,12 @@ import './style.css';
 // CSV TEST-DATA IMPORT
 const csvData = require('../../TEST-DATA/AllCountyEvictionCaseFilings-as-of-8-14-20.csv');
 
+function sortByDate(a, b) {
+  var dateA = new Date(a['File.Date']).getTime();
+  var dateB = new Date(b['File.Date']).getTime();
+  return dateA > dateB ? 1 : -1;
+}
+
 const EvictionChart = (props) => {
   // case data for csv test cases;
   const [caseData, setCaseData] = useState([]);
@@ -28,7 +34,7 @@ const EvictionChart = (props) => {
   useEffect(() => {
     csv(csvData)
       .then((data) => {
-        console.log('data: ', data);
+        // console.log('data: ', data);
         const dataObject = {};
         data
           // .filter(item =>
@@ -42,32 +48,26 @@ const EvictionChart = (props) => {
                 : parseFloat(item['Count']))
           );
         // ***** NOT FIGURING OUT WHAT THE COUNT IS; TOTAL OPEN CASES FOR THE DATE?
-        console.log('dataObject: ', dataObject);
+        // console.log('dataObject: ', dataObject);
 
-        const dataArray = Object.entries(dataObject).map(
-          ([key, value]) => (
-            console.log(`key: ${key} || value: ${value}`),
-            {
-              'File.Date': key,
-              Count: value,
-            }
-          )
+        const dataArray = Object.entries(dataObject).map(([key, value]) =>
+          // console.log(`key: ${key} || value: ${value}`),
+          ({
+            'File.Date': key,
+            Count: value,
+          })
         );
-            // * SORT THEN RETURN THE ARRAY;
-        function sortFunction(a, b) {
-          var dateA = new Date(a['File.Date']).getTime();
-          var dateB = new Date(b['File.Date']).getTime();
-          return dateA > dateB ? 1 : -1;
-        }
-        dataArray.sort(sortFunction);
-        console.log('dataArray: ', dataArray);
+        // * SORT THEN RETURN THE SORTED ARRAY;
+        dataArray.sort(sortByDate);
 
+        // SET THE ARRAY VALUES TO THE caseData VARIABLE STATE;
         setCaseData(dataArray);
       })
       .catch((err) => console.log(err));
+    // UPDATE ON CHANGE TO selectedCounties;
   }, [selectedCounties]);
 
-  console.log('caseData: ', caseData);
+  console.log(`caseData: ${caseData}`);
 
   const countyOptions = [
     { key: '063', text: 'Clayton County', value: '63' },
