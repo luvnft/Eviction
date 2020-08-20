@@ -17,6 +17,7 @@ import './style.css';
 // CSV TEST-DATA IMPORT
 const csvData = require('../../TEST-DATA/AllCountyEvictionCaseFilings-as-of-8-14-20.csv');
 
+// function to sort by date;
 function sortByDate(a, b) {
   var dateA = new Date(a['File.Date']).getTime();
   var dateB = new Date(b['File.Date']).getTime();
@@ -57,7 +58,7 @@ const EvictionChart = (props) => {
             Count: value,
           })
         );
-        // * SORT THEN RETURN THE SORTED ARRAY;
+        // * SORT THEN RETURN THE SORTED ARRAY, using the sort function defined on line 20;
         dataArray.sort(sortByDate);
 
         // SET THE ARRAY VALUES TO THE caseData VARIABLE STATE;
@@ -67,7 +68,7 @@ const EvictionChart = (props) => {
     // UPDATE ON CHANGE TO selectedCounties;
   }, [selectedCounties]);
 
-  console.log(`caseData: ${caseData}`);
+  // console.log(`caseData: ${caseData}`);
 
   const countyOptions = [
     { key: '063', text: 'Clayton County', value: '63' },
