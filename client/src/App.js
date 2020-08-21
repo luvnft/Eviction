@@ -12,7 +12,7 @@ const App = () => {
 
 
     // const [ data, setData ] = useState();
-    const [ geoJSONs, setGeoJSONs ] = useState();
+    const [ geoJSON, setGeoJSON ] = useState();
     const [ vizView, setVizView ] = useState('chart');
     const data = require('./Test-data/EvictionFilingsByTract.json');
   
@@ -39,10 +39,13 @@ const App = () => {
         //     { key: '135', text: 'Gwinnett County', value: '135' },
         //   ];
 
-        const url = `https://opendata.arcgis.com/datasets/2e73cc4a02a441ba968e6a63a8b526f5_56.geojson`;
+        const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='Tract' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
+        
+        // `https://opendata.arcgis.com/datasets/2e73cc4a02a441ba968e6a63a8b526f5_56.geojson`;
+
 
         API.getData(url)
-            .then(res => setGeoJSONs(res.data))
+            .then(res => setGeoJSON(res.data))
             .catch(err => console.error(err))
     };
 
@@ -80,7 +83,7 @@ useEffect(() => getGeoJSON(), []);
                             // maxvalue={maxValue}
                             // mapbounds={mapBounds}
                             // setMapBounds={setMapBounds}
-                            geojson={geoJSONs}                           
+                            geojson={geoJSON}                           
                         /> 
                     //         <div style={{height: '3%', textAlign: 'center'}}>
                     //     <h1>Evictions</h1>
