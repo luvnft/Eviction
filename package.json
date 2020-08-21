@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "12.14.1"
+    "node": "12.14.1",
+    "npm": "6.13.4"
   },
-  "proxy": "http://localhost:3001/",
   "dependencies": {
     "axios": "^0.19.2",
     "colormap": "^2.3.1",
