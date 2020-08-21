@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import { Radio } from 'semantic-ui-react';
 import EvictionMap from './Components/EvictionMap';
 import EvictionChart from './Components/EvictionChart';
 // import ColorRamp from './Components/ColorRamp'
 import API from './utils/API.js';
-import './App.css'
+import './App.css';
+
 
 const App = () => {
 
@@ -13,16 +14,13 @@ const App = () => {
     // const [ data, setData ] = useState();
     const [ geoJSONs, setGeoJSONs ] = useState();
     const [ vizView, setVizView ] = useState('chart');
-
-    const data = require('./TEST-DATA/EvictionFilingsByTract.json');
-
-
+    const data = require('./Test-data/EvictionFilingsByTract.json');
   
-    const style = {
-        colormap: 'density',
-        nshades: 72,
-        opacity: .7
-    }
+    // const style = {
+    //     colormap: 'density',
+    //     nshades: 72,
+    //     opacity: .7
+    // }
     
     const getGeoJSON = () => {
         const counties = [
@@ -73,7 +71,7 @@ useEffect(() => getGeoJSON(), []);
                     // <div style={{textAlign: 'center', height: '100vh'}}>
                     //   <div id='map-container'>  
                         <EvictionMap
-                            style={style} 
+                            // style={style} 
                             data={data}
                             // year={year}
                             // data={data1}
