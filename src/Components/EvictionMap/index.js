@@ -8,7 +8,9 @@ const EvictionMap = props => {
     const [tractData, setTractData] = useState();
     const [stats, setStats] = useState();
     const [bins, setBins] = useState();
-    const colors = ["#0c3383", "#0a7ab1", "#4a9d96", "#cbc74e",  "#d91e1e"]
+    const colors = ["#0c3383", "#0a7ab1", "#4a9d96", "#cbc74e",  "#d91e1e"];
+
+    console.log(props.geojson);
 
 
     // Create function to setStats({max: value, min: value, range: value})
@@ -70,12 +72,12 @@ const EvictionMap = props => {
                 <GeoJSON
                     key={'map-layer-' + props.name}
                     data={props.geojson}
-                    filter={feature => feature.properties['PLNG_REGIO'] !== 'NON-ARC'}
+                    // filter={feature => feature.properties['PLNG_REGIO'] !== 'NON-ARC'}
                     style={feature => {
 
                         const maxValue = stats.max;
                         const minValue = stats.min;
-                        const geoid = feature.properties['GEOID10'];
+                        const geoid = feature.properties['GEOID'];
                         const value = tractData[geoid]
                         const distFromMin = value - minValue;
                         const range = stats.range;
