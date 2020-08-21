@@ -13,29 +13,32 @@ import {
 import { Dropdown, Button, Container } from 'semantic-ui-react';
 import { csv } from 'd3';
 import moment from 'moment';
+import API from '../../utils/API';
 // STYLESHEET
 import './style.css';
 // CSV TEST-DATA IMPORT
-const csvData = require('../../TEST-DATA/AllCountyEvictionCaseFilings-as-of-8-14-20.csv');
 
-// function to sort by date;
-const sortByDate = (a, b) => {
-  var dateA = new Date(a['File.Date']).getTime();
-  var dateB = new Date(b['File.Date']).getTime();
-  return dateA > dateB ? 1 : -1;
-};
 
 const EvictionChart = props => {
+
+    // console.log(props.data);
+
+// function to sort by date;
+    const sortByDate = (a, b) => {
+        var dateA = new Date(a['File.Date']).getTime();
+        var dateB = new Date(b['File.Date']).getTime();
+        return dateA > dateB ? 1 : -1;
+    };
   // case data for csv test cases;
-  const [caseData, setCaseData] = useState([]);
-  const [countyFilter, setCountyFilter] = useState('63');
+  const [caseData, setCaseData] = useState();
+  const [countyFilter, setCountyFilter] = useState(63);
   const [timeScale, setTimeScale] = useState('daily');
   // const [selectedCounties, setSelectedCounties] = useState([63]);
   console.log('countyFilter: ', countyFilter);
 
   useEffect(() => {
-    csv(csvData)
-      .then((data) => {
+    // csv(csvData)
+    //   .then((data) => {
         // console.log('data: ', data);
         const dataObject = {};
 
@@ -64,8 +67,10 @@ const EvictionChart = props => {
               dataObject[moment(date).format('M/D/YY')] = 0
             : null
           );
+        
+        // console.log(props.data);  
 
-        data
+        props.data
           .sort((a, b) => sortByDate(a, b))
           .filter(item =>
             countyFilter === item['COUNTYFP10'])
@@ -84,7 +89,7 @@ const EvictionChart = props => {
               : parseFloat(item['Count']);
           });
 
-        console.log(dataObject);
+        // console.log(dataObject);
         // const dataArray = 
         const dataArray = Object.entries(dataObject).map(([key, value]) =>
           ({
@@ -95,18 +100,18 @@ const EvictionChart = props => {
 
         console.log(dataArray);
         setCaseData(dataArray);
-      })
-      .catch((err) => console.log(err));
+    //   })
+    //   .catch((err) => console.log(err))
   }, [countyFilter, timeScale]);
 
   // console.log(`caseData: ${caseData}`);
 
   const countyOptions = [
-    { key: '063', text: 'Clayton County', value: '63' },
-    { key: '067', text: 'Cobb County', value: '67' },
-    { key: '089', text: 'Dekalb County', value: '89' },
-    { key: '121', text: 'Fulton County', value: '121' },
-    { key: '135', text: 'Gwinnett County', value: '135' },
+    { key: '063', text: 'Clayton County', value: 63 },
+    { key: '067', text: 'Cobb County', value: 67 },
+    { key: '089', text: 'Dekalb County', value: 89 },
+    { key: '121', text: 'Fulton County', value: 121 },
+    { key: '135', text: 'Gwinnett County', value: 135 },
   ];
 
   return (

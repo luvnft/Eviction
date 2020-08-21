@@ -10,9 +10,12 @@ import './App.css'
 const App = () => {
 
 
-    const [ data, setData ] = useState();
+    // const [ data, setData ] = useState();
     const [ geoJSONs, setGeoJSONs ] = useState();
     const [ vizView, setVizView ] = useState('chart');
+
+    const data = require('./TEST-DATA/EvictionFilingsByTract.json');
+
 
   
     const style = {
@@ -66,7 +69,7 @@ useEffect(() => getGeoJSON(), []);
             </div>
             <div id='viz-box'>
                 {
-                    vizView === 'map' ?
+                    vizView === 'map' && data ?
                     // <div style={{textAlign: 'center', height: '100vh'}}>
                     //   <div id='map-container'>  
                         <EvictionMap
@@ -86,7 +89,8 @@ useEffect(() => getGeoJSON(), []);
                     // </div>
             // </div>
             // </div>
-                    : <EvictionChart/>
+                    : vizView === 'chart' && data ?
+                    <EvictionChart data={data}/> : null
                 }
 
 
