@@ -29,7 +29,7 @@ const EvictionChart = props => {
   // case data for csv test cases;
   const [caseData, setCaseData] = useState([]);
   const [countyFilter, setCountyFilter] = useState('63');
-  const [timeScale, setTimeScale] = useState('weekly');
+  const [timeScale, setTimeScale] = useState('daily');
   // const [selectedCounties, setSelectedCounties] = useState([63]);
   console.log('countyFilter: ', countyFilter);
 

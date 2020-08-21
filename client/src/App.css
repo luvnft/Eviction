@@ -20,10 +20,16 @@ h5 {
     text-align: center;
     width: 100%;
     padding: 5px;
-    background-color: rgb(214, 209, 209);
+    /* background-color: rgb(214, 209, 209); */
+}
+
+#header > h1 {
+    font-size: 3rem;
+    margin: 0;
 }
 
 #viz-box {
     width: 100%;
     /* background-color: rgb(255, 255, 255); */
 }
+
