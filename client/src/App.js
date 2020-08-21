@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Radio } from 'semantic-ui-react';
 import EvictionMap from './Components/EvictionMap';
 import EvictionChart from './Components/EvictionChart';
-import ColorRamp from './Components/ColorRamp'
+// import ColorRamp from './Components/ColorRamp'
 import API from './utils/API.js';
 import './App.css'
 

@@ -1,10 +1,16 @@
 {
-  "name": "covid-19-data-updater",
+  "name": "eviction-tracker",
   "version": "1.0.0",
-  "description": "",
-  "main": "App.js",
+  "description": "tracks eviction filings in ATL",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+    "start:prod": "node server.js && npm run client",
+    "start:dev": "nodemon server.js | npm run client",
+    "client": "cd client && npm run start",
+    "seed": "node seed/seedDB.js",
+    "install": "cd client && npm install",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +20,7 @@
     "moment": "^2.24.0",
     "mongodb": "^3.5.5",
     "mongojs": "^3.1.0",
-    "node-cron": "^2.0.3"
+    "node-cron": "^2.0.3",
+    "concurrently": "^5.0.2"
   }
 }
