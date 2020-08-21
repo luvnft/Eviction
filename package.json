@@ -25,6 +25,7 @@
     "mongodb": "^3.5.5",
     "mongojs": "^3.1.0",
     "node-cron": "^2.0.3",
-    "concurrently": "^5.0.2"
+    "concurrently": "^5.0.2",
+    "if-env": "^1.0.4"
   }
 }
