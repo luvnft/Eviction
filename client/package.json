@@ -5,7 +5,6 @@
   "engines": {
     "node": "12.4.1"
   },
-  "proxy": "http://localhost:3000/",
   "dependencies": {
     "axios": "^0.19.2",
     "colormap": "^2.3.1",
