@@ -1,83 +1,133 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON } from 'react-leaflet';
-import colormap from 'colormap';
 import './style.css';
 
-const EvictionMap = props =>
 
-{
+const EvictionMap = props => {
 
-    const numberOfBins = props.style.nshades;
-    const colorMap = props.style.colormap;
+    const [tractData, setTractData] = useState();
+    const [stats, setStats] = useState();
+    const [bins, setBins] = useState();
+    const colors = ["#0c3383", "#0a7ab1", "#4a9d96", "#cbc74e",  "#d91e1e"]
 
-    // console.log(props.geojson)
-      
-    // let colors = colormap({
-    //   colormap: colorMap,
-    //   nshades: numberOfBins,
-    //   format: 'hex',
-    //   alpha: 1
-    // }).reverse();
+
+    // Create function to setStats({max: value, min: value, range: value})
+    const calcStats = data => {
+        // console.log(Object.entries(data))
+        const valueArray = Object.values(data);
+        // console.log(valueArray);
+        const max = Math.max(...valueArray);
+        const min = Math.min(...valueArray);
+        setStats({
+            max: max,
+            min: min,
+            range: max - min
+        });
+
+        const binSize = (max - min)/colors.length;
+        const bins = [];
+
+        for (let j = 1; j <= colors.length; j++) {
+            bins.push({
+                bottom: binSize * (j - 1) + min,
+                top: binSize * j + min
+            })
+        }
+
+        setBins(bins);
+    }
+
+    const handleData = () => {
+        const dataObject = {};
+        props.data
+            .map(item =>
+                dataObject[item['tractID']] = dataObject[item['tractID']] ?
+                    dataObject[item['tractID']] + parseFloat(item['Count'])
+                    : parseFloat(item['Count']));
+
+        calcStats(dataObject);
+        setTractData(dataObject);
+    }
+
+    useEffect(() => { handleData() }, [])
 
     return (
         <LeafletMap
-          key={'leaflet-map-' + props.name}
-          center={[33.8, -84.4]}
-          zoom={9}
-          maxZoom={18}
-          bounds={props.mapbounds}
-          attributionControl={true}
-          zoomControl={true}
-          doubleClickZoom={true}
-          scrollWheelZoom={true}
-          dragging={true}
-          animate={false}
-          onMoveEnd={e => props.setMapBounds(e.target.getBounds())}
+            key={'leaflet-map-' + props.name}
+            center={[33.8, -84.4]}
+            zoom={10}
+            maxZoom={18}
+            attributionControl={true}
+            zoomControl={true}
+            doubleClickZoom={true}
+            scrollWheelZoom={true}
+            dragging={true}
+            animate={true}
         >
-            {props.geojson && props.data ?
+            {  props.geojson && 
+               tractData && 
+               stats ?
                 <GeoJSON
-                key={'map-layer-' + props.name}
-                data={props.geojson}
-                filter={feature => feature.properties['PLNG_REGIO'] !== 'NON-ARC'}
-                style={feature => {
+                    key={'map-layer-' + props.name}
+                    data={props.geojson}
+                    filter={feature => feature.properties['PLNG_REGIO'] !== 'NON-ARC'}
+                    style={feature => {
 
-                    const minValue = props.minvalue;
-                    const maxValue = props.maxvalue;
-                    const geoid = parseInt(feature.properties['GEOID10'])
-                    // console.log(geoid);
-                    const tractDataObj = props.data.find(geo => geoid === geo['GEOID']);
-                    // console.log(tractDataObj)
-                    const value = tractDataObj ? tractDataObj[props.year] : null;
-                    // console.log(value)
-                    const distFromMin = value - minValue;
-                    const range = maxValue - minValue;
-                    const binningRatio = distFromMin/range;
-                    const indexRange = numberOfBins - 1;
-            
-                    const color = value ? colors[Math.floor(value === 0 ? 0 : binningRatio * indexRange)] : null;
-        
-                    return ({
-                        color: value < minValue ? colors[0] : value > maxValue ? colors[colors.length -1] : color,
-                        weight: 1,
-                        fillColor: value ? value < minValue ? colors[0] : value > maxValue ? colors[colors.length -1] : color : 'orange',
-                        fillOpacity: props.style.opacity 
-                        })
-                  }}
+                        const maxValue = stats.max;
+                        const minValue = stats.min;
+                        const geoid = feature.properties['GEOID10'];
+                        const value = tractData[geoid]
+                        const distFromMin = value - minValue;
+                        const range = stats.range;
+                        const binningRatio = distFromMin / range;
+                        const numberOfBins = 5;
+                        const color = value ? colors[Math.floor(binningRatio * numberOfBins)] : 'lightgrey';
+
+                        return ({
+                            color: value ? 'black' : null,
+                            weight: value ? 1 : 0,
+                            fillColor: value ? color : 'lightgrey',
+                            fillOpacity: value ? .8 : 0
+                    })
+                }}
                 />
                 : null
-             }
-            <TileLayer 
-                key={'tile-layer-dark'}
+            }
+
+            <TileLayer
+                key={'tile-layer'}
                 attribution={'&copy <a href="http://osm.org/copyright">OpenStreetMap contributors</a>'}
-                url={'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'}
-                
-            />
+                url={'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'}
+
+            />                
+            <div className='legend'>
+                <div id='symbol-column'>
+                    {
+                        colors
+                            .reverse()    
+                            .map(color =>
+                                <div className='legend-symbol' style={{backgroundColor: color}}/>
+                            )
+                    }                        
+                </div>
+                <div id='symbol-labels'>
+                    {
+                        bins ?
+                            bins
+                            .reverse()
+                            .map(bin =>
+                                <div className='legend-label'>
+                                    {`${bin.bottom} to < ${bin.top}`}
+                                </div>
+                            )
+                        : null
+                    }
+
+                </div>
+            </div>
         </LeafletMap>
     )
 }
-//     <div id='map-container'>
 
-//     </div>
-// ;
 
 export default EvictionMap;

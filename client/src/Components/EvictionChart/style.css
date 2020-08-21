@@ -1,0 +1,53 @@
+/* responsive container housing the chart */
+.chart-responsive-container {
+    margin: 0 auto;
+}
+
+/* the total chart div */
+/* .BarChart {
+    margin: 0 50px 50px 50px;
+} */
+
+/* icons displaying wether the case is open or closed */
+.recharts-legend-item {
+    font-size: large;
+    margin-top: 20px;
+}
+
+/* chart dropdown, giving filter perimeters */
+.ui.fluid.dropdown {
+    justify-content: center;
+    display: flex;
+    width: 25%;
+    margin: 0 auto;
+    margin-top: 1em;
+}
+
+.divider.text {
+    font-size: x-large;
+}
+
+/* text for the dropdown */
+.ui.dropdown:not(.button)>.default.text {
+    font-weight: 700;
+    font-family: monospace;
+    color: black;
+}
+
+/* the dropdown options/items */
+.ui.dropdown .menu>.item {
+    text-align: center;
+    font-size: large;
+    font-weight: 500;
+    font-family: monospace;
+}
+
+/* BUTTON GROUP */
+.button-group-container {
+    text-align: center;
+}
+
+/* daily, weekly, monthly buttons */
+.ui.buttons .button {
+    margin: 0 2px 0 2px;
+}
