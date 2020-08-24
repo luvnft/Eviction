@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON } from 'react-leaflet';
+import numeral from 'numeral';
 import './style.css';
+import { color } from 'd3';
 
 
 const EvictionMap = props => {
 
     const [tractData, setTractData] = useState();
+    // const [normalizeData, setNormalizeData] = useState();
     const [stats, setStats] = useState();
     const [bins, setBins] = useState();
-    const colors = ["#0c3383", "#0a7ab1", "#4a9d96", "#cbc74e",  "#d91e1e"];
+    const colors = ["#0c3383", "#0a7ab1", "#4a9d96", "#cbc74e",  "#d91e1e"].reverse();
 
     console.log(props.geojson);
+    
+
+
 
 
     // Create function to setStats({max: value, min: value, range: value})
     const calcStats = data => {
         // console.log(Object.entries(data))
-        const valueArray = Object.values(data);
-        // console.log(valueArray);
+        const valueArray = Object.values(data).filter(a => a > 0).sort((a,b) => a > b ? -1 : 1);
+        console.log(valueArray);
         const max = Math.max(...valueArray);
         const min = Math.min(...valueArray);
         setStats({
@@ -26,32 +32,51 @@ const EvictionMap = props => {
             range: max - min
         });
 
-        const binSize = (max - min)/colors.length;
+        // const binSize = (max - min)/colors.length;
         const bins = [];
 
-        for (let j = 1; j <= colors.length; j++) {
+        
+
+        for (let j = 0; j < colors.length; j++) {
             bins.push({
-                bottom: binSize * (j - 1) + min,
-                top: binSize * j + min
+                top: valueArray[Math.floor(j * valueArray.length/colors.length)],
+                bottom: valueArray[Math.floor((j + 1) * valueArray.length/colors.length) - 1]
             })
         }
 
         setBins(bins);
+        console.log(bins);
     }
 
     const handleData = () => {
         const dataObject = {};
+        const normalizeData = {};
+
         props.data
+            // .filter()
             .map(item =>
                 dataObject[item['tractID']] = dataObject[item['tractID']] ?
-                    dataObject[item['tractID']] + parseFloat(item['Count'])
-                    : parseFloat(item['Count']));
+                    (dataObject[item['tractID']] + parseFloat(item['Count']))
+                    : parseFloat(item['Count'])
+            );
+
+        props.normalizeData.map(item => dataObject[item['GEOID']] > 0 && item['RentHHs'] ?
+            dataObject[item['GEOID']] = dataObject[item['GEOID']] * 100 / item['RentHHs']
+            : null
+        );
+
+        props.normalizeData.map(item => normalizeData[item['GEOID']] = item['RentHHs'])
+
 
         calcStats(dataObject);
         setTractData(dataObject);
+        // setNormalizeData(normalizeData);
+        console.log(dataObject);
     }
 
-    useEffect(() => { handleData() }, [])
+    useEffect(() => { handleData() }, []);
+    console.log(stats);
+    console.log(bins);
 
     return (
         <LeafletMap
@@ -74,22 +99,29 @@ const EvictionMap = props => {
                     data={props.geojson}
                     // filter={feature => feature.properties['PLNG_REGIO'] !== 'NON-ARC'}
                     style={feature => {
-
-                        const maxValue = stats.max;
-                        const minValue = stats.min;
+                        
                         const geoid = feature.properties['GEOID'];
-                        const value = tractData[geoid]
-                        const distFromMin = value - minValue;
-                        const range = stats.range;
-                        const binningRatio = distFromMin / range;
-                        const numberOfBins = 5;
-                        const color = value ? colors[Math.floor(binningRatio * numberOfBins)] : 'lightgrey';
+                        // const normalizer = normalizeData[geoid];
+                        const value = tractData[geoid];
+                        // console.log(`${geoid}: ${value}`)
+                        // console.log(value);
+                        let color = null;
+                        bins.forEach((bin, i) =>
+                            value < bin.top && 
+                            value > bin.bottom ? 
+                                color = colors[i]
+                            : null
+                        );
+
+                        // console.log(value);
+                        // console.log(normalizer);
+                        // console.log(geoid);
 
                         return ({
                             color: value ? 'black' : null,
                             weight: value ? 1 : 0,
-                            fillColor: value ? color : 'lightgrey',
-                            fillOpacity: value ? .8 : 0
+                            fillColor: color ? color : 'lightgrey',
+                            fillOpacity: color ? .8 : 0
                     })
                 }}
                 />
@@ -103,10 +135,15 @@ const EvictionMap = props => {
 
             />                
             <div className='legend'>
+                <div id='legend-header'>
+                    <h3>Eviction Filing Rate</h3>
+                </div>
+                <div id='symbol-container'>
+
                 <div id='symbol-column'>
                     {
                         colors
-                            .reverse()    
+                            // .reverse()    
                             .map(color =>
                                 <div className='legend-symbol' style={{backgroundColor: color}}/>
                             )
@@ -116,16 +153,18 @@ const EvictionMap = props => {
                     {
                         bins ?
                             bins
-                            .reverse()
+                            // .reverse()
                             .map(bin =>
                                 <div className='legend-label'>
-                                    {`${bin.bottom} to < ${bin.top}`}
+                                    {`${numeral(bin.bottom).format('0,0.0')} to < ${numeral(bin.top).format('0,0.0')}`}
                                 </div>
                             )
                         : null
                     }
 
                 </div>
+                </div>
+
             </div>
         </LeafletMap>
     )
