@@ -12,24 +12,95 @@ h5 {
     width: 100%;
     height: 100vh;
     display: grid;
-    grid-template-rows: 10% 85% 5%;
+    grid-template-rows: 15% 75% 10%;
 
 }
 
 #header, #footer {
     text-align: center;
     width: 100%;
-    padding: 5px;
+    /* padding: 5px; */
+    z-index: 999999;
+    box-shadow: 0 0 10px lightslategrey;
+
+
     /* background-color: rgb(214, 209, 209); */
 }
 
+#footer{
+    padding-top: 2vh;
+}
+
 #header > h1 {
-    font-size: 3rem;
+    font-size: 2rem;
     margin: 0;
 }
 
 #viz-box {
+    /* padding: 10px auto; */
     width: 100%;
     /* background-color: rgb(255, 255, 255); */
 }
 
+#viz-toggle {
+    display: grid;
+    position: fixed;
+    top: 11vh;
+    height: 4vh;
+    /* padding-top: 1vh;  */
+    width: 100%;
+    grid-template-columns: 50% 50%;
+    font-size: 1.5em;    
+    /* margin-top: 1em; */
+}
+
+.viz-tab {
+    background-color: lightgrey;
+    height: 100%;
+    padding-top: .5em;
+    z-index: 99998;
+    opacity: .5;
+}
+
+.viz-tab:hover {
+   opacity: 1; 
+}
+
+#active-viz-tab {
+    opacity: 1; 
+}
+
+
+/* chart dropdown, giving filter perimeters */
+.ui.fluid.dropdown {
+    text-align: center;
+    /* display: flex; */
+    width: 25%;
+    margin: 0 auto;
+}
+
+#county-dropdown-container {
+    width: 100%;
+    position: fixed;
+    top: 5vh;
+    z-index: 999999;
+}
+
+.divider.text {
+    font-size: large;
+}
+
+/* text for the dropdown */
+.ui.dropdown:not(.button)>.default.text {
+    font-weight: 700;
+    font-family: monospace;
+    color: black;
+}
+
+/* the dropdown options/items */
+.ui.dropdown .menu>.item {
+    text-align: center;
+    font-size: large;
+    font-weight: 500;
+    font-family: monospace;
+}

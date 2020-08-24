@@ -2,18 +2,16 @@ import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
+  // Brush,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
-  Area,
   ResponsiveContainer,
 } from 'recharts';
-import { Dropdown, Button, Container } from 'semantic-ui-react';
-import { csv } from 'd3';
+import { Button } from 'semantic-ui-react';
 import moment from 'moment';
-import API from '../../utils/API';
 // STYLESHEET
 import './style.css';
 // CSV TEST-DATA IMPORT
@@ -31,10 +29,10 @@ const EvictionChart = props => {
     };
   // case data for csv test cases;
   const [caseData, setCaseData] = useState();
-  const [countyFilter, setCountyFilter] = useState(63);
-  const [timeScale, setTimeScale] = useState('daily');
+  // const [countyFilter, setCountyFilter] = useState(63);
+  const [timeScale, setTimeScale] = useState('weekly');
   // const [selectedCounties, setSelectedCounties] = useState([63]);
-  console.log('countyFilter: ', countyFilter);
+  // console.log('countyFilter: ', countyFilter);
 
   useEffect(() => {
     // csv(csvData)
@@ -45,7 +43,7 @@ const EvictionChart = props => {
         // date array
         let getDateArray = (start, end) => {
 
-          let arr = new Array(),
+          let arr = [],
             dt = new Date(start),
             ed = new Date(end);
 
@@ -73,7 +71,9 @@ const EvictionChart = props => {
         props.data
           .sort((a, b) => sortByDate(a, b))
           .filter(item =>
-            countyFilter === item['COUNTYFP10'])
+            props.countyFilter !== 999 ? 
+              props.countyFilter === item['COUNTYFP10'] 
+            : true)
           .map(item => {
             const key = timeScale === 'daily' ? 
                 item['File.Date'] 
@@ -83,10 +83,10 @@ const EvictionChart = props => {
                 moment(item['File.Date']).format('MMM') 
             : null;
 
-            // item['Count'] !== '' ?
+            // item['Total Filings'] !== '' ?
             dataObject[key] = dataObject[key] ?
-              dataObject[key] + parseFloat(item['Count'])
-              : parseFloat(item['Count']);
+              dataObject[key] + parseFloat(item['Total Filings'])
+              : parseFloat(item['Total Filings']);
           });
 
         // console.log(dataObject);
@@ -94,7 +94,7 @@ const EvictionChart = props => {
         const dataArray = Object.entries(dataObject).map(([key, value]) =>
           ({
             "File.Date": key,
-            "Count": value
+            "Total Filings": value
           })
         );
 
@@ -102,21 +102,23 @@ const EvictionChart = props => {
         setCaseData(dataArray);
     //   })
     //   .catch((err) => console.log(err))
-  }, [countyFilter, timeScale]);
+  }, [props.countyFilter, timeScale]);
 
   // console.log(`caseData: ${caseData}`);
 
-  const countyOptions = [
-    { key: '063', text: 'Clayton County', value: 63 },
-    { key: '067', text: 'Cobb County', value: 67 },
-    { key: '089', text: 'Dekalb County', value: 89 },
-    { key: '121', text: 'Fulton County', value: 121 },
-    { key: '135', text: 'Gwinnett County', value: 135 },
-  ];
+  // const countyOptions = [
+  //   { key: '999', text: 'All Five Counties', value: 999 },
+  //   { key: '063', text: 'Clayton County', value: 63 },
+  //   { key: '067', text: 'Cobb County', value: 67 },
+  //   { key: '089', text: 'Dekalb County', value: 89 },
+  //   { key: '121', text: 'Fulton County', value: 121 },
+  //   { key: '135', text: 'Gwinnett County', value: 135 },
+
+  // ];
 
   return (
     <>
-      <Dropdown
+      {/* <Dropdown
         className="icon chart-dropdown"
         placeholder="County Options"
         fluid
@@ -125,7 +127,7 @@ const EvictionChart = props => {
         value={countyFilter}
         options={countyOptions}
         onChange={(e, data) => setCountyFilter(data.value)}
-      />
+      /> */}
 
       <ResponsiveContainer
         className="chart-responsive-container"
@@ -145,21 +147,22 @@ const EvictionChart = props => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="File.Date" />
           {/* <XAxis dataKey="Month" /> */}
-          <YAxis dataKey="Count"/>
+          <YAxis/>
+          {/* <Brush /> */}
           <Tooltip />
-          <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          {/* <Legend /> */}
-          <Bar dataKey="Count" stackId="a" fill="#8884d8" />
+          {/* <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" /> */}
+          <Legend />
+          <Bar dataKey="Total Filings" stackId="a" fill="#8884d8" />
           {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}
         </BarChart>
       </ResponsiveContainer>
 
-      <Container className="button-group-container">
+      <div className="button-group-container">
         <Button.Group className="button-group">
-          <Button 
+          {/* <Button 
             active={timeScale === 'daily' ? true : false}
             onClick={() => setTimeScale('daily')}
-          >Daily</Button>
+          >Daily</Button> */}
           <Button 
             active={timeScale === 'weekly' ? true : false}
             onClick={() => setTimeScale('weekly')}
@@ -171,7 +174,7 @@ const EvictionChart = props => {
 
           >Monthly</Button>
         </Button.Group>
-      </Container>
+      </div>
     </>
   );
 };

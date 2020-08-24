@@ -13,20 +13,19 @@
     height: 25vh;
     z-index: 999999;
     position: fixed;
-    bottom: 10vh;
+    bottom: 15vh;
     right: 2%;
     background-color: white;
-    border: 1px solid black;
+    border: 1px solid lightgrey;
     border-radius: 5px;
     text-align: center;
     overflow: auto;
     padding: 10px;
-    box-shadow: 5px 10px 'black';
 }
 
 #symbol-container {
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 25% 75%;
 
 
 }
@@ -42,4 +41,8 @@
     width: 20px;
     margin: 5px 5px 5px 50%;
 
+}
+
+.legend-label {
+    font-size: 1.2em;
 }

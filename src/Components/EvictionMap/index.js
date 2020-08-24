@@ -1,51 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON } from 'react-leaflet';
 import numeral from 'numeral';
+import moment from 'moment';
+import Loader from 'react-loader-spinner';
+
 import './style.css';
-import { color } from 'd3';
+// import { color } from 'd3';
 
 
 const EvictionMap = props => {
 
     const [tractData, setTractData] = useState();
-    // const [normalizeData, setNormalizeData] = useState();
     const [stats, setStats] = useState();
     const [bins, setBins] = useState();
-    const colors = ["#0c3383", "#0a7ab1", "#4a9d96", "#cbc74e",  "#d91e1e"].reverse();
+    const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
 
-    console.log(props.geojson);
+    // console.log(props.geojson);
+
+    // const [ monthOptions, setMonthOptions ] = useState();
+
+    // const getMonthList = () => {
+    //     const monthArray = [];
+    //     props.data.map(item => 
+    //         !monthArray.includes(moment(item['File.Date']).format('MMMM')) ? 
+    //             monthArray.push(moment(item['File.Date']).format('MMMM'))
+    //         : null
+    //     );
+    //     setMonthOptions(monthArray);
+    // }
     
-
-
-
-
     // Create function to setStats({max: value, min: value, range: value})
     const calcStats = data => {
-        // console.log(Object.entries(data))
         const valueArray = Object.values(data).filter(a => a > 0).sort((a,b) => a > b ? -1 : 1);
-        console.log(valueArray);
+        // console.log(valueArray);
         const max = Math.max(...valueArray);
         const min = Math.min(...valueArray);
+        const bins = [];
+
         setStats({
             max: max,
             min: min,
             range: max - min
         });
 
-        // const binSize = (max - min)/colors.length;
-        const bins = [];
+        const createBins = (binningType, binsArray) => 
+            binningType === 'quantile' ?
+                colors.map((color,j) =>
+                bins.push({
+                    top: valueArray[Math.floor(j * valueArray.length/colors.length)],
+                    bottom: valueArray[Math.floor((j + 1) * valueArray.length/colors.length) - 1]
+                })
+            )
+            : binningType === 'defined' ?
+                binsArray.map((bin,i) => 
+                    bins.push({
+                        bottom: i !== 0 ? binsArray[i - 1] : 0,
+                        top: bin
+                    })
+                ) 
+            : null
 
-        
 
-        for (let j = 0; j < colors.length; j++) {
-            bins.push({
-                top: valueArray[Math.floor(j * valueArray.length/colors.length)],
-                bottom: valueArray[Math.floor((j + 1) * valueArray.length/colors.length) - 1]
-            })
-        }
+
+        createBins('defined', [5, 10, 15, 30, 50]);
+
+
+   
 
         setBins(bins);
-        console.log(bins);
+        // console.log(bins);
     }
 
     const handleData = () => {
@@ -53,11 +76,16 @@ const EvictionMap = props => {
         const normalizeData = {};
 
         props.data
+            .filter(item =>
+                props.countyFilter !== 999 ? 
+                props.countyFilter === item['COUNTYFP10'] 
+                : true
+            )
             // .filter()
             .map(item =>
                 dataObject[item['tractID']] = dataObject[item['tractID']] ?
-                    (dataObject[item['tractID']] + parseFloat(item['Count']))
-                    : parseFloat(item['Count'])
+                    (dataObject[item['tractID']] + parseFloat(item['Total Filings']))
+                    : parseFloat(item['Total Filings'])
             );
 
         props.normalizeData.map(item => dataObject[item['GEOID']] > 0 && item['RentHHs'] ?
@@ -71,12 +99,13 @@ const EvictionMap = props => {
         calcStats(dataObject);
         setTractData(dataObject);
         // setNormalizeData(normalizeData);
-        console.log(dataObject);
+        // console.log(dataObject);
     }
 
-    useEffect(() => { handleData() }, []);
-    console.log(stats);
-    console.log(bins);
+    useEffect(() => { handleData() }, [props.countyFilter]);
+    // useEffect(() => getMonthList(), []);
+    // console.log(monthOptions);
+    // console.log(bins);
 
     return (
         <LeafletMap
@@ -118,14 +147,17 @@ const EvictionMap = props => {
                         // console.log(geoid);
 
                         return ({
-                            color: value ? 'black' : null,
+                            color: color ? color : null,
                             weight: value ? 1 : 0,
                             fillColor: color ? color : 'lightgrey',
-                            fillOpacity: color ? .8 : 0
+                            fillOpacity: color ? .7 : 0
                     })
                 }}
                 />
-                : null
+                : <div style={{zIndex: '99999', color: '#609580', position: 'absolute', bottom: '50%', width: '100%', textAlign: 'center'}}>
+                    <h2>Layers Loading...</h2>
+                        <Loader id='loader-box' color='#609580' type='Circles' />
+                    </div>
             }
 
             <TileLayer
@@ -156,7 +188,7 @@ const EvictionMap = props => {
                             // .reverse()
                             .map(bin =>
                                 <div className='legend-label'>
-                                    {`${numeral(bin.bottom).format('0,0.0')} to < ${numeral(bin.top).format('0,0.0')}`}
+                                    {`${numeral(bin.bottom).format('0,0')}% to < ${numeral(bin.top).format('0,0')}%`}
                                 </div>
                             )
                         : null
