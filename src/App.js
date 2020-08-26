@@ -140,6 +140,7 @@ const App = () => {
             <div id='footer'>
                 <div id='footer-text'>Developed in partnership by</div>
                 <div id='footer-logos'>
+                    {/* <div id='left-logo'> */}
                         The Atlanta Regional Commission (ARC) | The Federal Reserve Bank of Atlanta | Georgia Institute of Technology
                 </div>
             </div>
