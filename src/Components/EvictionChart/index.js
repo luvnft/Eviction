@@ -20,52 +20,54 @@ import './style.css';
 
 const EvictionChart = props => {
 
+  const sortByDate = (a, b) => {
+    var dateA = new Date(a['File.Date']).getTime();
+    var dateB = new Date(b['File.Date']).getTime();
+    return dateA > dateB ? 1 : -1;
+  };  
+
+
     // console.log(props.data);
 
 // function to sort by date;
-    const sortByDate = (a, b) => {
-        var dateA = new Date(a['File.Date']).getTime();
-        var dateB = new Date(b['File.Date']).getTime();
-        return dateA > dateB ? 1 : -1;
-    };
+
   // case data for csv test cases;
   const [caseData, setCaseData] = useState();
   // const [countyFilter, setCountyFilter] = useState(63);
   const [timeScale, setTimeScale] = useState('weekly');
   // const [selectedCounties, setSelectedCounties] = useState([63]);
   // console.log('countyFilter: ', countyFilter);
-
-  useEffect(() => {
+  const handleData = () => {
     // csv(csvData)
     //   .then((data) => {
         // console.log('data: ', data);
         const dataObject = {};
 
         // date array
-        // let getDateArray = (start, end) => {
+        let getDateArray = (start, end) => {
 
-        //   let arr = [],
-        //     dt = new Date(start),
-        //     ed = new Date(end);
+          let arr = [],
+            dt = new Date(start),
+            ed = new Date(end);
 
-        //   // console.log(dt);
+          // console.log(dt);
 
-        //   while (dt <= ed) {
-        //     arr.push(new Date(dt));
-        //     dt.setDate(dt.getDate() + 1);
-        //   }
+          while (dt <= ed) {
+            arr.push(new Date(dt));
+            dt.setDate(dt.getDate() + 1);
+          }
 
-        //   // console.log(arr)
+          // console.log(arr)
 
-        //   return arr;
+          return arr;
 
-        // }
+        }
 
-        // getDateArray("2020-01-01", "2020-08-14").map(date => 
-        //     timeScale === 'daily' ? 
-        //       dataObject[moment(date).format('M/D/YY')] = 0
-        //     : null
-        //   );
+        getDateArray("2020-01-01", "2020-08-21").map(date => 
+            timeScale === 'daily' ? 
+              dataObject[moment(date).format('M/D/YY')] = 0
+            : null
+          );
         
         props.data
           .sort((a, b) => sortByDate(a, b))
@@ -94,17 +96,22 @@ const EvictionChart = props => {
           })
         );
         setCaseData(dataArray);
-  }, [props.countyFilter, timeScale]);
+  };
+
+  useEffect(() => handleData(), [props.countyFilter, timeScale]);
 
   const CustomTooltip = ({ active, payload, label }) => {
     const county = props.counties.find(county => county.value === props.countyFilter);
     const header = timeScale === 'weekly' ? 
       <div>
         Between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
-      </div> : 
-      <div>
-        In <span className='tooltip-data'>{moment(label).format('MMMM YYYY')}</span>  
-      </div>;
+      </div> : timeScale === 'monthly' ?
+        <div>
+          In <span className='tooltip-data'>{moment(label).format('MMMM YYYY')}</span>  
+        </div> : timeScale === 'daily' ?
+          <div>
+            On <span className='tooltip-data'>{moment(label).format('dddd, MMMM Do YYYY')}</span>  
+          </div> : null;
     return active ?
         <div className='tooltip-content chart-tooltip-content'>
           {header}
@@ -144,24 +151,24 @@ const EvictionChart = props => {
 
       <ResponsiveContainer
         className="chart-responsive-container"
-        width="95%"
-        height="85%"
+        width="100%"
+        height="80%"
       >
         <BarChart
           className="barChart"
           data={caseData}
           margin={{
-            top: 30,
-            right: 30,
-            left: 10,
+            top: 50,
+            right: 50,
+            left: 50,
             bottom: 10,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
             dataKey={"File.Date"}
-            angle={ timeScale === 'weekly' ? -45 : null} 
-            textAnchor={timeScale === 'weekly' ? 'end' : 'middle'}
+            angle={ timeScale === 'weekly' || timeScale === 'daily' ? -45 : null} 
+            textAnchor={timeScale === 'weekly' || timeScale === 'daily'  ? 'end' : 'middle'}
             // type={'number'}
             tickFormatter={tick => timeScale === 'monthly' ? moment(tick).format('MMMM') : moment(tick).format('M/D')}
           />
@@ -189,10 +196,10 @@ const EvictionChart = props => {
 
       <div className="button-group-container">
         <Button.Group className="button-group">
-          {/* <Button 
+          <Button 
             active={timeScale === 'daily' ? true : false}
             onClick={() => setTimeScale('daily')}
-          >Daily</Button> */}
+          >Daily</Button>
           <Button 
             active={timeScale === 'weekly' ? true : false}
             onClick={() => setTimeScale('weekly')}

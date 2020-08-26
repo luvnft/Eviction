@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import numeral from 'numeral';
+import * as turf from '@turf/turf';
 // import moment from 'moment';
 import Loader from 'react-loader-spinner';
 import './style.css';
@@ -13,6 +14,7 @@ const EvictionMap = props => {
     const [bins, setBins] = useState();
     const [hoverID, setHoverID] = useState();
     const [dateRange, setDateRange] = useState();
+    const [bounds, setBounds] = useState();
     const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
 
     const sortByDate = (a, b) => {
@@ -20,6 +22,10 @@ const EvictionMap = props => {
         var dateB = new Date(b).getTime();
         return dateA > dateB ? 1 : -1;
     };
+
+    const countyBoundary = props.boundaryGeoJSON ?
+        props.boundaryGeoJSON.features.map(feature =>
+            turf.polygonToLine(feature)) : null;
     // console.log(props.geojson);
 
     // const [ monthOptions, setMonthOptions ] = useState();
@@ -111,8 +117,38 @@ const EvictionMap = props => {
         setDateRange({start: startDate, end: endDate});
     }
 
+    const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
+    const countyBounds = {
+        '999': {
+            center: [33.77285,-84.33268],
+            zoom: 9.8
+        },
+        '067': {
+            center: [33.9132,-84.58030],
+            zoom: 11
+        },
+        '063': {
+            center: [33.50533,-84.34112],
+            zoom: 11.2
+        },
+        '121': {
+            center: [33.840747,-84.46563],
+            zoom: 10
+        },
+        '135': {
+            center: [33.959468,-84.02901],
+            zoom: 10.8
+        },
+        '089': {
+            center: [33.79857,-84.22737],
+            zoom: 11
+        }
+    }
+
     useEffect(() => { handleData() }, [props.countyFilter]);
     useEffect(() => { handleDateRange() }, []);
+
+    // console.log(props.boundaryGeoJSON);
     // useEffect(() => getMonthList(), []);
     // console.log(monthOptions);
     // console.log(bins);
@@ -120,22 +156,37 @@ const EvictionMap = props => {
     return (
         <LeafletMap
             key={'leaflet-map-' + props.name}
-            center={[33.8, -84.4]}
-            zoom={10}
+            center={countyBounds[props.countyFilter.toString().padStart(3, '0')].center}
+            zoom={countyBounds[props.countyFilter.toString().padStart(3, '0')].zoom}
             maxZoom={18}
+            zoomSnap={0.2}
+            zoomDelta={0.2}
             attributionControl={true}
             zoomControl={true}
             doubleClickZoom={true}
             scrollWheelZoom={true}
             dragging={true}
             animate={true}
+            // bounds={null}
+            // onViewportChange={e => console.log(e)}
         >
+            {  props.boundaryGeoJSON ?
+                <GeoJSON
+                key={'county-boundary' + props.countyFilter}
+                data={countyBoundary}
+                    filter={feature => props.countyFilter !== 999 ?
+                        feature.properties['GEOID'] === `13${props.countyFilter.toString().padStart(3, '0')}`
+                        : countyFIPS.includes(feature.properties['GEOID']) }
+                />
+                : null
+            }
             {  props.geojson && 
                tractData && 
                stats ?
                 <GeoJSON
                     key={'map-layer-' + props.name + props.countyFilter}
                     data={props.geojson}
+                    onAdd={e => e.target.bringToBack()}
                     onMouseover={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
                     onMouseout={() => setHoverID()}
                     filter={feature => props.countyFilter !== 999 ? 
@@ -170,10 +221,10 @@ const EvictionMap = props => {
                                 between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span>
                             </div>
                             <div>
-                                there were <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> eviction filings reported,
+                                there were <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> eviction filings reported
                             </div>
                             <div>
-                                equal to <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span> of rental households.
+                                or about <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span> of rental households.
                             </div>
 
                         </div>
@@ -185,6 +236,8 @@ const EvictionMap = props => {
                         <Loader id='loader-box' color='#DC1C13' type='Circles' />
                     </div>
             }
+
+
            
             <TileLayer
                 key={'tile-layer'}

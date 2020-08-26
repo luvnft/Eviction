@@ -5,18 +5,25 @@ import EvictionChart from './Components/EvictionChart';
 import { Dropdown } from 'semantic-ui-react';
 
 import API from './utils/API.js';
+import ARClogo from './logos/ARC_logo.png';
+import Fedlogo from './logos/FedLogo2.PNG';
+import CSPAVlogo from './logos/CSPAV_logo.jpg';
 import './App.css';
 
 const App = () => {
 
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+
     const [ geoJSON, setGeoJSON ] = useState();
+    const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
     const [ vizView, setVizView ] = useState('map');
     const data = require('./Test-data/EvictionFilingsByTract.json');
     const normalizeData = require('./Test-data/RentHHsByTract.json');
     const [countyFilter, setCountyFilter] = useState(999);
 
       
-    const getGeoJSON = () => {
+    const getTractGeoJSON = () => {
 
         const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='Tract' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
         
@@ -28,6 +35,17 @@ const App = () => {
             .catch(err => console.error(err))
     };
 
+    const getCountyGeoJSON = () => {
+        const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='County' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
+        
+        // `https://opendata.arcgis.com/datasets/2e73cc4a02a441ba968e6a63a8b526f5_56.geojson`;
+
+
+        API.getData(url)
+            .then(res => setBoundaryGeoJSON(res.data))
+            .catch(err => console.error(err))
+    }
+
     const countyOptions = [
         { key: '999', text: '5-County Region', value: 999 },
         { key: '063', text: 'Clayton County', value: 63 },
@@ -37,9 +55,9 @@ const App = () => {
         { key: '135', text: 'Gwinnett County', value: 135 },
     
       ];
-
-
-    useEffect(() => getGeoJSON(), []);  
+    
+    useEffect(() => getTractGeoJSON(), []);
+    useEffect(() => getCountyGeoJSON(), []);  
 
     return (
         <div id='eviction-tracker'>
@@ -108,6 +126,7 @@ const App = () => {
                             normalizeData={normalizeData}
                             name={'evictionMap'}
                             geojson={geoJSON}
+                            boundaryGeoJSON={boundaryGeoJSON}
                             countyFilter={countyFilter}
                             counties={countyOptions.map(county => county.key)}                          
                         /> 
@@ -119,8 +138,18 @@ const App = () => {
                 }
             </div>
             <div id='footer'>
-                <h5>Developed in partnership by</h5>
-                <h5>The Atlanta Regional Commission | The Atlanta Federal Reserve Bank | Georgia Institute of Technology</h5>
+                <div id='footer-text'>Developed in partnership by</div>
+                <div id='footer-logos'>
+                    <div id='left-logo'>
+                    <img src={ARClogo} alt='ARC-logo'/>
+                    </div>
+                    <div id='center-logo'>
+                    <img src={Fedlogo} alt='Fed-logo'/>
+                    </div>
+                    <div id='right-logo'>
+                    <img src={CSPAVlogo} alt='CSPAV-logo'/>
+                    </div>
+                </div>
             </div>
         </div>
     );
