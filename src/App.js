@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // import { Radio } from 'semantic-ui-react';
 import EvictionMap from './Components/EvictionMap';
 import EvictionChart from './Components/EvictionChart';
-import { Dropdown, Button } from 'semantic-ui-react';
+import { Dropdown } from 'semantic-ui-react';
 
 import API from './utils/API.js';
 import './App.css';

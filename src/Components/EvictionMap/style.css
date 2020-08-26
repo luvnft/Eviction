@@ -46,3 +46,17 @@
 .legend-label {
     font-size: 1.2em;
 }
+
+.tooltip-content {
+    display: grid;
+    grid-template-rows: auto;
+    text-align: center;
+}
+
+.tooltip-content > div {
+    line-height: 24px;
+}
+.tooltip-data {
+    font-size: 1.2em;
+    font-weight: 600;
+}

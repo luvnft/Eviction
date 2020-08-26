@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Map as LeafletMap, TileLayer, GeoJSON } from 'react-leaflet';
+import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import numeral from 'numeral';
-import moment from 'moment';
+// import moment from 'moment';
 import Loader from 'react-loader-spinner';
-
 import './style.css';
-// import { color } from 'd3';
-
 
 const EvictionMap = props => {
 
     const [tractData, setTractData] = useState();
+    const [rawTractData, setRawTractData] = useState();
     const [stats, setStats] = useState();
     const [bins, setBins] = useState();
+    const [hoverID, setHoverID] = useState();
     const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
 
     // console.log(props.geojson);
@@ -60,19 +59,14 @@ const EvictionMap = props => {
                 ) 
             : null
 
-
-
         createBins('defined', [5, 10, 15, 30, 50]);
-
-
-   
-
         setBins(bins);
         // console.log(bins);
     }
 
     const handleData = () => {
         const dataObject = {};
+        const rawDataObject = {};
         const normalizeData = {};
 
         props.data
@@ -83,13 +77,13 @@ const EvictionMap = props => {
             )
             // .filter()
             .map(item =>
-                dataObject[item['tractID']] = dataObject[item['tractID']] ?
-                    (dataObject[item['tractID']] + parseFloat(item['Total Filings']))
+                rawDataObject[item['tractID']] = rawDataObject[item['tractID']] ?
+                    (rawDataObject[item['tractID']] + parseFloat(item['Total Filings']))
                     : parseFloat(item['Total Filings'])
             );
 
-        props.normalizeData.map(item => dataObject[item['GEOID']] > 0 && item['RentHHs'] ?
-            dataObject[item['GEOID']] = dataObject[item['GEOID']] * 100 / item['RentHHs']
+        props.normalizeData.map(item => rawDataObject[item['GEOID']] > 0 && item['RentHHs'] ?
+            dataObject[item['GEOID']] = rawDataObject[item['GEOID']] * 100 / item['RentHHs']
             : null
         );
 
@@ -98,8 +92,7 @@ const EvictionMap = props => {
 
         calcStats(dataObject);
         setTractData(dataObject);
-        // setNormalizeData(normalizeData);
-        // console.log(dataObject);
+        setRawTractData(rawDataObject);
     }
 
     useEffect(() => { handleData() }, [props.countyFilter]);
@@ -126,14 +119,11 @@ const EvictionMap = props => {
                 <GeoJSON
                     key={'map-layer-' + props.name}
                     data={props.geojson}
-                    // filter={feature => feature.properties['PLNG_REGIO'] !== 'NON-ARC'}
+                    onMouseover={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
                     style={feature => {
                         
                         const geoid = feature.properties['GEOID'];
-                        // const normalizer = normalizeData[geoid];
                         const value = tractData[geoid];
-                        // console.log(`${geoid}: ${value}`)
-                        // console.log(value);
                         let color = null;
                         bins.forEach((bin, i) =>
                             value < bin.top && 
@@ -142,24 +132,41 @@ const EvictionMap = props => {
                             : null
                         );
 
-                        // console.log(value);
-                        // console.log(normalizer);
-                        // console.log(geoid);
-
                         return ({
                             color: color ? color : null,
                             weight: value ? 1 : 0,
                             fillColor: color ? color : 'lightgrey',
                             fillOpacity: color ? .7 : 0
                     })
-                }}
-                />
-                : <div style={{zIndex: '99999', color: '#609580', position: 'absolute', bottom: '50%', width: '100%', textAlign: 'center'}}>
-                    <h2>Layers Loading...</h2>
-                        <Loader id='loader-box' color='#609580' type='Circles' />
+                }}> 
+                    <Tooltip>
+                        
+                        <div className='tooltip-content'>
+                            <div>
+                                There were <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> total eviction filings
+                            </div>
+                            <div>
+                                for an eviction filing rate of <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span>
+                            </div>
+                            <div>
+                                in census tract <span className='tooltip-data'>{hoverID}</span>.
+                            </div>
+                            <div>
+                               between 1/1/2020 and 8/24/2020.
+                            </div>
+
+                             
+                        </div>
+                        
+                    </Tooltip>
+
+                </GeoJSON>
+                : <div style={{zIndex: '99999', color: '#609580', position: 'absolute', bottom: '35vh', width: '100%', textAlign: 'center'}}>
+                    {/* <h2>Layers Loading...</h2> */}
+                        <Loader id='loader-box' color='#DC1C13' type='Circles' />
                     </div>
             }
-
+           
             <TileLayer
                 key={'tile-layer'}
                 attribution={'&copy <a href="http://osm.org/copyright">OpenStreetMap contributors</a>'}

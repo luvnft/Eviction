@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import { Button } from 'semantic-ui-react';
 import moment from 'moment';
+import numeral from 'numeral';
 // STYLESHEET
 import './style.css';
 // CSV TEST-DATA IMPORT
@@ -47,14 +48,14 @@ const EvictionChart = props => {
             dt = new Date(start),
             ed = new Date(end);
 
-          console.log(dt);
+          // console.log(dt);
 
           while (dt <= ed) {
             arr.push(new Date(dt));
             dt.setDate(dt.getDate() + 1);
           }
 
-          console.log(arr)
+          // console.log(arr)
 
           return arr;
 
@@ -66,8 +67,6 @@ const EvictionChart = props => {
             : null
           );
         
-        // console.log(props.data);  
-
         props.data
           .sort((a, b) => sortByDate(a, b))
           .filter(item =>
@@ -78,30 +77,23 @@ const EvictionChart = props => {
             const key = timeScale === 'daily' ? 
                 item['File.Date'] 
               : timeScale === 'weekly' ?
-                moment(item['File.Date']).week() 
+                moment(item['File.Date']).startOf('week')
               : timeScale === 'monthly' ?
-                moment(item['File.Date']).format('MMM') 
+                moment(item['File.Date']).startOf('month') 
             : null;
 
-            // item['Total Filings'] !== '' ?
             dataObject[key] = dataObject[key] ?
               dataObject[key] + parseFloat(item['Total Filings'])
               : parseFloat(item['Total Filings']);
           });
 
-        // console.log(dataObject);
-        // const dataArray = 
         const dataArray = Object.entries(dataObject).map(([key, value]) =>
           ({
             "File.Date": key,
             "Total Filings": value
           })
         );
-
-        console.log(dataArray);
         setCaseData(dataArray);
-    //   })
-    //   .catch((err) => console.log(err))
   }, [props.countyFilter, timeScale]);
 
   // console.log(`caseData: ${caseData}`);
@@ -145,11 +137,20 @@ const EvictionChart = props => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="File.Date" />
+          <XAxis 
+            dataKey="File.Date"
+            angle={ timeScale === 'weekly' ? -45 : null} 
+            textAnchor={"end"}
+            type={'category'}
+            tickFormatter={tick => timeScale === 'monthly' ? moment(tick).format('MMM') : moment(tick).format('M/D')}
+          />
           {/* <XAxis dataKey="Month" /> */}
           <YAxis/>
           {/* <Brush /> */}
-          <Tooltip />
+          <Tooltip 
+            labelFormatter={label => timeScale === 'weekly' ? `Between ${moment(label).format('M/D/YY')} and ${moment(label).endOf('week').format('M/D/YY')}...` : `In ${moment(label).format('MMMM YYYY')}...`}
+            formatter={(value,name) => [`there were ${numeral(value).format('0,0')} total eviction filings`,]}
+          />
           {/* <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" /> */}
           <Legend />
           <Bar dataKey="Total Filings" stackId="a" fill="#8884d8" />
@@ -175,6 +176,7 @@ const EvictionChart = props => {
           >Monthly</Button>
         </Button.Group>
       </div>
+
     </>
   );
 };
