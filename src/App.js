@@ -16,7 +16,7 @@ const App = () => {
     // document.documentElement.style.setProperty('--vh', `${vh}px`);
 
     const [ geoJSON, setGeoJSON ] = useState();
-    const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
+    // const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
     const [ vizView, setVizView ] = useState('map');
     const data = require('./Test-data/EvictionFilingsByTract.json');
     const normalizeData = require('./Test-data/RentHHsByTract.json');
@@ -35,16 +35,16 @@ const App = () => {
             .catch(err => console.error(err))
     };
 
-    const getCountyGeoJSON = () => {
-        const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='County' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
+    // const getCountyGeoJSON = () => {
+    //     const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='County' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
         
-        // `https://opendata.arcgis.com/datasets/2e73cc4a02a441ba968e6a63a8b526f5_56.geojson`;
+    //     // `https://opendata.arcgis.com/datasets/2e73cc4a02a441ba968e6a63a8b526f5_56.geojson`;
 
 
-        API.getData(url)
-            .then(res => setBoundaryGeoJSON(res.data))
-            .catch(err => console.error(err))
-    }
+    //     API.getData(url)
+    //         .then(res => setBoundaryGeoJSON(res.data))
+    //         .catch(err => console.error(err))
+    // }
 
     const countyOptions = [
         { key: '999', text: '5-County Region', value: 999 },
@@ -57,7 +57,7 @@ const App = () => {
       ];
     
     useEffect(() => getTractGeoJSON(), []);
-    useEffect(() => getCountyGeoJSON(), []);  
+    // useEffect(() => getCountyGeoJSON(), []);  
 
     return (
         <div id='eviction-tracker'>
@@ -126,7 +126,7 @@ const App = () => {
                             normalizeData={normalizeData}
                             name={'evictionMap'}
                             geojson={geoJSON}
-                            boundaryGeoJSON={boundaryGeoJSON}
+                            // boundaryGeoJSON={boundaryGeoJSON}
                             countyFilter={countyFilter}
                             counties={countyOptions.map(county => county.key)}                          
                         /> 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import numeral from 'numeral';
-import * as turf from '@turf/turf';
+// import * as turf from '@turf/turf';
 // import moment from 'moment';
 import Loader from 'react-loader-spinner';
 import './style.css';
@@ -14,7 +14,7 @@ const EvictionMap = props => {
     const [bins, setBins] = useState();
     const [hoverID, setHoverID] = useState();
     const [dateRange, setDateRange] = useState();
-    const [bounds, setBounds] = useState();
+    // const [bounds, setBounds] = useState();
     const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
 
     const sortByDate = (a, b) => {
@@ -23,9 +23,9 @@ const EvictionMap = props => {
         return dateA > dateB ? 1 : -1;
     };
 
-    const countyBoundary = props.boundaryGeoJSON ?
-        props.boundaryGeoJSON.features.map(feature =>
-            turf.polygonToLine(feature)) : null;
+    // const countyBoundary = props.boundaryGeoJSON ?
+    //     props.boundaryGeoJSON.features.map(feature =>
+    //         turf.polygonToLine(feature)) : null;
     // console.log(props.geojson);
 
     // const [ monthOptions, setMonthOptions ] = useState();
@@ -117,7 +117,7 @@ const EvictionMap = props => {
         setDateRange({start: startDate, end: endDate});
     }
 
-    const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
+    // const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
     const countyBounds = {
         '999': {
             center: [33.77285,-84.33268],
@@ -170,7 +170,7 @@ const EvictionMap = props => {
             // bounds={null}
             // onViewportChange={e => console.log(e)}
         >
-            {  props.boundaryGeoJSON ?
+            {/* {  props.boundaryGeoJSON ?
                 <GeoJSON
                 key={'county-boundary' + props.countyFilter}
                 data={countyBoundary}
@@ -179,7 +179,7 @@ const EvictionMap = props => {
                         : countyFIPS.includes(feature.properties['GEOID']) }
                 />
                 : null
-            }
+            } */}
             {  props.geojson && 
                tractData && 
                stats ?
