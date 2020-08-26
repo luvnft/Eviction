@@ -2,13 +2,13 @@ const path = require('path');
 const router = require('express').Router();
 // const configRoutes = require('./configs');
 // const manifestRoutes = require('./manifest')
-// const geoAPIRoutes = require('./geoapis');
+const dataRoutes = require('./data');
 // const userRoutes = require('./users');
 // const sessoionRoutes = require('./sessions');
 // API Routes
 // router.use('/configs', configRoutes);
 // router.use('/manifest', manifestRoutes);
-// router.use('/geoapis', geoAPIRoutes);
+router.use('/data', dataRoutes);
 // router.use('/users', userRoutes);
 // router.use('/sessions', sessionRoutes)
 
