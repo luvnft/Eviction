@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const data = new Schema({
-    // _id: {type: String, required: true},
-    // name: {type: String, required: true},
-    // url: {type: String, required: true},
-    // thumbUrl: {type: String, required: true},
-    // attribution: {type: String, required: false}
+    fileDate: {type: String, required: true},
+    tractID: {type: Number, required: true},
+    COUNTYFP10: {type: Number, required: true},
+    totalFiling: {type: Number, required: true},
+    
 });
 
-const data = mongoose.model('data', data);
+const Data = mongoose.model('data', data);
 
-module.exports = data;
+module.exports = Data;
