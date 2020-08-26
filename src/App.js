@@ -29,7 +29,7 @@ const App = () => {
     };
 
     const countyOptions = [
-        { key: '999', text: 'All Five Counties', value: 999 },
+        { key: '999', text: '5-County Region', value: 999 },
         { key: '063', text: 'Clayton County', value: 63 },
         { key: '067', text: 'Cobb County', value: 67 },
         { key: '089', text: 'Dekalb County', value: 89 },
@@ -114,7 +114,8 @@ const App = () => {
                     : vizView === 'chart' && data ?
                     <EvictionChart 
                         countyFilter={countyFilter}
-                        data={data}/> : null
+                        data={data}
+                        counties={countyOptions}/> : null
                 }
             </div>
             <div id='footer'>

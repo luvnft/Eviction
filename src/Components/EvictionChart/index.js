@@ -96,6 +96,27 @@ const EvictionChart = props => {
         setCaseData(dataArray);
   }, [props.countyFilter, timeScale]);
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    const county = props.counties.find(county => county.value === props.countyFilter);
+    const header = timeScale === 'weekly' ? 
+      <div>
+        Between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
+      </div> : 
+      <div>
+        In <span className='tooltip-data'>{moment(label).format('MMMM YYYY')}</span>  
+      </div>;
+    return active ?
+        <div className='tooltip-content chart-tooltip-content'>
+          {header}
+          <div>
+            there were <span className='tooltip-data'>{numeral(payload[0].value).format('0,0')}</span> eviction filings reported
+          </div>
+          <div>
+            in {props.countyFilter === 999 ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span>.
+          </div>
+        </div>
+    : null;
+  }
   // console.log(`caseData: ${caseData}`);
 
   // const countyOptions = [
@@ -130,26 +151,34 @@ const EvictionChart = props => {
           className="barChart"
           data={caseData}
           margin={{
-            top: 15,
+            top: 30,
             right: 30,
-            left: 20,
+            left: 10,
             bottom: 10,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
-            dataKey="File.Date"
+            dataKey={"File.Date"}
             angle={ timeScale === 'weekly' ? -45 : null} 
-            textAnchor={"end"}
-            type={'category'}
-            tickFormatter={tick => timeScale === 'monthly' ? moment(tick).format('MMM') : moment(tick).format('M/D')}
+            textAnchor={timeScale === 'weekly' ? 'end' : 'middle'}
+            // type={'number'}
+            tickFormatter={tick => timeScale === 'monthly' ? moment(tick).format('MMMM') : moment(tick).format('M/D')}
           />
           {/* <XAxis dataKey="Month" /> */}
-          <YAxis/>
+          <YAxis
+            tickFormatter={tick => numeral(tick).format('0,0')}
+          />
           {/* <Brush /> */}
           <Tooltip 
-            labelFormatter={label => timeScale === 'weekly' ? `Between ${moment(label).format('M/D/YY')} and ${moment(label).endOf('week').format('M/D/YY')}...` : `In ${moment(label).format('MMMM YYYY')}...`}
-            formatter={(value,name) => [`there were ${numeral(value).format('0,0')} total eviction filings`,]}
+            content={ <CustomTooltip />}
+            // labelFormatter={label => {
+            //   const county = props.counties.find(county => county.value === props.countyFilter);
+            //   return timeScale === 'weekly' ? 
+            //     `Between ${moment(label).format('M/D/YY')} and ${moment(label).endOf('week').format('M/D/YY')}, ${county.text}...` 
+            //   : `In ${moment(label).format('MMMM YYYY')}, ${county.text}...`}
+            // }
+            // formatter={(value,name) => [`reporte ${numeral(value).format('0,0')} total eviction filings.`,]}
           />
           {/* <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" /> */}
           <Legend />

@@ -164,17 +164,18 @@ const EvictionMap = props => {
                         
                         <div className='tooltip-content'>
                             <div>
-                                There were <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> total eviction filings
+                                In census tract <span className='tooltip-data'>{hoverID}</span>
                             </div>
                             <div>
-                                for an eviction filing rate of <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span>
+                                between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span>
                             </div>
                             <div>
-                                in census tract <span className='tooltip-data'>{hoverID}</span>.
+                                there were <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> eviction filings reported,
                             </div>
                             <div>
-                               between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span>.
+                                equal to <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span> of rental households.
                             </div>
+
                         </div>
                     </Tooltip>
 

@@ -104,3 +104,28 @@ h5 {
     font-weight: 500;
     /* font-family: monospace; */
 }
+
+.tooltip-content {
+    display: grid;
+    grid-template-rows: auto;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+.chart-tooltip-content {
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    font-size: .9em;
+
+
+}
+
+.tooltip-content > div {
+    line-height: 24px;
+}
+.tooltip-data {
+    font-size: 1.2em;
+    font-weight: 600;
+}
