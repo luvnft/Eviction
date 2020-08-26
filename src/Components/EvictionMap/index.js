@@ -12,8 +12,14 @@ const EvictionMap = props => {
     const [stats, setStats] = useState();
     const [bins, setBins] = useState();
     const [hoverID, setHoverID] = useState();
+    const [dateRange, setDateRange] = useState();
     const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
 
+    const sortByDate = (a, b) => {
+        var dateA = new Date(a).getTime();
+        var dateB = new Date(b).getTime();
+        return dateA > dateB ? 1 : -1;
+    };
     // console.log(props.geojson);
 
     // const [ monthOptions, setMonthOptions ] = useState();
@@ -93,9 +99,20 @@ const EvictionMap = props => {
         calcStats(dataObject);
         setTractData(dataObject);
         setRawTractData(rawDataObject);
+    };
+
+    const handleDateRange = () => {
+        const dateArray = new Set([...props.data.map(item => item['File.Date'])]);
+        const sortedDates = [...dateArray].sort((a,b) => sortByDate(a,b))
+        // console.log(dateArray);
+        // console.log(sortedDates);
+        const startDate = sortedDates[0];
+        const endDate = sortedDates[sortedDates.length -1];
+        setDateRange({start: startDate, end: endDate});
     }
 
     useEffect(() => { handleData() }, [props.countyFilter]);
+    useEffect(() => { handleDateRange() }, []);
     // useEffect(() => getMonthList(), []);
     // console.log(monthOptions);
     // console.log(bins);
@@ -117,9 +134,13 @@ const EvictionMap = props => {
                tractData && 
                stats ?
                 <GeoJSON
-                    key={'map-layer-' + props.name}
+                    key={'map-layer-' + props.name + props.countyFilter}
                     data={props.geojson}
                     onMouseover={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
+                    onMouseout={() => setHoverID()}
+                    filter={feature => props.countyFilter !== 999 ? 
+                        feature.properties['GEOID'].slice(2,5) === props.countyFilter.toString().padStart(3, '0') :
+                        props.counties.includes(feature.properties['GEOID'].slice(2,5))}
                     style={feature => {
                         
                         const geoid = feature.properties['GEOID'];
@@ -152,12 +173,9 @@ const EvictionMap = props => {
                                 in census tract <span className='tooltip-data'>{hoverID}</span>.
                             </div>
                             <div>
-                               between 1/1/2020 and 8/24/2020.
+                               between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span>.
                             </div>
-
-                             
                         </div>
-                        
                     </Tooltip>
 
                 </GeoJSON>

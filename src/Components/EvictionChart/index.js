@@ -42,30 +42,30 @@ const EvictionChart = props => {
         const dataObject = {};
 
         // date array
-        let getDateArray = (start, end) => {
+        // let getDateArray = (start, end) => {
 
-          let arr = [],
-            dt = new Date(start),
-            ed = new Date(end);
+        //   let arr = [],
+        //     dt = new Date(start),
+        //     ed = new Date(end);
 
-          // console.log(dt);
+        //   // console.log(dt);
 
-          while (dt <= ed) {
-            arr.push(new Date(dt));
-            dt.setDate(dt.getDate() + 1);
-          }
+        //   while (dt <= ed) {
+        //     arr.push(new Date(dt));
+        //     dt.setDate(dt.getDate() + 1);
+        //   }
 
-          // console.log(arr)
+        //   // console.log(arr)
 
-          return arr;
+        //   return arr;
 
-        }
+        // }
 
-        getDateArray("2020-01-01", "2020-08-14").map(date => 
-            timeScale === 'daily' ? 
-              dataObject[moment(date).format('M/D/YY')] = 0
-            : null
-          );
+        // getDateArray("2020-01-01", "2020-08-14").map(date => 
+        //     timeScale === 'daily' ? 
+        //       dataObject[moment(date).format('M/D/YY')] = 0
+        //     : null
+        //   );
         
         props.data
           .sort((a, b) => sortByDate(a, b))
@@ -153,7 +153,7 @@ const EvictionChart = props => {
           />
           {/* <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" /> */}
           <Legend />
-          <Bar dataKey="Total Filings" stackId="a" fill="#8884d8" />
+          <Bar dataKey="Total Filings" fill="#DC1C13" />
           {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}
         </BarChart>
       </ResponsiveContainer>

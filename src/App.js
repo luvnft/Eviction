@@ -108,7 +108,8 @@ const App = () => {
                             normalizeData={normalizeData}
                             name={'evictionMap'}
                             geojson={geoJSON}
-                            countyFilter={countyFilter}                           
+                            countyFilter={countyFilter}
+                            counties={countyOptions.map(county => county.key)}                          
                         /> 
                     : vizView === 'chart' && data ?
                     <EvictionChart 
