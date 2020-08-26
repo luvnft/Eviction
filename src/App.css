@@ -32,24 +32,40 @@ h5 {
     grid-template-columns: 33% auto 33%;
 } */
 #footer-logos {
-    /* display: grid;
-    grid-template-columns: 40% 20% 40%; */
+    display: grid;
+    grid-template-columns: 40% 20% 40%;
     width: 100%;
-    text-align: center;
-    font-size: 1.2em;
+    /* text-align: center;
+    font-size: 1.2em; */
 }
 
-/* #footer-logos > div > img {
-    height: 5vh;
+#footer-logos > div > img {
+    /* height: 5vh; */
 }
 
-#left-logo {
+/* #left-logo {
     text-align: right;
+} */
+
+#left-logo > img {
+    height: 6vh;
 }
 
-#right-logo {
+/* #right-logo {
+    text-align: left;
+}
+
+#right-logo  > img {
     text-align: left;
 } */
+
+#right-logo  > img {
+    height: 4vh;
+}
+
+#center-logo > img {
+    height: 6vh;
+}
 
 #footer-text {
     padding: 5px 0 5px 0;

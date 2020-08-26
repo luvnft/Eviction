@@ -152,7 +152,7 @@ const EvictionChart = props => {
       <ResponsiveContainer
         className="chart-responsive-container"
         width="100%"
-        height="80%"
+        height="85%"
       >
         <BarChart
           className="barChart"

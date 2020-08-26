@@ -5,9 +5,9 @@ import EvictionChart from './Components/EvictionChart';
 import { Dropdown } from 'semantic-ui-react';
 
 import API from './utils/API.js';
-// import ARClogo from './logos/ARC_logo.png';
-// import Fedlogo from './logos/FedLogo2.PNG';
-// import CSPAVlogo from './logos/CSPAV_logo.jpg';
+import ARClogo from './logos/ARC_logo.png';
+import Fedlogo from './logos/FedLogo2.PNG';
+import CSPAVlogo from './logos/CSPAV_logo.jpg';
 import './App.css';
 
 const App = () => {
@@ -140,8 +140,15 @@ const App = () => {
             <div id='footer'>
                 <div id='footer-text'>Developed in partnership by</div>
                 <div id='footer-logos'>
-                    {/* <div id='left-logo'> */}
-                        The Atlanta Regional Commission (ARC) | The Federal Reserve Bank of Atlanta | Georgia Institute of Technology
+                    <div id='left-logo'>
+                    <img src={Fedlogo} alt='Fed-logo'/>
+                    </div>
+                    <div id='center-logo'>
+                    <img src={ARClogo} alt='ARC-logo'/>
+                    </div>
+                    <div id='right-logo'>
+                    <img src={CSPAVlogo} alt='CSPAV-logo'/>
+                    </div>
                 </div>
             </div>
         </div>
