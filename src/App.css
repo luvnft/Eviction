@@ -32,12 +32,14 @@ h5 {
     grid-template-columns: 33% auto 33%;
 } */
 #footer-logos {
-    display: grid;
-    grid-template-columns: 40% 20% 40%;
+    /* display: grid;
+    grid-template-columns: 40% 20% 40%; */
     width: 100%;
+    text-align: center;
+    font-size: 1.2em;
 }
 
-#footer-logos > div > img {
+/* #footer-logos > div > img {
     height: 5vh;
 }
 
@@ -47,7 +49,7 @@ h5 {
 
 #right-logo {
     text-align: left;
-}
+} */
 
 #footer-text {
     padding: 5px 0 5px 0;

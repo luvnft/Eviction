@@ -5,15 +5,15 @@ import EvictionChart from './Components/EvictionChart';
 import { Dropdown } from 'semantic-ui-react';
 
 import API from './utils/API.js';
-import ARClogo from './logos/ARC_logo.png';
-import Fedlogo from './logos/FedLogo2.PNG';
-import CSPAVlogo from './logos/CSPAV_logo.jpg';
+// import ARClogo from './logos/ARC_logo.png';
+// import Fedlogo from './logos/FedLogo2.PNG';
+// import CSPAVlogo from './logos/CSPAV_logo.jpg';
 import './App.css';
 
 const App = () => {
 
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    // let vh = window.innerHeight * 0.01;
+    // document.documentElement.style.setProperty('--vh', `${vh}px`);
 
     const [ geoJSON, setGeoJSON ] = useState();
     const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
@@ -140,15 +140,7 @@ const App = () => {
             <div id='footer'>
                 <div id='footer-text'>Developed in partnership by</div>
                 <div id='footer-logos'>
-                    <div id='left-logo'>
-                    <img src={ARClogo} alt='ARC-logo'/>
-                    </div>
-                    <div id='center-logo'>
-                    <img src={Fedlogo} alt='Fed-logo'/>
-                    </div>
-                    <div id='right-logo'>
-                    <img src={CSPAVlogo} alt='CSPAV-logo'/>
-                    </div>
+                        The Atlanta Regional Commission (ARC) | The Federal Reserve Bank of Atlanta | Georgia Institute of Technology
                 </div>
             </div>
         </div>
