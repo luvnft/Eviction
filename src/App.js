@@ -21,7 +21,7 @@ const App = () => {
     const data = require('./Test-data/EvictionFilingsByTract.json');
     const normalizeData = require('./Test-data/RentHHsByTract.json');
     const [countyFilter, setCountyFilter] = useState(999);
-
+    const boundaryGeoJSON = require('./Test-data/countyboundaries.json');
       
     const getTractGeoJSON = () => {
 
@@ -126,7 +126,7 @@ const App = () => {
                             normalizeData={normalizeData}
                             name={'evictionMap'}
                             geojson={geoJSON}
-                            // boundaryGeoJSON={boundaryGeoJSON}
+                            boundaryGeoJSON={boundaryGeoJSON}
                             countyFilter={countyFilter}
                             counties={countyOptions.map(county => county.key)}                          
                         /> 

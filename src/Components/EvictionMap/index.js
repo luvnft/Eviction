@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import numeral from 'numeral';
-// import * as turf from '@turf/turf';
+import * as turf from '@turf/turf';
 // import moment from 'moment';
 import Loader from 'react-loader-spinner';
 import './style.css';
 
 const EvictionMap = props => {
 
+    
     const [tractData, setTractData] = useState();
     const [rawTractData, setRawTractData] = useState();
     const [stats, setStats] = useState();
@@ -26,7 +27,10 @@ const EvictionMap = props => {
     // const countyBoundary = props.boundaryGeoJSON ?
     //     props.boundaryGeoJSON.features.map(feature =>
     //         turf.polygonToLine(feature)) : null;
-    // console.log(props.geojson);
+
+    console.log(JSON.stringify(props.boundaryGeoJSON));
+   
+
 
     // const [ monthOptions, setMonthOptions ] = useState();
 
@@ -117,7 +121,7 @@ const EvictionMap = props => {
         setDateRange({start: startDate, end: endDate});
     }
 
-    // const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
+    const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
     const countyBounds = {
         '999': {
             center: [33.77285,-84.33268],
@@ -170,16 +174,16 @@ const EvictionMap = props => {
             // bounds={null}
             // onViewportChange={e => console.log(e)}
         >
-            {/* {  props.boundaryGeoJSON ?
+            {  props.boundaryGeoJSON ?
                 <GeoJSON
                 key={'county-boundary' + props.countyFilter}
-                data={countyBoundary}
+                data={props.boundaryGeoJSON}
                     filter={feature => props.countyFilter !== 999 ?
                         feature.properties['GEOID'] === `13${props.countyFilter.toString().padStart(3, '0')}`
                         : countyFIPS.includes(feature.properties['GEOID']) }
                 />
                 : null
-            } */}
+            }
             {  props.geojson && 
                tractData && 
                stats ?
