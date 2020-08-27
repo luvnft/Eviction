@@ -1,7 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# adding the server to the ignore, to keep live server out of commits. 
-server.js
+
 
 # dependencies
 node_modules
