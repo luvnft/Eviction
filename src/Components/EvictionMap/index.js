@@ -85,7 +85,7 @@ const EvictionMap = props => {
                 ) 
             : null
 
-        createBins('defined', [1, 2, 5, 10, 15]);
+        createBins('defined', [1, 2, 5, 10, 18]);
         setBins(bins);
         // console.log(bins);
     }
@@ -195,7 +195,7 @@ const EvictionMap = props => {
         let color = null;
         bins.forEach((bin, i) =>
             value < bin.top && 
-            value > bin.bottom ? 
+            value >= bin.bottom ? 
                 color = colors[i]
             : null
         );
