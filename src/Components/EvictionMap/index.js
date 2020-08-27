@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import numeral from 'numeral';
-import * as turf from '@turf/turf';
+// import * as turf from '@turf/turf';
 // import moment from 'moment';
 import Loader from 'react-loader-spinner';
 import './style.css';
