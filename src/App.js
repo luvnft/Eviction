@@ -8,6 +8,7 @@ import API from './utils/API.js';
 import ARClogo from './logos/ARC_logo.png';
 import Fedlogo from './logos/FedLogo2.PNG';
 import CSPAVlogo from './logos/CSPAV_logo.jpg';
+import countyBoundary from './Test-data/countyboundaries.json';
 import './App.css';
 
 const App = () => {
@@ -21,7 +22,6 @@ const App = () => {
     const data = require('./Test-data/EvictionFilingsByTract.json');
     const normalizeData = require('./Test-data/RentHHsByTract.json');
     const [countyFilter, setCountyFilter] = useState(999);
-    const countyBoundary = require('./Test-data/countyboundaries.json');
       
     const getTractGeoJSON = () => {
 
