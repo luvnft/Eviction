@@ -16,12 +16,12 @@ const App = () => {
     // document.documentElement.style.setProperty('--vh', `${vh}px`);
 
     const [ geoJSON, setGeoJSON ] = useState();
-    // const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
+    const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
     const [ vizView, setVizView ] = useState('map');
     const data = require('./Test-data/EvictionFilingsByTract.json');
     const normalizeData = require('./Test-data/RentHHsByTract.json');
     const [countyFilter, setCountyFilter] = useState(999);
-    const boundaryGeoJSON = require('./Test-data/countyboundaries.json');
+    const countyBoundary = require('./Test-data/countyboundaries.json');
       
     const getTractGeoJSON = () => {
 
@@ -57,7 +57,7 @@ const App = () => {
       ];
     
     useEffect(() => getTractGeoJSON(), []);
-    // useEffect(() => getCountyGeoJSON(), []);  
+    useEffect(() => setBoundaryGeoJSON(countyBoundary), []);  
 
     return (
         <div id='eviction-tracker'>

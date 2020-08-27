@@ -28,7 +28,7 @@ const EvictionMap = props => {
     //     props.boundaryGeoJSON.features.map(feature =>
     //         turf.polygonToLine(feature)) : null;
 
-    console.log(JSON.stringify(props.boundaryGeoJSON));
+    // console.log(JSON.stringify(props.boundaryGeoJSON));
    
 
 
