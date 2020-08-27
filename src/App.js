@@ -65,8 +65,8 @@ const App = () => {
                 <h1>ATLANTA REGION EVICTION TRACKER</h1>
                 <div id='county-dropdown-container'>
                     <Dropdown
-                        className="icon chart-dropdown"
-                        placeholder="County Options"
+                        // className="icon chart-dropdown"
+                        placeholder="Filter by County"
                         fluid
                         // multiple
                         selection

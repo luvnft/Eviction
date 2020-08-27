@@ -8,10 +8,10 @@
 
 .legend {
     display: grid;
-    grid-template-rows: 20% 80%;
+    grid-template-rows: 10% 15% 75%;
     width: 200px;
-    height: 25vh;
-    z-index: 999999;
+    height: 30vh;
+    z-index: 9999;
     position: fixed;
     bottom: 15vh;
     right: 2%;
@@ -47,4 +47,34 @@
     font-size: 1.2em;
 }
 
+#month-selector {
+    z-index: 9999;
+    font-size: 1.2em;
+    /* position: fixed;
+    bottom: 36vh; */
+    /* right: 2%;
+    width: 200px; */
+
+}
+
+#month-selector > .ui.dropdown > .text {
+    background-color: black;
+    padding: 5px 10px;
+    border-radius: 2px;
+    color: white;
+}
+
+#month-selector > .ui.dropdown .menu {
+    max-height: 20vh;
+    overflow: auto;
+    position: relative;
+    /* top: 15px; */
+    right: 10px;
+    /* float: center; */
+    z-index: 99999;
+}
+
+#month-selector > .ui.dropdown .menu > .item {
+ font-size: .9em;
+}
 

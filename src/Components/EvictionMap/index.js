@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import numeral from 'numeral';
+import { Dropdown } from 'semantic-ui-react';
+
 // import * as turf from '@turf/turf';
-// import moment from 'moment';
+import moment from 'moment';
 import Loader from 'react-loader-spinner';
 import './style.css';
 
@@ -32,17 +34,25 @@ const EvictionMap = props => {
    
 
 
-    // const [ monthOptions, setMonthOptions ] = useState();
+    const [ monthOptions, setMonthOptions ] = useState();
+    const [ selectedMonth, setSelectedMonth ] = useState('January')
 
-    // const getMonthList = () => {
-    //     const monthArray = [];
-    //     props.data.map(item => 
-    //         !monthArray.includes(moment(item['File.Date']).format('MMMM')) ? 
-    //             monthArray.push(moment(item['File.Date']).format('MMMM'))
-    //         : null
-    //     );
-    //     setMonthOptions(monthArray);
-    // }
+    const getMonthList = () => {
+        const monthArray = [];
+        props.data.map(item => 
+            !monthArray.includes(moment(item['File.Date']).format('MMMM')) ? 
+                monthArray.push(moment(item['File.Date']).format('MMMM'))
+            : null
+        );
+        const monthOptionsArray = monthArray.map(month =>
+            ({
+                text: `${month} ${2020}`,
+                value: month,
+                key: month
+            })
+        );
+        setMonthOptions(monthOptionsArray);
+    }
     
     // Create function to setStats({max: value, min: value, range: value})
     const calcStats = data => {
@@ -75,7 +85,7 @@ const EvictionMap = props => {
                 ) 
             : null
 
-        createBins('defined', [5, 10, 15, 30, 50]);
+        createBins('defined', [1, 2, 5, 10, 15]);
         setBins(bins);
         // console.log(bins);
     }
@@ -86,12 +96,14 @@ const EvictionMap = props => {
         const normalizeData = {};
 
         props.data
-            .filter(item =>
-                props.countyFilter !== 999 ? 
-                props.countyFilter === item['COUNTYFP10'] 
-                : true
+            // .filter(item =>
+            //     props.countyFilter !== 999 ? 
+            //     props.countyFilter === item['COUNTYFP10'] 
+            //     : true
+            // )
+            .filter(item => 
+                moment(item['File.Date']).format('MMMM') === selectedMonth
             )
-            // .filter()
             .map(item =>
                 rawDataObject[item['tractID']] = rawDataObject[item['tractID']] ?
                     (rawDataObject[item['tractID']] + parseFloat(item['Total Filings']))
@@ -149,15 +161,63 @@ const EvictionMap = props => {
         }
     }
 
-    useEffect(() => { handleData() }, [props.countyFilter]);
+    const CustomTooltip = () => (
+        <div className='tooltip-content'>
+        <div>
+            In <span className='tooltip-data'>{selectedMonth} 2020</span>
+            {/* between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span> */}
+        </div>
+        <div>
+            in census tract <span className='tooltip-data'>{hoverID}</span>
+        </div> 
+
+        <div>
+            there were <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> total reported eviction filings
+        </div>
+        <div>
+            resulting in an eviction filing rate of <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span>.
+        </div>
+
+
+
+
+    </div>
+    );
+
+    // const Legend = () => (
+       
+    // );
+
+    const featureStyler = feature => {
+                        
+        const geoid = feature.properties['GEOID'];
+        const value = tractData[geoid];
+        let color = null;
+        bins.forEach((bin, i) =>
+            value < bin.top && 
+            value > bin.bottom ? 
+                color = colors[i]
+            : null
+        );
+
+        return ({
+            color: color ? color : null,
+            weight: value ? 1 : 0,
+            fillColor: color ? color : 'lightgrey',
+            fillOpacity: color ? .7 : 0
+        })    
+    };
+
+    useEffect(() => { handleData() }, [props.countyFilter, selectedMonth]);
     useEffect(() => { handleDateRange() }, []);
 
     // console.log(props.boundaryGeoJSON);
-    // useEffect(() => getMonthList(), []);
-    // console.log(monthOptions);
+    useEffect(() => getMonthList(), []);
+    console.log(monthOptions);
     // console.log(bins);
 
     return (
+        <>
         <LeafletMap
             key={'leaflet-map-' + props.name}
             center={countyBounds[props.countyFilter.toString().padStart(3, '0')].center}
@@ -176,9 +236,9 @@ const EvictionMap = props => {
         >
             {  props.boundaryGeoJSON ?
                 <GeoJSON
-                key={'county-boundary' + props.countyFilter}
+                key={'county-boundary' + props.countyFilter }
                 data={props.boundaryGeoJSON}
-                    filter={feature => props.countyFilter !== 999 ?
+                filter={feature => props.countyFilter !== 999 ?
                         feature.properties['GEOID'] === `13${props.countyFilter.toString().padStart(3, '0')}`
                         : countyFIPS.includes(feature.properties['GEOID']) }
                 />
@@ -188,7 +248,7 @@ const EvictionMap = props => {
                tractData && 
                stats ?
                 <GeoJSON
-                    key={'map-layer-' + props.name + props.countyFilter}
+                    key={'map-layer-' + props.name + props.countyFilter + selectedMonth}
                     data={props.geojson}
                     onAdd={e => e.target.bringToBack()}
                     onMouseover={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
@@ -196,42 +256,9 @@ const EvictionMap = props => {
                     filter={feature => props.countyFilter !== 999 ? 
                         feature.properties['GEOID'].slice(2,5) === props.countyFilter.toString().padStart(3, '0') :
                         props.counties.includes(feature.properties['GEOID'].slice(2,5))}
-                    style={feature => {
-                        
-                        const geoid = feature.properties['GEOID'];
-                        const value = tractData[geoid];
-                        let color = null;
-                        bins.forEach((bin, i) =>
-                            value < bin.top && 
-                            value > bin.bottom ? 
-                                color = colors[i]
-                            : null
-                        );
-
-                        return ({
-                            color: color ? color : null,
-                            weight: value ? 1 : 0,
-                            fillColor: color ? color : 'lightgrey',
-                            fillOpacity: color ? .7 : 0
-                    })
-                }}> 
+                    style={feature => featureStyler(feature)}> 
                     <Tooltip>
-                        
-                        <div className='tooltip-content'>
-                            <div>
-                                In census tract <span className='tooltip-data'>{hoverID}</span>
-                            </div>
-                            <div>
-                                between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span>
-                            </div>
-                            <div>
-                                there were <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> eviction filings reported
-                            </div>
-                            <div>
-                                or about <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span> of rental households.
-                            </div>
-
-                        </div>
+                        <CustomTooltip />
                     </Tooltip>
 
                 </GeoJSON>
@@ -240,48 +267,63 @@ const EvictionMap = props => {
                         <Loader id='loader-box' color='#DC1C13' type='Circles' />
                     </div>
             }
-
-
-           
             <TileLayer
                 key={'tile-layer'}
                 attribution={'&copy <a href="http://osm.org/copyright">OpenStreetMap contributors</a>'}
                 url={'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'}
 
-            />                
-            <div className='legend'>
-                <div id='legend-header'>
-                    <h3>Eviction Filing Rate</h3>
-                </div>
-                <div id='symbol-container'>
 
-                <div id='symbol-column'>
-                    {
-                        colors
-                            // .reverse()    
-                            .map(color =>
-                                <div className='legend-symbol' style={{backgroundColor: color}}/>
-                            )
-                    }                        
-                </div>
-                <div id='symbol-labels'>
-                    {
-                        bins ?
-                            bins
-                            // .reverse()
-                            .map(bin =>
-                                <div className='legend-label'>
-                                    {`${numeral(bin.bottom).format('0,0')}% to < ${numeral(bin.top).format('0,0')}%`}
-                                </div>
-                            )
-                        : null
-                    }
+            />  
+            
+            
+        </LeafletMap>
+ 
+        <div className='legend'>
+            <div id='legend-header'>
+                <h3>Eviction Filing Rate</h3>
+            </div>
+            <div id='month-selector'>
 
-                </div>
-                </div>
+                <Dropdown
+                    style={{float: 'center'}} 
+                    // selection
+                    inline
+                    // fluid
+                    placeholder="Select Month"
+                    value={selectedMonth}
+                    options={monthOptions}
+                    onChange={(e, data) => setSelectedMonth(data.value)}
+                />
+            </div>
+            <div id='symbol-container'>
+
+            <div id='symbol-column'>
+                {
+                    colors
+                        // .reverse()    
+                        .map(color =>
+                            <div className='legend-symbol' style={{backgroundColor: color}}/>
+                        )
+                }                        
+            </div>
+            <div id='symbol-labels'>
+                {
+                    bins ?
+                        bins
+                        // .reverse()
+                        .map(bin =>
+                            <div className='legend-label'>
+                                {`${numeral(bin.bottom).format('0,0')}% to < ${numeral(bin.top).format('0,0')}%`}
+                            </div>
+                        )
+                    : null
+                }
 
             </div>
-        </LeafletMap>
+            </div>
+
+            </div>  
+     </>
     )
 }
 

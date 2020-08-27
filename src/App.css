@@ -22,6 +22,7 @@ h5 {
     /* padding: 5px; */
     z-index: 999999;
     box-shadow: 0 0 10px lightslategrey;
+    overflow: hidden;
 
 
     /* background-color: rgb(214, 209, 209); */
@@ -39,25 +40,9 @@ h5 {
     font-size: 1.2em; */
 }
 
-#footer-logos > div > img {
-    /* height: 5vh; */
-}
-
-/* #left-logo {
-    text-align: right;
-} */
-
 #left-logo > img {
     height: 6vh;
 }
-
-/* #right-logo {
-    text-align: left;
-}
-
-#right-logo  > img {
-    text-align: left;
-} */
 
 #right-logo  > img {
     height: 4vh;
@@ -74,7 +59,7 @@ h5 {
 
 
 #header > h1 {
-    font-size: 4rem;
+    font-size: 4em;
     margin: 1vh 0 0 0;
     font-family: 'Impact';
 }
@@ -117,9 +102,8 @@ h5 {
 /* chart dropdown, giving filter perimeters */
 .ui.fluid.dropdown {
     text-align: center;
-    /* display: flex; */
-    width: 25%;
-    margin: 0 auto;
+    /* width: 25%;
+    margin: 0 auto; */
 }
 
 #county-dropdown-container {
@@ -127,25 +111,26 @@ h5 {
     position: fixed;
     top: 10vh;
     z-index: 999999;
-}
-
-.divider.text {
+    padding: 0 35% 0 35%;
     font-size: large;
 }
+
+/* .divider.text {
+    font-size: large;
+} */
 
 /* text for the dropdown */
-.ui.dropdown:not(.button)>.default.text {
+/* .ui.dropdown:not(.button)>.default.text {
     font-weight: 700;
-    /* font-family: monospace; */
     color: black;
-}
+} */
 
 /* the dropdown options/items */
-.ui.dropdown .menu>.item {
+.ui.dropdown .menu > .item {
     text-align: center;
-    font-size: large;
-    font-weight: 500;
-    /* font-family: monospace; */
+    font-size: 1em;
+    /* font-size: large;
+    font-weight: 500; */
 }
 
 .tooltip-content {

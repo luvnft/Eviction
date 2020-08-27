@@ -102,25 +102,26 @@ const EvictionChart = props => {
 
   const CustomTooltip = ({ active, payload, label }) => {
     const county = props.counties.find(county => county.value === props.countyFilter);
-    const header = timeScale === 'weekly' ? 
+    const dateInfo = timeScale === 'weekly' ? 
       <div>
-        Between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
+        between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
       </div> : timeScale === 'monthly' ?
         <div>
-          In <span className='tooltip-data'>{moment(label).format('MMMM YYYY')}</span>  
+          in <span className='tooltip-data'>{moment(label).format('MMMM YYYY')}</span>  
         </div> : timeScale === 'daily' ?
           <div>
-            On <span className='tooltip-data'>{moment(label).format('dddd, MMMM Do YYYY')}</span>  
+            on <span className='tooltip-data'>{moment(label).format('dddd, MMMM Do YYYY')}</span>  
           </div> : null;
     return active ?
         <div className='tooltip-content chart-tooltip-content'>
-          {header}
           <div>
-            there were <span className='tooltip-data'>{numeral(payload[0].value).format('0,0')}</span> eviction filings reported
+            In {props.countyFilter === 999 ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span>
           </div>
+          {dateInfo}
           <div>
-            in {props.countyFilter === 999 ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span>.
+            there were <span className='tooltip-data'>{numeral(payload[0].value).format('0,0')}</span> reported eviction filings.
           </div>
+
         </div>
     : null;
   }
