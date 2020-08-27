@@ -10,6 +10,8 @@ import './style.css';
 
 const EvictionMap = props => {
 
+    const smallScreen = window.innerWidth < 850
+
     
     const [tractData, setTractData] = useState();
     const [rawTractData, setRawTractData] = useState();
@@ -137,27 +139,27 @@ const EvictionMap = props => {
     const countyBounds = {
         '999': {
             center: [33.77285,-84.33268],
-            zoom: 9.8
+            zoom: smallScreen ? 8.8 : 9.8
         },
         '067': {
             center: [33.9132,-84.58030],
-            zoom: 11
+            zoom: smallScreen ? 10 : 11
         },
         '063': {
             center: [33.50533,-84.34112],
-            zoom: 11.2
+            zoom: smallScreen ? 10 : 11.2
         },
         '121': {
             center: [33.840747,-84.46563],
-            zoom: 10
+            zoom: smallScreen ? 9 : 10
         },
         '135': {
             center: [33.959468,-84.02901],
-            zoom: 10.8
+            zoom: smallScreen ? 9 : 10.8
         },
         '089': {
             center: [33.79857,-84.22737],
-            zoom: 11
+            zoom: smallScreen ? 10 : 11
         }
     }
 
@@ -253,6 +255,7 @@ const EvictionMap = props => {
                     onAdd={e => e.target.bringToBack()}
                     onMouseover={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
                     onMouseout={() => setHoverID()}
+                    onMouseDown={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
                     filter={feature => props.countyFilter !== 999 ? 
                         feature.properties['GEOID'].slice(2,5) === props.countyFilter.toString().padStart(3, '0') :
                         props.counties.includes(feature.properties['GEOID'].slice(2,5))}

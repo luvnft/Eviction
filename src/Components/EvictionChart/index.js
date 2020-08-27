@@ -152,7 +152,7 @@ const EvictionChart = props => {
 
       <ResponsiveContainer
         className="chart-responsive-container"
-        width="100%"
+        width="90%"
         height="85%"
       >
         <BarChart
@@ -160,9 +160,9 @@ const EvictionChart = props => {
           data={caseData}
           margin={{
             top: 50,
-            right: 50,
-            left: 50,
-            bottom: 10,
+            right: 20,
+            left: 0,
+            bottom: 20,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />

@@ -40,6 +40,14 @@ h5 {
     font-size: 1.2em; */
 }
 
+#left-logo {
+    text-align: right;
+}
+
+#right-logo {
+    text-align: left;
+}
+
 #left-logo > img {
     height: 6vh;
 }
@@ -133,6 +141,10 @@ h5 {
     font-weight: 500; */
 }
 
+.leaflet-tooltip {
+    z-index: 999999;
+}
+
 .tooltip-content {
     display: grid;
     grid-template-rows: auto;
@@ -146,8 +158,6 @@ h5 {
     border-radius: 5px;
     border: 1px solid lightgrey;
     font-size: .9em;
-
-
 }
 
 .tooltip-content > div {
@@ -156,4 +166,72 @@ h5 {
 .tooltip-data {
     font-size: 1.2em;
     font-weight: 600;
+}
+
+@media only screen and  (max-width: 850px) {
+    #header > h1 {
+        font-size: 2.8em;
+        line-height: 1em;
+        margin-top: 3vh;
+    }
+
+    #eviction-tracker {
+        grid-template-rows: 25% 60% 15%;
+    
+    }
+    #viz-toggle {
+        top: 20vh;
+        height: 5vh;
+        /* padding-top: 1vh;  */
+        font-size: 1.2em;    
+        /* margin-top: 1em; */
+    }
+    #left-logo > img {
+        height: 4vh;
+    }
+    
+    #right-logo  > img {
+        height: 4vh;
+        padding-top: 5px;
+        
+
+    }
+    
+    #center-logo > img {
+        height: 4vh;
+    }
+
+    #left-logo, #center-logo {
+        width: 50%;
+        float: left;
+    }
+
+    #left-logo, #right-logo {
+        text-align: center;
+    }
+    
+    #footer-logos {
+        display: inline-block;
+        /* grid-template-columns: 100% 100% 100%;
+        width: 100%; */
+        /* text-align: center;
+        font-size: 1.2em; */
+    }
+
+    #county-dropdown-container {
+        width: 100%;
+        position: fixed;
+        top: 14vh;
+        z-index: 999999;
+        padding: 0;
+        font-size: medium;
+    }
+}
+
+@media only screen and  (max-height: 700px) {
+    #header > h1 {
+        font-size: 2.7em;
+        line-height: 1em;
+    } 
+
 }

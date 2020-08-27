@@ -78,3 +78,25 @@
  font-size: .9em;
 }
 
+@media only screen and  (max-width: 850px) {
+    .legend {
+        font-size: .7rem;
+        grid-template-rows: 11% 19% 70%;
+        width: 200px;
+        height: 26vh;
+        padding: 3px;
+        /* z-index: 9999; */
+        position: fixed;
+        bottom: 18vh;
+    }
+    #legend-header > h3 {
+        font-size: 1.2rem;
+    }
+
+    .legend-symbol {
+        height: 15px;
+        width: 15px;
+        margin: 2px 2px 2px 70%;
+    
+    }
+}

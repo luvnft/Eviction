@@ -16,10 +16,17 @@
 
 /* BUTTON GROUP */
 .button-group-container {
-    text-align: center;
+    text-align: center; 
 }
 
 /* daily, weekly, monthly buttons */
 .ui.buttons .button {
     margin: 0 2px 0 2px;
+}
+
+@media only screen and  (max-width: 850px) {
+    .button-group-container {
+        position: relative;
+        bottom: 1.5vh;
+    }
 }
