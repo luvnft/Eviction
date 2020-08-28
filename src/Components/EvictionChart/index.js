@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
+  Line,
   // Brush,
   XAxis,
   YAxis,
@@ -191,16 +192,17 @@ const EvictionChart = props => {
           {/* <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" /> */}
           <Legend />
           <Bar dataKey="Total Filings" fill="#DC1C13" />
+          {/* <Line dataKey="Total Filings" fill="#DC1C13" /> */}
           {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}
         </BarChart>
       </ResponsiveContainer>
 
       <div className="button-group-container">
         <Button.Group className="button-group">
-          <Button 
+          {/* <Button 
             active={timeScale === 'daily' ? true : false}
             onClick={() => setTimeScale('daily')}
-          >Daily</Button>
+          >Daily</Button> */}
           <Button 
             active={timeScale === 'weekly' ? true : false}
             onClick={() => setTimeScale('weekly')}

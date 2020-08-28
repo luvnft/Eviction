@@ -88,6 +88,7 @@ const EvictionMap = props => {
             : null
 
         createBins('defined', [1, 2, 5, 10, 18]);
+        // createBins('quantile')
         setBins(bins);
         // console.log(bins);
     }
@@ -280,6 +281,8 @@ const EvictionMap = props => {
             
             
         </LeafletMap>
+
+        
  
         <div className='legend'>
             <div id='legend-header'>
@@ -302,8 +305,8 @@ const EvictionMap = props => {
 
             <div id='symbol-column'>
                 {
-                    colors
-                        // .reverse()    
+                    [...colors]
+                        .reverse()    
                         .map(color =>
                             <div className='legend-symbol' style={{backgroundColor: color}}/>
                         )
@@ -312,8 +315,8 @@ const EvictionMap = props => {
             <div id='symbol-labels'>
                 {
                     bins ?
-                        bins
-                        // .reverse()
+                        [...bins]
+                        .reverse()
                         .map(bin =>
                             <div className='legend-label'>
                                 {`${numeral(bin.bottom).format('0,0')}% to < ${numeral(bin.top).format('0,0')}%`}

@@ -103,7 +103,7 @@ const App = () => {
                         onClick={() => setVizView('chart')}
 
                     >
-                        Chart
+                        CHART
                     </div>                  
 
                     {/* MAP 
