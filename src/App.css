@@ -103,7 +103,8 @@ h5 {
 }
 
 .viz-tab:hover {
-   opacity: 1; 
+   opacity: 1;
+   background-color: rgb(111, 111, 163); 
 }
 
 #active-viz-tab {
@@ -178,7 +179,7 @@ h5 {
     #header > h1 {
         font-size: 2.4em;
         line-height: 1em;
-        margin-top: 1.5vh;
+        margin-top: 3vh;
     }
 
     #eviction-tracker {
@@ -226,12 +227,56 @@ h5 {
 
     #county-dropdown-container {
         width: 100%;
-        position: fixed;
-        top: 14vh;
+        /* position: fixed; */
+        top: 13vh;
         z-index: 999999;
         padding: 0;
         font-size: medium;
+        font-size: 1.2em;
     }
+
+    #county-dropdown-container > select {
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    #county-dropdown-container > select > option {
+        font-size: .6em;
+    }
+
+    #legend-icon {
+        position: fixed;
+        bottom: 18vh;
+        right: 1%;
+        z-index: 999999;
+    }
+
+    #legend-close-icon {
+        position: fixed;
+        bottom: 42.5vh;
+        z-index: 999999;
+        right: 194px;
+        background-color: black;
+        height: 20px;
+        width: 20px;
+        border-radius: 10px;
+        padding: 0px;
+        /* text-align: center; */
+    }
+
+    #legend-close-icon > .icon {
+        margin: 0;
+        position: relative;
+        left: 2px;
+        /* bottom: 1px; */
+    }
+
+
+
+
+    /* .legend {
+        height: 30vh;
+    } */
 }
 
 @media only screen and  (max-height: 700px) {

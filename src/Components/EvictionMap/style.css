@@ -65,7 +65,7 @@
 }
 
 #month-selector > .ui.dropdown .menu {
-    max-height: 20vh;
+    max-height: 15vh;
     overflow: auto;
     position: relative;
     /* top: 15px; */
@@ -98,5 +98,16 @@
         width: 15px;
         margin: 2px 2px 2px 70%;
     
+    }
+
+    #month-selector {
+        font-size: 1.5em;
+        position: relative;
+        top: .5vh;
+    }
+
+    #month-selector  > select {
+        padding: 3px;
+        border-radius: 5px;
     }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import numeral from 'numeral';
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, Icon } from 'semantic-ui-react';
 
 // import * as turf from '@turf/turf';
 import moment from 'moment';
@@ -10,23 +10,22 @@ import './style.css';
 
 const EvictionMap = props => {
 
-    const smallScreen = window.innerWidth < 850
-
+    const [legendVisble, setLegendVisible] = useState(true);
     
     const [tractData, setTractData] = useState();
     const [rawTractData, setRawTractData] = useState();
     const [stats, setStats] = useState();
     const [bins, setBins] = useState();
     const [hoverID, setHoverID] = useState();
-    const [dateRange, setDateRange] = useState();
+    // const [dateRange, setDateRange] = useState();
     // const [bounds, setBounds] = useState();
     const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
 
-    const sortByDate = (a, b) => {
-        var dateA = new Date(a).getTime();
-        var dateB = new Date(b).getTime();
-        return dateA > dateB ? 1 : -1;
-    };
+    // const sortByDate = (a, b) => {
+    //     var dateA = new Date(a).getTime();
+    //     var dateB = new Date(b).getTime();
+    //     return dateA > dateB ? 1 : -1;
+    // };
 
     // const countyBoundary = props.boundaryGeoJSON ?
     //     props.boundaryGeoJSON.features.map(feature =>
@@ -126,41 +125,41 @@ const EvictionMap = props => {
         setRawTractData(rawDataObject);
     };
 
-    const handleDateRange = () => {
-        const dateArray = new Set([...props.data.map(item => item['File.Date'])]);
-        const sortedDates = [...dateArray].sort((a,b) => sortByDate(a,b))
-        // console.log(dateArray);
-        // console.log(sortedDates);
-        const startDate = sortedDates[0];
-        const endDate = sortedDates[sortedDates.length -1];
-        setDateRange({start: startDate, end: endDate});
-    }
+    // const handleDateRange = () => {
+    //     const dateArray = new Set([...props.data.map(item => item['File.Date'])]);
+    //     const sortedDates = [...dateArray].sort((a,b) => sortByDate(a,b))
+    //     // console.log(dateArray);
+    //     // console.log(sortedDates);
+    //     const startDate = sortedDates[0];
+    //     const endDate = sortedDates[sortedDates.length -1];
+    //     setDateRange({start: startDate, end: endDate});
+    // }
 
     const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
     const countyBounds = {
         '999': {
             center: [33.77285,-84.33268],
-            zoom: smallScreen ? 8.8 : 9.8
+            zoom: props.smallScreen ? 8.8 : 9.8
         },
         '067': {
             center: [33.9132,-84.58030],
-            zoom: smallScreen ? 10 : 11
+            zoom: props.smallScreen ? 10.2 : 11
         },
         '063': {
             center: [33.50533,-84.34112],
-            zoom: smallScreen ? 10 : 11.2
+            zoom: props.smallScreen ? 10.5 : 11.2
         },
         '121': {
             center: [33.840747,-84.46563],
-            zoom: smallScreen ? 9 : 10
+            zoom: props.smallScreen ? 9.4 : 10
         },
         '135': {
             center: [33.959468,-84.02901],
-            zoom: smallScreen ? 9 : 10.8
+            zoom: props.smallScreen ? 10 : 10.8
         },
         '089': {
-            center: [33.79857,-84.22737],
-            zoom: smallScreen ? 10 : 11
+            center: [33.79857,-84.20737],
+            zoom: props.smallScreen ? 10.4 : 11
         }
     }
 
@@ -207,16 +206,16 @@ const EvictionMap = props => {
             color: color ? color : null,
             weight: value ? 1 : 0,
             fillColor: color ? color : 'lightgrey',
-            fillOpacity: color ? .7 : 0
+            fillOpacity: color ? .8 : .2
         })    
     };
 
     useEffect(() => { handleData() }, [props.countyFilter, selectedMonth]);
-    useEffect(() => { handleDateRange() }, []);
+    // useEffect(() => { handleDateRange() }, []);
 
     // console.log(props.boundaryGeoJSON);
     useEffect(() => getMonthList(), []);
-    console.log(monthOptions);
+    // console.log(monthOptions);
     // console.log(bins);
 
     return (
@@ -241,7 +240,7 @@ const EvictionMap = props => {
                 <GeoJSON
                 key={'county-boundary' + props.countyFilter }
                 data={props.boundaryGeoJSON}
-                filter={feature => props.countyFilter !== 999 ?
+                filter={feature => props.countyFilter !== 999 && props.countyFilter !== '999' ?
                         feature.properties['GEOID'] === `13${props.countyFilter.toString().padStart(3, '0')}`
                         : countyFIPS.includes(feature.properties['GEOID']) }
                 />
@@ -257,7 +256,7 @@ const EvictionMap = props => {
                     onMouseover={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
                     onMouseout={() => setHoverID()}
                     onMouseDown={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
-                    filter={feature => props.countyFilter !== 999 ? 
+                    filter={feature => props.countyFilter !== 999 && props.countyFilter !== '999' ? 
                         feature.properties['GEOID'].slice(2,5) === props.countyFilter.toString().padStart(3, '0') :
                         props.counties.includes(feature.properties['GEOID'].slice(2,5))}
                     style={feature => featureStyler(feature)}> 
@@ -282,53 +281,87 @@ const EvictionMap = props => {
             
         </LeafletMap>
 
-        
- 
-        <div className='legend'>
-            <div id='legend-header'>
-                <h3>Eviction Filing Rate</h3>
-            </div>
-            <div id='month-selector'>
-
-                <Dropdown
-                    style={{float: 'center'}} 
-                    // selection
-                    inline
-                    // fluid
-                    placeholder="Select Month"
-                    value={selectedMonth}
-                    options={monthOptions}
-                    onChange={(e, data) => setSelectedMonth(data.value)}
+        { legendVisble && props.smallScreen ?
+            <div 
+                id='legend-close-icon'
+                onClick={() => setLegendVisible(false)}
+            >
+                <Icon
+                    // size='small'
+                    inverted 
+                    name='close'
                 />
-            </div>
-            <div id='symbol-container'>
+            </div> : null
 
-            <div id='symbol-column'>
-                {
-                    [...colors]
-                        .reverse()    
-                        .map(color =>
-                            <div className='legend-symbol' style={{backgroundColor: color}}/>
-                        )
-                }                        
-            </div>
-            <div id='symbol-labels'>
-                {
-                    bins ?
-                        [...bins]
-                        .reverse()
-                        .map(bin =>
-                            <div className='legend-label'>
-                                {`${numeral(bin.bottom).format('0,0')}% to < ${numeral(bin.top).format('0,0')}%`}
-                            </div>
-                        )
-                    : null
-                }
+        }
+        { legendVisble ?
+            <div className='legend'>
+                <div id='legend-header'>
+                    <h3>Eviction Filing Rate</h3>
+                </div>
+                <div id='month-selector'>
 
-            </div>
-            </div>
+                    { props.smallScreen ?
 
-            </div>  
+                        <select value={selectedMonth} 
+                            onChange={e => setSelectedMonth(e.target.value)}
+                        >
+                            {monthOptions ? monthOptions.map(month => 
+                                <option 
+                                key={month.text} value={month.value} id={`option-${month.text}`}>
+                                    {month.text}</option>    
+                            ) : null}
+                        </select> :
+
+                        <Dropdown
+                            style={{float: 'center'}} 
+                            // selection
+                            inline
+                            // fluid
+                            placeholder="Select Month"
+                            value={selectedMonth}
+                            options={monthOptions}
+                            onChange={(e, data) => setSelectedMonth(data.value)}
+                        />
+                    }
+                </div>
+                <div id='symbol-container'>
+                    <div id='symbol-column'>
+                        {
+                            [...colors]
+                                .reverse()    
+                                .map(color =>
+                                    <div className='legend-symbol' style={{backgroundColor: color}}/>
+                                )
+                        }                        
+                    </div>
+                    <div id='symbol-labels'>
+                        {
+                            bins ?
+                                [...bins]
+                                .reverse()
+                                .map(bin =>
+                                    <div className='legend-label'>
+                                        {`${numeral(bin.bottom).format('0,0')}% to < ${numeral(bin.top).format('0,0')}%`}
+                                    </div>
+                                )
+                            : null
+                        }
+
+                    </div>
+                </div>
+
+            </div> : null 
+        }
+        {   !legendVisble && props.smallScreen ?
+            <div id='legend-icon'>
+                <Icon 
+                    name='list alternate outline' 
+                    size='huge'
+                    onClick={() => setLegendVisible(true)}
+                />
+            </div> : null
+        }   
      </>
     )
 }

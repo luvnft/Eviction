@@ -12,8 +12,10 @@ import './App.css';
 
 const App = () => {
 
-    let vh = window.innerHeight * 0.01;
+    const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
+    const smallScreen = window.innerWidth < 850
+
 
     const [ geoJSON, setGeoJSON ] = useState();
     const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
@@ -64,6 +66,19 @@ const App = () => {
             <div id='header'>
                 <h1>ATLANTA REGION EVICTION TRACKER</h1>
                 <div id='county-dropdown-container'>
+
+                { smallScreen ?
+
+                    <select value={countyFilter} 
+                        onChange={e => setCountyFilter(e.target.value)}
+                    >
+                        {countyOptions ? countyOptions.map(county => 
+                            <option 
+                            key={county.text} value={county.value} id={`option-${county.text}`}>
+                                {county.text}</option>    
+                        ) : null}
+                    </select> :
+
                     <Dropdown
                         // className="icon chart-dropdown"
                         placeholder="Filter by County"
@@ -73,7 +88,8 @@ const App = () => {
                         value={countyFilter}
                         options={countyOptions}
                         onChange={(e, data) => setCountyFilter(data.value)}
-                    />                
+                    /> 
+                }               
                 </div>
 
                 <div id='viz-toggle'>
@@ -122,6 +138,7 @@ const App = () => {
                 {
                     vizView === 'map' && data ?
                         <EvictionMap
+                            smallScreen={smallScreen}
                             data={data}
                             normalizeData={normalizeData}
                             name={'evictionMap'}
