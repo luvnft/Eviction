@@ -27,6 +27,6 @@
 @media only screen and  (max-width: 850px) {
     .button-group-container {
         position: relative;
-        bottom: 1.5vh;
+        bottom: 2.5vh;
     }
 }

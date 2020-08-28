@@ -73,7 +73,7 @@ const EvictionChart = props => {
         props.data
           .sort((a, b) => sortByDate(a, b))
           .filter(item =>
-            props.countyFilter !== 999 ? 
+            props.countyFilter !== 999 && props.countyFilter !== '999' ? 
               props.countyFilter === item['COUNTYFP10'] 
             : true)
           .map(item => {
@@ -116,7 +116,7 @@ const EvictionChart = props => {
     return active ?
         <div className='tooltip-content chart-tooltip-content'>
           <div>
-            In {props.countyFilter === 999 ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span>
+            In {props.countyFilter === 999 || props.countyFilter === '999' ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span>
           </div>
           {dateInfo}
           <div>
