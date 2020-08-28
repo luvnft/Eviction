@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
-  Line,
+  // Line,
   // Brush,
   XAxis,
   YAxis,
@@ -73,8 +73,10 @@ const EvictionChart = props => {
         props.data
           .sort((a, b) => sortByDate(a, b))
           .filter(item =>
-            props.countyFilter !== 999 && props.countyFilter !== '999' ? 
-              props.countyFilter === item['COUNTYFP10'] 
+            props.countyFilter !== 999 && 
+            props.countyFilter !== '999' ? 
+              props.countyFilter === item['COUNTYFP10'] || 
+              props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
             : true)
           .map(item => {
             const key = timeScale === 'daily' ? 
@@ -102,7 +104,7 @@ const EvictionChart = props => {
   useEffect(() => handleData(), [props.countyFilter, timeScale]);
 
   const CustomTooltip = ({ active, payload, label }) => {
-    const county = props.counties.find(county => county.value === props.countyFilter);
+    const county = props.counties.find(county => county.value.toString().padStart(3, '0') === props.countyFilter.toString().padStart(3,'0'));
     const dateInfo = timeScale === 'weekly' ? 
       <div>
         between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
