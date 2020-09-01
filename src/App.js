@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import EvictionMap from './Components/EvictionMap';
 import EvictionChart from './Components/EvictionChart';
 import { Dropdown, Button, Icon } from 'semantic-ui-react';
-
+import moment from 'moment';
 import API from './utils/API.js';
 import ARClogo from './logos/ARC_logo.png';
 import Fedlogo from './logos/FedLogo2.PNG';
@@ -14,6 +14,9 @@ const App = () => {
 
     const team = require('./Data/team.json');
     const sources = require('./Data/sources.json');
+    const data = require('./Test-data/EvictionFilingsByTract.json');
+    const normalizeData = require('./Test-data/RentHHsByTract.json');
+
 
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -23,11 +26,10 @@ const App = () => {
     const [ geoJSON, setGeoJSON ] = useState();
     const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
     const [ vizView, setVizView ] = useState('map');
-    const data = require('./Test-data/EvictionFilingsByTract.json');
-    const normalizeData = require('./Test-data/RentHHsByTract.json');
     const [countyFilter, setCountyFilter] = useState(999);
     const countyBoundary = require('./Test-data/countyboundaries.json');
     const [modalStatus, setModalStatus] = useState(true);
+    const [dateRange, setDateRange] = useState();
       
     const getTractGeoJSON = () => {
 
@@ -155,9 +157,28 @@ const App = () => {
         { key: '135', text: 'Gwinnett County', value: 135 },
     
       ];
+
+    
+
+    const handleDateRange = () => {
+
+        const sortByDate = (a, b) => {
+            var dateA = new Date(a).getTime();
+            var dateB = new Date(b).getTime();
+            return dateA > dateB ? 1 : -1;
+         };
+        const dateArray = new Set([...data.map(item => item['File.Date'])]);
+        const sortedDates = [...dateArray].sort((a,b) => sortByDate(a,b))
+        // console.log(dateArray);
+        // console.log(sortedDates);
+        const startDate = sortedDates[0];
+        const endDate = sortedDates[sortedDates.length -1];
+        setDateRange({start: startDate, end: endDate});
+    }
     
     useEffect(() => getTractGeoJSON(), []);
-    useEffect(() => setBoundaryGeoJSON(countyBoundary), []);  
+    useEffect(() => setBoundaryGeoJSON(countyBoundary), []);
+    useEffect(() => handleDateRange(), []);  
 
     return (
         <div id='eviction-tracker'>
@@ -170,9 +191,9 @@ const App = () => {
                                 <h1>
                                     ATLANTA REGION
                                 </h1>
-                                <h2>
+                                <h1>
                                     EVICTION TRACKER
-                                </h2>                                
+                                </h1>                                
                             </div>
 
                             <div id='modal-body'>
@@ -304,6 +325,8 @@ const App = () => {
                         </p>
                     </div>
                 </div>
+                <p>Current as of {dateRange ? moment(dateRange.end).format('M/D/YYYY'): null}
+                </p>
                 
             </div>
             <div 

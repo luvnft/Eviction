@@ -21,12 +21,6 @@ const EvictionMap = props => {
     // const [bounds, setBounds] = useState();
     const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
 
-    // const sortByDate = (a, b) => {
-    //     var dateA = new Date(a).getTime();
-    //     var dateB = new Date(b).getTime();
-    //     return dateA > dateB ? 1 : -1;
-    // };
-
     // const countyBoundary = props.boundaryGeoJSON ?
     //     props.boundaryGeoJSON.features.map(feature =>
     //         turf.polygonToLine(feature)) : null;
@@ -125,15 +119,6 @@ const EvictionMap = props => {
         setRawTractData(rawDataObject);
     };
 
-    // const handleDateRange = () => {
-    //     const dateArray = new Set([...props.data.map(item => item['File.Date'])]);
-    //     const sortedDates = [...dateArray].sort((a,b) => sortByDate(a,b))
-    //     // console.log(dateArray);
-    //     // console.log(sortedDates);
-    //     const startDate = sortedDates[0];
-    //     const endDate = sortedDates[sortedDates.length -1];
-    //     setDateRange({start: startDate, end: endDate});
-    // }
 
     const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
     const countyBounds = {
@@ -179,10 +164,6 @@ const EvictionMap = props => {
         <div>
             resulting in an eviction filing rate of <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span>.
         </div>
-
-
-
-
     </div>
     );
 
