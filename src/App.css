@@ -1,9 +1,157 @@
 body {
     width: 100%;
     height: 100vh;
+    min-height: 700px;
     position: fixed;
+    font-family: 'NotoSansKR-Light';
     top: 0;
     overflow: hidden;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}
+
+#info-icon {
+    position: fixed;
+    bottom: 16.6vh;
+    left: 10px;
+    z-index: 999999;
+    font-size: 1.5em;
+}
+
+/* #info .icon {
+    font-size: .5em;
+} */
+
+.team-member-grid-row {
+    display: grid;
+    grid-template-columns: 33% auto 33%;
+    grid-template-rows: auto;
+}
+
+#modal {
+    position: fixed; /* Stay in place */
+    z-index: 9999999; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100vh; /* Full height */
+    overflow: hidden; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+  }
+
+#modal-content {
+    background-color: white;
+    margin: 5vh auto; /* 15% from the top and centered */
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #888;
+    height: 90vh;
+    width: 90%; /* Could be more or less, depending on screen size */
+    display: grid;
+    grid-template-rows: 15% 80% 5%;
+    padding: 2%;
+}
+
+#modal-heading {
+    width: 100%;
+    text-align: center;
+}
+
+#modal-heading > h1,
+#modal-heading > h2 {
+    margin: 0;
+    color: #4B7A90;
+
+}
+
+#modal-heading > h1 {
+    font-size: 3em;
+}
+
+#modal-heading > h2 {
+    font-size: 2.5em;
+}
+
+#welcome {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2em;
+}
+
+.about-team-member-institution {
+    font-size: 1.1em;
+    margin-top: .2em;
+    font-weight: 600;
+}
+
+.about-team-member-department {
+    font-style: italic;
+}
+
+.about-team-member {
+    /* margin-bottom: 20px; */
+    padding: 1em;
+}
+.about-team-member-role {
+    font-size: 1.2em;
+    padding-bottom: .3em;
+    font-style: italic;
+}
+
+.about-team-member-name {
+    font-size: 1.21em;
+    font-weight: 600;
+    color: #4B7A90;
+}
+
+.about-team-member-title {
+    margin-top: .3em;
+    font-weight: 600;
+}
+
+#modal-footer {
+    text-align: right;
+}
+
+#modal-body {
+    overflow: auto;
+    margin-bottom: 3%;
+}
+
+.about-content-section {
+    margin-bottom: 3em;
+    padding: 0 2em 0 2em;
+}
+
+.about-content-section > p {
+    font-size: 1.1em;
+    padding: 0 2em 0 1em;
+}
+
+.about-content-section-source {
+    font-size: 1.1em;
+    margin-bottom: 1em;
+}
+
+.about-content-section-source > a {
+    margin-left: .5em;
+}
+
+.about-content-section-heading {
+    color: #4B7A90;
+    font-size: 2em;
+    width: 100%;
+    /* text-align: center; */
+}
+
+.about-content-source-note {
+    padding-left: 2em;
 }
 
 h5 {
@@ -15,7 +163,7 @@ h5 {
     width: 100%;
     height: 100vh;
     display: grid;
-    grid-template-rows: 20% 70% 10%;
+    grid-template-rows: 20% 65% 15%;
 }
 
 #header, #footer {
@@ -28,22 +176,16 @@ h5 {
 
 #footer {
     position: fixed;
+    padding: .5em;
     bottom: 0;
-    /* padding: 0 0 1vh 0;
-    height: 20vh; */
+    background-color: white;
+    height: 15vh;
 }
 
-
-/* #footer-logos {
-    display: grid;
-    grid-template-columns: 33% auto 33%;
-} */
 #footer-logos {
     display: grid;
     grid-template-columns: 40% 20% 40%;
     width: 100%;
-    /* text-align: center;
-    font-size: 1.2em; */
 }
 
 #left-logo {
@@ -75,7 +217,7 @@ h5 {
 #header > h1 {
     font-size: 4em;
     margin: 1vh 0 0 0;
-    font-family: 'Impact';
+    /* font-family: 'Impact'; */
 }
 
 #viz-box {
@@ -101,14 +243,23 @@ h5 {
 .viz-tab {
     background-color: lightgrey;
     height: 100%;
-    padding-top: .5em;
+    line-height: 4vh;
+    /* align-items: center; */
     z-index: 99998;
     opacity: .5;
+    /* font-weight: 700; */
+    /* font-style: b */
+}
+
+.viz-tab > h3 {
+    line-height: 4vh;
+    font-size: 1.3em;
 }
 
 .viz-tab:hover {
    opacity: 1;
-   background-color: rgb(111, 111, 163); 
+   background-color: #4B7A90;
+   ; 
 }
 
 #active-viz-tab {
@@ -147,24 +298,10 @@ h5 {
     text-align: center;
 }
 
-/* .divider.text {
-    font-size: large;
-} */
-
-/* text for the dropdown */
-/* .ui.dropdown:not(.button)>.default.text {
-    font-weight: 700;
-    color: black;
-} */
-
-/* the dropdown options/items */
 .ui.dropdown .menu > .item {
     text-align: center;
     font-size: 1em;
     z-index: 999999;
-
-    /* font-size: large;
-    font-weight: 500; */
 }
 
 .leaflet-tooltip {
@@ -176,9 +313,12 @@ h5 {
     grid-template-rows: auto;
     text-align: center;
     font-size: 1.1em;
+    font-family: 'Courier New', Courier, monospace;
+
 }
 
 .chart-tooltip-content {
+    font-family: 'Courier New', Courier, monospace;
     background-color: white;
     padding: 5px;
     border-radius: 5px;
@@ -194,7 +334,28 @@ h5 {
     font-weight: 600;
 }
 
+@media only screen and (min-width: 1100px ) {
+    #modal-content {
+        width: 70%;
+    }
+}
+
+@media only screen and (min-width: 1300px ) {
+    #modal-content {
+        width: 60%;
+    }
+}
+
 @media only screen and  (max-width: 850px) {
+
+    .team-member-grid-row {
+        grid-template-columns: 100%;
+    }
+
+    #info-icon {
+        bottom: 21vh;
+    }
+
     #header > h1 {
         font-size: 2em;
         line-height: 1em;
@@ -209,13 +370,21 @@ h5 {
     #viz-toggle {
         top: 20vh;
         height: 5vh;
-        /* padding-top: 1vh;  */
         font-size: 1.2em;    
-        /* margin-top: 1em; */
     }
+
+    .viz-tab > h3 {
+        line-height: 5vh;
+    }
+
     #left-logo > img {
         height: 5vh;
     }
+
+    #modal-content {
+        grid-template-rows: 25% 65% 10%;
+    }
+
     
     
     #center-logo > img {
@@ -240,10 +409,6 @@ h5 {
 
     #footer-logos {
         display: inline-block;
-        /* grid-template-columns: 100% 100% 100%;
-        width: 100%; */
-        /* text-align: center;
-        font-size: 1.2em; */
     }
 
     #county-dropdown-container {
@@ -269,18 +434,21 @@ h5 {
         height: 20vh;
     }
 
+    #modal-heading {
+        padding-top: 2em;
+    }
+
+    #modal-heading > h1 {
+        font-size: 2em;
+    }
+    
+    #modal-heading > h2 {
+        font-size: 2em;
+    }
 
 
 
     /* .legend {
         height: 30vh;
     } */
-}
-
-@media only screen and  (max-height: 700px) {
-    #header > h1 {
-        font-size: 2.7em;
-        line-height: 1em;
-    } 
-
 }

@@ -139,7 +139,7 @@ const EvictionMap = props => {
     const countyBounds = {
         '999': {
             center: [33.77285,-84.33268],
-            zoom: props.smallScreen ? 8.8 : 9.8
+            zoom: 9.8
         },
         '067': {
             center: [33.9132,-84.58030],
@@ -206,7 +206,7 @@ const EvictionMap = props => {
             color: color ? color : null,
             weight: value ? 1 : 0,
             fillColor: color ? color : 'lightgrey',
-            fillOpacity: color ? .8 : .2
+            fillOpacity: color ? .7 : .2
         })    
     };
 
