@@ -99,13 +99,13 @@ body {
     padding: 1em;
 }
 .about-team-member-role {
-    font-size: 1.2em;
+    font-size: 1em;
     padding-bottom: .3em;
     font-style: italic;
 }
 
 .about-team-member-name {
-    font-size: 1.21em;
+    font-size: 1.2em;
     font-weight: 600;
     color: #4B7A90;
 }

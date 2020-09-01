@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-  BarChart,
+  // BarChart,
   Bar,
-  // Line,
+  ComposedChart,
+  Line,
   // Brush,
   XAxis,
   YAxis,
@@ -44,31 +45,30 @@ const EvictionChart = props => {
         // console.log('data: ', data);
         const dataObject = {};
 
-        // date array
-        let getDateArray = (start, end) => {
+        // let getDateArray = (start, end) => {
 
-          let arr = [],
-            dt = new Date(start),
-            ed = new Date(end);
+        //   let arr = [],
+        //     dt = new Date(start),
+        //     ed = new Date(end);
 
-          // console.log(dt);
+        //   // console.log(dt);
 
-          while (dt <= ed) {
-            arr.push(new Date(dt));
-            dt.setDate(dt.getDate() + 1);
-          }
+        //   while (dt <= ed) {
+        //     arr.push(new Date(dt));
+        //     dt.setDate(dt.getDate() + 1);
+        //   }
 
-          // console.log(arr)
+        //   // console.log(arr)
 
-          return arr;
+        //   return arr;
 
-        }
+        // }
 
-        getDateArray("2020-01-01", "2020-08-21").map(date => 
-            timeScale === 'daily' ? 
-              dataObject[moment(date).format('M/D/YY')] = 0
-            : null
-          );
+        // getDateArray("2020-01-01", "2020-08-21").map(date => 
+        //     timeScale === 'daily' ? 
+        //       dataObject[moment(date).format('M/D/YY')] = 0
+        //     : null
+        //   );
         
         props.data
           .sort((a, b) => sortByDate(a, b))
@@ -77,7 +77,8 @@ const EvictionChart = props => {
             props.countyFilter !== '999' ? 
               props.countyFilter === item['COUNTYFP10'] || 
               props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
-            : true)
+            : true
+          )
           .map(item => {
             const key = timeScale === 'daily' ? 
                 item['File.Date'] 
@@ -87,15 +88,53 @@ const EvictionChart = props => {
                 moment(item['File.Date']).startOf('month') 
             : null;
 
-            dataObject[key] = dataObject[key] ?
-              dataObject[key] + parseFloat(item['Total Filings'])
+            dataObject[key] = {...dataObject[key]}
+
+            dataObject[key]['current'] = dataObject[key]['current'] ?
+              dataObject[key]['current'] + parseFloat(item['Total Filings'])
               : parseFloat(item['Total Filings']);
           });
+
+          // console.log(props.dateRange)
+
+          props.data2019
+            .filter(item =>
+              props.countyFilter !== 999 && 
+              props.countyFilter !== '999' ? 
+                props.countyFilter === item['COUNTYFP10'] || 
+                props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
+              : true
+            )
+            .filter(item => new Date(item['File.Date']).getTime() < new Date(moment(props.dateRange.end).subtract(1, 'y').format('M/D/YYYY')).getTime())
+            .map(item => {
+              const key = item['File.Date'] ? timeScale === 'daily' ? 
+                  item['File.Date'] 
+                : timeScale === 'weekly' ?
+                  moment(item['File.Date']).add(1, 'y').startOf('week')
+                : timeScale === 'monthly' ?
+                  moment(item['File.Date']).add(1, 'y').startOf('month') 
+              : null : null
+
+              // console.log(item['File.Date']);
+
+              dataObject[key] = {...dataObject[key]}
+
+              dataObject[key]['historic'] = dataObject[key]['historic'] ?
+              dataObject[key]['historic'] + parseFloat(item['Total Filings'])
+              : parseFloat(item['Total Filings']);
+
+              
+
+            })
+
+        console.log(dataObject);
+
 
         const dataArray = Object.entries(dataObject).map(([key, value]) =>
           ({
             "File.Date": key,
-            "Total Filings": value
+            "Total Filings 2020": value.current,
+            "Total Filings 2019" : value.historic
           })
         );
         setCaseData(dataArray);
@@ -105,6 +144,7 @@ const EvictionChart = props => {
 
   const CustomTooltip = ({ active, payload, label }) => {
     const county = props.counties.find(county => county.value.toString().padStart(3, '0') === props.countyFilter.toString().padStart(3,'0'));
+    // console.log(payload);
     const dateInfo = timeScale === 'weekly' ? 
       <div>
         between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
@@ -122,7 +162,10 @@ const EvictionChart = props => {
           </div>
           {dateInfo}
           <div>
-            there were <span className='tooltip-data'>{numeral(payload[0].value).format('0,0')}</span> reported eviction filings.
+            there were <span className='tooltip-data'>{payload[0] && payload[1] ? numeral(payload[0].value).format('0,0') : '?'}</span> reported eviction filings
+          </div>
+          <div>
+            compared to <span className='tooltip-data'>{payload[0] && payload[1] ? numeral(payload[1].value).format('0,0') : numeral(payload[0].value).format('0,0')}</span> for the same duration in 2019.
           </div>
 
         </div>
@@ -158,7 +201,7 @@ const EvictionChart = props => {
         width="90%"
         height="85%"
       >
-        <BarChart
+        <ComposedChart
           className="barChart"
           data={caseData}
           margin={{
@@ -193,10 +236,17 @@ const EvictionChart = props => {
           />
           {/* <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" /> */}
           <Legend />
-          <Bar dataKey="Total Filings" fill="#DC1C13" />
-          {/* <Line dataKey="Total Filings" fill="#DC1C13" /> */}
+          <Bar dataKey="Total Filings 2020" fill="#DC1C13" />
+          <Line 
+            dataKey="Total Filings 2019"
+            strokeWidth={2} 
+            // fill="#DC1C13"
+            // dot={false}
+            // strokeDasharray={'5 5'}
+            // legendType='circle' 
+          />
           {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}
-        </BarChart>
+        </ComposedChart>
       </ResponsiveContainer>
 
       <div className="button-group-container">
