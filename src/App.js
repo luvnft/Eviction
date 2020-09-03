@@ -17,7 +17,7 @@ const App = () => {
     const data = require('./Data/EvictionFilingsByTract.json');
     const data2019 = require('./Data/EvictionFilingsByCounty2019.json');
     const normalizeData = require('./Data/RentHHsByTract.json');
-
+    const countyBoundary = require('./Data/countyboundaries.json');
 
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -28,7 +28,6 @@ const App = () => {
     const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
     const [ vizView, setVizView ] = useState('map');
     const [countyFilter, setCountyFilter] = useState(999);
-    const countyBoundary = require('./Test-data/countyboundaries.json');
     const [modalStatus, setModalStatus] = useState(true);
     const [dateRange, setDateRange] = useState();
       
