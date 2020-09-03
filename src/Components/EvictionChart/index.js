@@ -13,8 +13,11 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Button } from 'semantic-ui-react';
+import CSVExportButton from '../CSVExportButton';
 import moment from 'moment';
 import numeral from 'numeral';
+import Loader from 'react-loader-spinner';
+
 // STYLESHEET
 import './style.css';
 // CSV TEST-DATA IMPORT
@@ -35,6 +38,7 @@ const EvictionChart = props => {
 
   // case data for csv test cases;
   const [caseData, setCaseData] = useState();
+  const [csvData, setCSVData] = useState();
   // const [countyFilter, setCountyFilter] = useState(63);
   const [timeScale, setTimeScale] = useState('weekly');
   // const [selectedCounties, setSelectedCounties] = useState([63]);
@@ -81,7 +85,7 @@ const EvictionChart = props => {
           )
           .map(item => {
             const key = timeScale === 'daily' ? 
-                item['File.Date'] 
+                moment(item['File.Date']).format('M/D') 
               : timeScale === 'weekly' ?
                 moment(item['File.Date']).startOf('week')
               : timeScale === 'monthly' ?
@@ -108,7 +112,7 @@ const EvictionChart = props => {
             .filter(item => new Date(item['File.Date']).getTime() < new Date(moment(props.dateRange.end).subtract(1, 'y').format('M/D/YYYY')).getTime())
             .map(item => {
               const key = item['File.Date'] ? timeScale === 'daily' ? 
-                  item['File.Date'] 
+                  moment(item['File.Date']).format('M/D')
                 : timeScale === 'weekly' ?
                   moment(item['File.Date']).add(1, 'y').startOf('week')
                 : timeScale === 'monthly' ?
@@ -140,10 +144,32 @@ const EvictionChart = props => {
         setCaseData(dataArray);
   };
 
+  const timeLabel = 
+    timeScale === 'weekly' ? 
+    "Week of" 
+    : timeScale === 'monthly' ?
+      "Month"
+      : "Filing Date"
+
+  const handleCSVData = () => 
+
+    caseData ?
+      caseData.map(item => 
+        ({
+          [timeLabel]: moment(item['File.Date']).format(timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'),
+          "Total Filings 2020": item["Total Filings 2020"],
+          "Total Filings 2019" : item["Total Filings 2019"]
+        })
+      ) : null;
+
+
   useEffect(() => handleData(), [props.countyFilter, timeScale]);
+  useEffect(() => setCSVData(handleCSVData()), [caseData]);
+
+  const county = props.counties.find(county => county.value.toString().padStart(3, '0') === props.countyFilter.toString().padStart(3,'0'));
+
 
   const CustomTooltip = ({ active, payload, label }) => {
-    const county = props.counties.find(county => county.value.toString().padStart(3, '0') === props.countyFilter.toString().padStart(3,'0'));
     // console.log(payload);
     const dateInfo = timeScale === 'weekly' ? 
       <div>
@@ -171,17 +197,6 @@ const EvictionChart = props => {
         </div>
     : null;
   }
-  // console.log(`caseData: ${caseData}`);
-
-  // const countyOptions = [
-  //   { key: '999', text: 'All Five Counties', value: 999 },
-  //   { key: '063', text: 'Clayton County', value: 63 },
-  //   { key: '067', text: 'Cobb County', value: 67 },
-  //   { key: '089', text: 'Dekalb County', value: 89 },
-  //   { key: '121', text: 'Fulton County', value: 121 },
-  //   { key: '135', text: 'Gwinnett County', value: 135 },
-
-  // ];
 
   return (
     <>
@@ -195,22 +210,23 @@ const EvictionChart = props => {
         options={countyOptions}
         onChange={(e, data) => setCountyFilter(data.value)}
       /> */}
+      {caseData ?
 
       <ResponsiveContainer
         className="chart-responsive-container"
-        width="90%"
+        width="95%"
         height="85%"
       >
         <ComposedChart
           className="barChart"
           data={caseData}
           margin={{
-            top: 50,
+            top: 30,
             right: 20,
-            left: 0,
+            left: 10,
             bottom: 20,
           }}
-        >
+        > 
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
             dataKey={"File.Date"}
@@ -226,16 +242,7 @@ const EvictionChart = props => {
           {/* <Brush /> */}
           <Tooltip 
             content={ <CustomTooltip />}
-            // labelFormatter={label => {
-            //   const county = props.counties.find(county => county.value === props.countyFilter);
-            //   return timeScale === 'weekly' ? 
-            //     `Between ${moment(label).format('M/D/YY')} and ${moment(label).endOf('week').format('M/D/YY')}, ${county.text}...` 
-            //   : `In ${moment(label).format('MMMM YYYY')}, ${county.text}...`}
-            // }
-            // formatter={(value,name) => [`reporte ${numeral(value).format('0,0')} total eviction filings.`,]}
           />
-          {/* <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" /> */}
-          <Legend />
           <Bar dataKey="Total Filings 2020" fill="#DC1C13" />
           <Line 
             dataKey="Total Filings 2019"
@@ -245,9 +252,18 @@ const EvictionChart = props => {
             // strokeDasharray={'5 5'}
             // legendType='circle' 
           />
-          {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}
+          {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}  
+              <Legend />
+
+
         </ComposedChart>
+        
+
       </ResponsiveContainer>
+       : <div style={{zIndex: '99999', color: '#609580', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center'}}>
+           <Loader id='loader-box' color='#DC1C13' type='Circles' />
+       </div>
+      }
 
       <div className="button-group-container">
         <Button.Group className="button-group">
@@ -267,6 +283,22 @@ const EvictionChart = props => {
           >Monthly</Button>
         </Button.Group>
       </div>
+      {
+            csvData ?
+                <div id={props.smallScreen ? 'chart-data-export-button-mobile' : 'chart-data-export-button'}>
+                    <CSVExportButton
+                        smallScreen={props.smallScreen} 
+                        csvTitle={
+                          `Title: ${timeScale.charAt(0).toUpperCase()}${timeScale.slice(1)} Eviction Filings for ${county.text} as of ${props.dateRange ? moment(props.dateRange.end).format('M/D/YYYY') : null}`
+                          + '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
+                        }
+                        csvFilename={`${timeScale.charAt(0).toUpperCase()}${timeScale.slice(1)}-Eviction-Filings-${county.text.toUpperCase()}`}
+                        data={csvData}
+                        content={'Download Data'}
+                    />
+                </div>
+            : null
+        } 
 
     </>
   );

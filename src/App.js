@@ -14,9 +14,9 @@ const App = () => {
 
     const team = require('./Data/team.json');
     const sources = require('./Data/sources.json');
-    const data = require('./Test-data/EvictionFilingsByTract.json');
-    const data2019 = require('./Test-data/EvictionFilingsByCounty2019.json');
-    const normalizeData = require('./Test-data/RentHHsByTract.json');
+    const data = require('./Data/EvictionFilingsByTract.json');
+    const data2019 = require('./Data/EvictionFilingsByCounty2019.json');
+    const normalizeData = require('./Data/RentHHsByTract.json');
 
 
     const vh = window.innerHeight * 0.01;
@@ -293,14 +293,17 @@ const App = () => {
                             smallScreen={smallScreen}
                             data={data}
                             normalizeData={normalizeData}
+                            dateRange={dateRange}
                             name={'evictionMap'}
                             geojson={geoJSON}
                             boundaryGeoJSON={boundaryGeoJSON}
                             countyFilter={countyFilter}
-                            counties={countyOptions.map(county => county.key)}                          
+                            counties={countyOptions.map(county => county.key)}
+                            countyInfo={countyOptions}                          
                         /> 
                     : vizView === 'chart' && data ?
                     <EvictionChart
+                        smallScreen={smallScreen}
                         dateRange={dateRange}
                         data2019={data2019} 
                         countyFilter={countyFilter}

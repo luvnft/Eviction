@@ -1,9 +1,9 @@
 
 .legend {
     display: grid;
-    grid-template-rows: 10% 15% 75%;
+    grid-template-rows: 10% 15% 60% 10%;
     width: 200px;
-    height: 30vh;
+    height: 35vh;
     z-index: 9999;
     position: fixed;
     bottom: 18vh;
@@ -14,6 +14,14 @@
     text-align: center;
     overflow: auto;
     padding: 10px;
+}
+
+.legend > div > em {
+    font-size: .8em;
+    white-space: wrap;
+    line-height: .5em;;
+
+    /* line-height: 0; */
 }
 
 #symbol-container {
@@ -62,19 +70,31 @@
  font-size: .9em;
 }
 
+#map-data-export-button {
+    position: fixed;
+    bottom: 17vh;
+    z-index: 999999;
+    left: 5%;
+}
+
+
 @media only screen and  (max-width: 850px) {
     .legend {
         font-size: .7rem;
-        grid-template-rows: 11% 19% 70%;
+        grid-template-rows: 10% 16% 60%;
         width: 200px;
-        height: 30vh;
-        padding: 3px;
-        /* z-index: 9999; */
+        height: 35vh;
+        padding: 1em;
         position: fixed;
         bottom: 22vh;
     }
+
+    .legend {
+        font-size: .8em;
+    }
+
     #legend-header > h3 {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 
     .legend-symbol {
@@ -104,7 +124,7 @@
 
     #legend-close-icon {
         position: fixed;
-        bottom: 50vh;
+        bottom: 55vh;
         z-index: 999999;
         right: 194px;
         background-color: black;
@@ -120,5 +140,17 @@
         position: relative;
         left: 2px;
         /* bottom: 1px; */
+    }
+
+    #map-data-export-button {
+        bottom: 28vh;
+        left: 15px;
+        font-size: 2.4em;
+        background-color: white;
+        border-radius: 5px;
+        /* padding: .3em; */
+    }
+    #map-data-export-button > .icon {
+        margin: 0;
     }
 }

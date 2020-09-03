@@ -17,7 +17,7 @@ body {
 
 #info-icon {
     position: fixed;
-    bottom: 16.6vh;
+    bottom: 17vh;
     left: 10px;
     z-index: 999999;
     font-size: 1.5em;
@@ -354,7 +354,7 @@ h5 {
     }
 
     #info-icon {
-        bottom: 21vh;
+        bottom: 22vh;
     }
 
     .tooltip-content {

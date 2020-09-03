@@ -3,6 +3,13 @@
     margin: 2vh auto;
 }
 
+#chart-data-export-button {
+    position: fixed;
+    bottom: 17vh;
+    z-index: 999999;
+    left: 5%;
+}
+
 /* the total chart div */
 /* .BarChart {
     margin: 0 50px 50px 50px;
@@ -16,7 +23,11 @@
 
 /* BUTTON GROUP */
 .button-group-container {
+    z-index: 99999;
     text-align: center; 
+    position: fixed;
+    bottom: 17vh;
+    width: 100%;
 }
 
 /* daily, weekly, monthly buttons */
@@ -26,7 +37,22 @@
 
 @media only screen and  (max-width: 850px) {
     .button-group-container {
-        position: relative;
-        bottom: 2.5vh;
+        
+        /* position: relative; */
+        bottom: 22vh;
+    }
+
+    #chart-data-export-button-mobile {
+        position: fixed;
+        bottom: 22vh;
+        right: 4%;
+        font-size: 2.4em;
+        background-color: white;
+        z-index: 999999;
+        border-radius: 5px;
+        /* padding: .3em; */
+    }
+    #chart-data-export-button > .icon {
+        margin: 0;
     }
 }

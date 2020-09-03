@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import numeral from 'numeral';
 import { Dropdown, Icon } from 'semantic-ui-react';
-
-// import * as turf from '@turf/turf';
+import CSVExportButton from '../CSVExportButton';
 import moment from 'moment';
 import Loader from 'react-loader-spinner';
 import './style.css';
@@ -11,26 +10,16 @@ import './style.css';
 const EvictionMap = props => {
 
     const [legendVisble, setLegendVisible] = useState(true);
-    
     const [tractData, setTractData] = useState();
     const [rawTractData, setRawTractData] = useState();
     const [stats, setStats] = useState();
     const [bins, setBins] = useState();
     const [hoverID, setHoverID] = useState();
-    // const [dateRange, setDateRange] = useState();
-    // const [bounds, setBounds] = useState();
-    const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
-
-    // const countyBoundary = props.boundaryGeoJSON ?
-    //     props.boundaryGeoJSON.features.map(feature =>
-    //         turf.polygonToLine(feature)) : null;
-
-    // console.log(JSON.stringify(props.boundaryGeoJSON));
-   
-
-
+    const [csvData, setCSVData] = useState();
     const [ monthOptions, setMonthOptions ] = useState();
     const [ selectedMonth, setSelectedMonth ] = useState('January')
+
+    const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B",  "#F6BDC0"].reverse();
 
     const getMonthList = () => {
         const monthArray = [];
@@ -91,12 +80,14 @@ const EvictionMap = props => {
         const rawDataObject = {};
         const normalizeData = {};
 
-        props.data
-            // .filter(item =>
-            //     props.countyFilter !== 999 ? 
-            //     props.countyFilter === item['COUNTYFP10'] 
-            //     : true
-            // )
+        
+
+        [...props.data]
+            .filter(item =>
+                props.countyFilter !== 999 && props.countyFilter !== '999' ? 
+                props.countyFilter.toString().padStart(3,'0') === item['COUNTYFP10'].toString().padStart(3,'0')
+                : true
+            )
             .filter(item => 
                 moment(item['File.Date']).format('MMMM') === selectedMonth
             )
@@ -118,6 +109,36 @@ const EvictionMap = props => {
         setTractData(dataObject);
         setRawTractData(rawDataObject);
     };
+
+    const handleCSVData = () => {
+        console.log(props.geojson);
+        const dataArray = 
+            tractData && props.geojson ?
+                props.geojson.features
+                .filter(feature =>
+                    props.countyFilter !== 999 && props.countyFilter !== '999' ? 
+                        feature.properties['GEOID'].slice(2,5) === props.countyFilter.toString().padStart(3, '0') :
+                    props.counties.includes(feature.properties['GEOID'].slice(2,5))                )
+                .filter(feature => 
+                    rawTractData[feature.properties['GEOID']] &&
+                    tractData[feature.properties['GEOID']]
+                )
+                .map(feature =>
+                    ({
+                        "TractID" : feature.properties['GEOID'],
+                        "Month" : `${selectedMonth} 2020`,
+                        "Total Eviction Filings" : rawTractData[feature.properties['GEOID']],
+                        "Eviction Filing Rate" : tractData[feature.properties['GEOID']]
+                    })
+                ) : null;
+        console.log(dataArray);
+        
+        setCSVData(dataArray);
+            // .map(item =>
+                
+            
+            // )
+    }
 
 
     const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
@@ -192,6 +213,7 @@ const EvictionMap = props => {
     };
 
     useEffect(() => { handleData() }, [props.countyFilter, selectedMonth]);
+    useEffect(() => handleCSVData(), [tractData, props.geojson]);
     // useEffect(() => { handleDateRange() }, []);
 
     // console.log(props.boundaryGeoJSON);
@@ -278,7 +300,7 @@ const EvictionMap = props => {
         { legendVisble ?
             <div className='legend'>
                 <div id='legend-header'>
-                    <h3>Eviction Filing Rate</h3>
+                    <h3>Eviction Filing Rate*</h3>
                 </div>
                 <div id='month-selector'>
 
@@ -331,6 +353,9 @@ const EvictionMap = props => {
 
                     </div>
                 </div>
+                <div id='legend-footer'>
+                    *<em>calculated by dividing total filings by the number of renter housholds</em>
+                </div>
 
             </div> : null 
         }
@@ -342,6 +367,25 @@ const EvictionMap = props => {
                     onClick={() => setLegendVisible(true)}
                 />
             </div> : null
+        }
+        {
+            csvData ?
+                <div id='map-data-export-button'>
+                    <CSVExportButton 
+                        smallScreen={props.smallScreen}
+                        csvTitle={
+                            `Title: ${selectedMonth} Eviction Filings by Census Tracts in ${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text} as of ${props.dateRange ? moment(props.dateRange.end).format('M/D/YYYY') : null}`
+                            + '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
+                          }
+                        csvFilename={`Eviction-Filings-by-Census-Tract-${selectedMonth}-2020-${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text}`}
+                        data={csvData}
+                        // data={props.data.filter(item => 
+
+                        // )}
+                        content={'Download Data'}
+                    />
+                </div>
+            : null
         }   
      </>
     )
