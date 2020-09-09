@@ -49,6 +49,7 @@ const EvictionChart = props => {
         // console.log('data: ', data);
         const dataObject = {};
 
+
         // let getDateArray = (start, end) => {
 
         //   let arr = [],
@@ -87,6 +88,7 @@ const EvictionChart = props => {
             const key = timeScale === 'daily' ? 
                 moment(item['Filing Date']).format('M/D') 
               : timeScale === 'weekly' ?
+                // moment(item['Filing Date']).isoWeek()
                 moment(item['Filing Date']).startOf('week')
               : timeScale === 'monthly' ?
                 moment(item['Filing Date']).startOf('month') 
@@ -109,12 +111,12 @@ const EvictionChart = props => {
                 props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
               : true
             )
-            .filter(item => new Date(moment(item['Filing Date']).add(1, 'y').subtract(1, 'd')).getTime() <= new Date(props.dateRange.end).getTime())
             .forEach(item => {
               const key = item['Filing Date'] ? timeScale === 'daily' ? 
                   moment(item['Filing Date']).format('M/D')
                 : timeScale === 'weekly' ?
-                  moment(item['Filing Date']).add(1, 'y').startOf('week')
+                  // moment(item['Filing Date']).isoWeek()
+                  moment(item['Filing Date']).add(1, 'y').subtract(2, 'd').startOf('week')
                 : timeScale === 'monthly' ?
                   moment(item['Filing Date']).add(1, 'y').startOf('month') 
               : null : null;
@@ -131,7 +133,17 @@ const EvictionChart = props => {
         console.log(dataObject);
 
 
-        const dataArray = Object.entries(dataObject).map(([key, value]) =>
+        const dataArray = Object.entries(dataObject)
+        .filter(([key, value]) => 
+          // moment(item['Filing Date']).isoWeek() <= moment(props.dateRange.end).isoWeek()  &&
+          // new Date(item['Filing Date']).getTime() < new Date('12/27/2019').getTime()
+          new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
+        )
+        .filter(([key, value]) => timeScale === 'monthly' && 
+          new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month')).getTime() ?
+          new Date(key).getTime() < new Date(moment(props.dateRange.end).startOf('month')).getTime() : true
+        )
+        .map(([key, value]) =>
           ({
             "Filing Date": key,
             "Total Filings 2020": value.current,

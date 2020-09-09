@@ -10,6 +10,7 @@ mongoose.connect(MONGODB_URI,
     useUnifiedTopology: true
   }
 ); 
+
 db.evictionsbytract
   .remove()
   .then(() => 
