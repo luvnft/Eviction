@@ -1,1 +1,1 @@
-module.exports = {evictiondata: require('./data')}
+module.exports = {evictionsbytract: require('./evictionsbytract')}

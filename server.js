@@ -9,9 +9,10 @@ const mongoose = require('mongoose');
 const routes = require('./routes');
 // const passport = require('passport');
 // const MongoStore = require('connect-mongo')(session);
-// const flash = require('express-flash');
+const flash = require('express-flash');
 const app = express();
 const PORT = process.env.PORT || 3001;
+
 // require('./config/passport');
 
 
@@ -38,7 +39,7 @@ if (process.env.NODE_ENV === 'production') {
 //   store: new MongoStore({ mongooseConnection: mongoose.connection })
 // }));
 
-// app.use(flash());
+app.use(flash());
 
 // // Incorporate PASSPORT
 

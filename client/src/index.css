@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'NotoSansKR-Light';
+    src: local('NotoSansKR-Light'), url(./fonts/Noto_Sans_KR/NotoSansKR-Light.otf) format('truetype');
+}
+
+.leaflet-container {
+    height: 100%;
+    width: 100%;
+  }

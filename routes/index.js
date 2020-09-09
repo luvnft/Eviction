@@ -1,16 +1,8 @@
 const path = require('path');
 const router = require('express').Router();
-// const configRoutes = require('./configs');
-// const manifestRoutes = require('./manifest')
-const dataRoutes = require('./data');
-// const userRoutes = require('./users');
-// const sessoionRoutes = require('./sessions');
-// API Routes
-// router.use('/configs', configRoutes);
-// router.use('/manifest', manifestRoutes);
-router.use('/data', dataRoutes);
-// router.use('/users', userRoutes);
-// router.use('/sessions', sessionRoutes)
+const dataRoutes = require('./evictionsbytract');
+
+router.use('/evictionsbytract', dataRoutes);
 
 // If no API routes are hit, send the React app
 router.use((req, res) => res.sendFile(path.join(__dirname, '../client/build/index.html')));

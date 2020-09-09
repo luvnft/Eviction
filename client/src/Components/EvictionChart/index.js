@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import {
-  BarChart,
+  // BarChart,
   Bar,
+  ComposedChart,
+  Line,
+  // Brush,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
-  Area,
   ResponsiveContainer,
 } from 'recharts';
-import { Dropdown, Button, Container } from 'semantic-ui-react';
-import { csv } from 'd3';
+import { Button } from 'semantic-ui-react';
+import CSVExportButton from '../CSVExportButton';
 import moment from 'moment';
-import API from '../../utils/API';
+import numeral from 'numeral';
+import Loader from 'react-loader-spinner';
+
 // STYLESHEET
 import './style.css';
 // CSV TEST-DATA IMPORT
@@ -21,102 +25,181 @@ import './style.css';
 
 const EvictionChart = props => {
 
+  const sortByDate = (a, b) => {
+    var dateA = new Date(a['Filing Date']).getTime();
+    var dateB = new Date(b['Filing Date']).getTime();
+    return dateA > dateB ? 1 : -1;
+  };  
+
+
     // console.log(props.data);
 
 // function to sort by date;
-    const sortByDate = (a, b) => {
-        var dateA = new Date(a['File.Date']).getTime();
-        var dateB = new Date(b['File.Date']).getTime();
-        return dateA > dateB ? 1 : -1;
-    };
+
   // case data for csv test cases;
   const [caseData, setCaseData] = useState();
-  const [countyFilter, setCountyFilter] = useState(63);
-  const [timeScale, setTimeScale] = useState('daily');
+  const [csvData, setCSVData] = useState();
+  // const [countyFilter, setCountyFilter] = useState(63);
+  const [timeScale, setTimeScale] = useState('weekly');
   // const [selectedCounties, setSelectedCounties] = useState([63]);
-  console.log('countyFilter: ', countyFilter);
-
-  useEffect(() => {
+  // console.log('countyFilter: ', countyFilter);
+  const handleData = () => {
     // csv(csvData)
     //   .then((data) => {
         // console.log('data: ', data);
         const dataObject = {};
 
-        // date array
-        let getDateArray = (start, end) => {
+        // let getDateArray = (start, end) => {
 
-          let arr = new Array(),
-            dt = new Date(start),
-            ed = new Date(end);
+        //   let arr = [],
+        //     dt = new Date(start),
+        //     ed = new Date(end);
 
-          console.log(dt);
+        //   // console.log(dt);
 
-          while (dt <= ed) {
-            arr.push(new Date(dt));
-            dt.setDate(dt.getDate() + 1);
-          }
+        //   while (dt <= ed) {
+        //     arr.push(new Date(dt));
+        //     dt.setDate(dt.getDate() + 1);
+        //   }
 
-          console.log(arr)
+        //   // console.log(arr)
 
-          return arr;
+        //   return arr;
 
-        }
+        // }
 
-        getDateArray("2020-01-01", "2020-08-14").map(date => 
-            timeScale === 'daily' ? 
-              dataObject[moment(date).format('M/D/YY')] = 0
-            : null
-          );
+        // getDateArray("2020-01-01", "2020-08-21").map(date => 
+        //     timeScale === 'daily' ? 
+        //       dataObject[moment(date).format('M/D/YY')] = 0
+        //     : null
+        //   );
         
-        // console.log(props.data);  
-
         props.data
           .sort((a, b) => sortByDate(a, b))
           .filter(item =>
-            countyFilter === item['COUNTYFP10'])
-          .map(item => {
+            props.countyFilter !== 999 && 
+            props.countyFilter !== '999' ? 
+              props.countyFilter === item['COUNTYFP10'] || 
+              props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
+            : true
+          )
+          .forEach(item => {
             const key = timeScale === 'daily' ? 
-                item['File.Date'] 
+                moment(item['Filing Date']).format('M/D') 
               : timeScale === 'weekly' ?
-                moment(item['File.Date']).week() 
+                moment(item['Filing Date']).startOf('week')
               : timeScale === 'monthly' ?
-                moment(item['File.Date']).format('MMM') 
+                moment(item['Filing Date']).startOf('month') 
             : null;
 
-            // item['Count'] !== '' ?
-            dataObject[key] = dataObject[key] ?
-              dataObject[key] + parseFloat(item['Count'])
-              : parseFloat(item['Count']);
+            dataObject[key] = {...dataObject[key]}
+
+            dataObject[key]['current'] = dataObject[key]['current'] ?
+              dataObject[key]['current'] + parseFloat(item['Total Filings'])
+              : parseFloat(item['Total Filings']);
           });
 
-        // console.log(dataObject);
-        // const dataArray = 
+          // console.log(props.dateRange)
+
+          props.data2019
+            .filter(item =>
+              props.countyFilter !== 999 && 
+              props.countyFilter !== '999' ? 
+                props.countyFilter === item['COUNTYFP10'] || 
+                props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
+              : true
+            )
+            .filter(item => new Date(moment(item['Filing Date']).add(1, 'y').subtract(1, 'd')).getTime() <= new Date(props.dateRange.end).getTime())
+            .forEach(item => {
+              const key = item['Filing Date'] ? timeScale === 'daily' ? 
+                  moment(item['Filing Date']).format('M/D')
+                : timeScale === 'weekly' ?
+                  moment(item['Filing Date']).add(1, 'y').startOf('week')
+                : timeScale === 'monthly' ?
+                  moment(item['Filing Date']).add(1, 'y').startOf('month') 
+              : null : null;
+
+              console.log(item);
+
+              dataObject[key] = {...dataObject[key]}
+
+              dataObject[key]['historic'] = dataObject[key]['historic'] ?
+              dataObject[key]['historic'] + parseFloat(item['Total Filings'])
+              : parseFloat(item['Total Filings']);
+            })
+
+        console.log(dataObject);
+
+
         const dataArray = Object.entries(dataObject).map(([key, value]) =>
           ({
-            "File.Date": key,
-            "Count": value
+            "Filing Date": key,
+            "Total Filings 2020": value.current,
+            "Total Filings 2019" : value.historic
           })
         );
-
-        console.log(dataArray);
         setCaseData(dataArray);
-    //   })
-    //   .catch((err) => console.log(err))
-  }, [countyFilter, timeScale]);
+  };
 
-  // console.log(`caseData: ${caseData}`);
+  const timeLabel = 
+    timeScale === 'weekly' ? 
+    "Week of" 
+    : timeScale === 'monthly' ?
+      "Month"
+      : "Filing Date"
 
-  const countyOptions = [
-    { key: '063', text: 'Clayton County', value: 63 },
-    { key: '067', text: 'Cobb County', value: 67 },
-    { key: '089', text: 'Dekalb County', value: 89 },
-    { key: '121', text: 'Fulton County', value: 121 },
-    { key: '135', text: 'Gwinnett County', value: 135 },
-  ];
+  const handleCSVData = () => 
+
+    caseData ?
+      caseData.map(item => 
+        ({
+          [timeLabel]: moment(item['Filing Date']).format(timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'),
+          "Total Filings 2020": item["Total Filings 2020"],
+          "Total Filings 2019" : item["Total Filings 2019"]
+        })
+      ) : null;
+
+  // console.log(csvData);
+
+
+  useEffect(() => handleData(), [props.countyFilter, timeScale, props.data]);
+  useEffect(() => setCSVData(handleCSVData()), [caseData]);
+
+  const county = props.counties.find(county => county.value.toString().padStart(3, '0') === props.countyFilter.toString().padStart(3,'0'));
+
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    // console.log(payload);
+    const dateInfo = timeScale === 'weekly' ? 
+      <div>
+        between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
+      </div> : timeScale === 'monthly' ?
+        <div>
+          in <span className='tooltip-data'>{moment(label).format('MMMM YYYY')}</span>  
+        </div> : timeScale === 'daily' ?
+          <div>
+            on <span className='tooltip-data'>{moment(label).format('dddd, MMMM Do YYYY')}</span>  
+          </div> : null;
+    return active ?
+        <div className='tooltip-content chart-tooltip-content'>
+          <div>
+            In {props.countyFilter === 999 || props.countyFilter === '999' ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span>
+          </div>
+          {dateInfo}
+          <div>
+            there were <span className='tooltip-data'>{payload[0] && payload[1] ? numeral(payload[0].value).format('0,0') : '?'}</span> reported eviction filings
+          </div>
+          <div>
+            compared to <span className='tooltip-data'>{payload[0] && payload[1] ? numeral(payload[1].value).format('0,0') : numeral(payload[0].value).format('0,0')}</span> for the same duration in 2019.
+          </div>
+
+        </div>
+    : null;
+  }
 
   return (
     <>
-      <Dropdown
+      {/* <Dropdown
         className="icon chart-dropdown"
         placeholder="County Options"
         fluid
@@ -125,41 +208,68 @@ const EvictionChart = props => {
         value={countyFilter}
         options={countyOptions}
         onChange={(e, data) => setCountyFilter(data.value)}
-      />
+      /> */}
+      {caseData ?
 
       <ResponsiveContainer
         className="chart-responsive-container"
         width="95%"
         height="85%"
       >
-        <BarChart
+        <ComposedChart
           className="barChart"
           data={caseData}
           margin={{
-            top: 15,
-            right: 30,
-            left: 20,
-            bottom: 10,
+            top: 30,
+            right: 20,
+            left: 10,
+            bottom: 20,
           }}
-        >
+        > 
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="File.Date" />
+          <XAxis 
+            dataKey={"Filing Date"}
+            angle={ timeScale === 'weekly' || timeScale === 'daily' ? -45 : null} 
+            textAnchor={timeScale === 'weekly' || timeScale === 'daily'  ? 'end' : 'middle'}
+            // type={'number'}
+            tickFormatter={tick => timeScale === 'monthly' ? moment(tick).format('MMMM') : moment(tick).format('M/D')}
+          />
           {/* <XAxis dataKey="Month" /> */}
-          <YAxis dataKey="Count"/>
-          <Tooltip />
-          <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          {/* <Legend /> */}
-          <Bar dataKey="Count" stackId="a" fill="#8884d8" />
-          {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}
-        </BarChart>
-      </ResponsiveContainer>
+          <YAxis
+            tickFormatter={tick => numeral(tick).format('0,0')}
+          />
+          {/* <Brush /> */}
+          <Tooltip 
+            content={ <CustomTooltip />}
+          />
+          <Bar dataKey="Total Filings 2020" fill="#DC1C13" />
+          <Line 
+            dataKey="Total Filings 2019"
+            strokeWidth={2} 
+            // fill="#DC1C13"
+            // dot={false}
+            // strokeDasharray={'5 5'}
+            // legendType='circle' 
+          />
+          {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}  
+              <Legend />
 
-      <Container className="button-group-container">
+
+        </ComposedChart>
+        
+
+      </ResponsiveContainer>
+       : <div style={{zIndex: '99999', color: '#609580', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center'}}>
+           <Loader id='loader-box' color='#DC1C13' type='Circles' />
+       </div>
+      }
+
+      <div className="button-group-container">
         <Button.Group className="button-group">
-          <Button 
+          {/* <Button 
             active={timeScale === 'daily' ? true : false}
             onClick={() => setTimeScale('daily')}
-          >Daily</Button>
+          >Daily</Button> */}
           <Button 
             active={timeScale === 'weekly' ? true : false}
             onClick={() => setTimeScale('weekly')}
@@ -171,7 +281,24 @@ const EvictionChart = props => {
 
           >Monthly</Button>
         </Button.Group>
-      </Container>
+      </div>
+      {
+            csvData ?
+                <div id={props.smallScreen ? 'chart-data-export-button-mobile' : 'chart-data-export-button'}>
+                    <CSVExportButton
+                        smallScreen={props.smallScreen} 
+                        csvTitle={
+                          `Title: ${timeScale.charAt(0).toUpperCase()}${timeScale.slice(1)} Eviction Filings for ${county.text} as of ${props.dateRange ? moment(props.dateRange.end).format('M/D/YYYY') : null}`
+                          + '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
+                        }
+                        csvFilename={`${timeScale.charAt(0).toUpperCase()}${timeScale.slice(1)}-Eviction-Filings-${county.text.toUpperCase()}`}
+                        data={csvData}
+                        content={'Download Data'}
+                    />
+                </div>
+            : null
+        } 
+
     </>
   );
 };

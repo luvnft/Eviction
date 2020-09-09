@@ -1,0 +1,31 @@
+[
+    { 
+        "name" : "Fulton County Magistrates, State, and Superior Court Record Search",
+        "url" : "https://publicrecordsaccess.fultoncountyga.gov/Portal",
+        "type" : "Court Record Data"
+    },
+    { 
+        "name" : "DeKalb County - Judicial Information System",
+        "url" : "https://ody.dekalbcountyga.gov/portal",
+        "type" : "Court Record Data"
+    },
+    { 
+        "name" : "Gwinnett County Courts - Tyler Odyssey Portal",
+        "url" : "https://odyssey.gwinnettcourts.com/Portal",
+        "type" : "Court Record Data"
+    },
+    { 
+        "name" : "Xerox CourtConnect Cobb Magistrate Court",
+        "url" : "https://courtconnect.cobbcounty.org:4443/ccmag/ck_public_qry_main.cp_main_idx",
+        "type" : "Court Record Data"
+    },
+    { 
+        "name" : "Clayton County Court Case Inquiry",
+        "url" : "https://weba.co.clayton.ga.us/casinqsvr/htdocs/index.shtml",
+        "type" : "Court Record Data"
+    },
+    {
+        "name" : "US Census Bureau, American Community Survey (ACS), 5-year estimates, 2014-2018",
+        "type" : "Other Data"
+    }
+]

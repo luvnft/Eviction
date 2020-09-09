@@ -6,16 +6,20 @@
     "node": "12.14.1",
     "npm": "6.13.4"
   },
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "axios": "^0.19.2",
     "colormap": "^2.3.1",
     "d3": "^5.16.0",
+    "export-to-csv": "^0.2.1",
     "leaflet": "^1.6.0",
     "moment": "^2.27.0",
     "numeral": "^2.0.6",
     "react": "^16.12.0",
+    "react-annotation": "^2.2.1",
     "react-dom": "^16.12.0",
     "react-leaflet": "^2.7.0",
+    "react-loader-spinner": "^3.1.14",
     "react-scripts": "^2.1.8",
     "recharts": "^1.8.5",
     "semantic-ui-react": "^1.2.0"
