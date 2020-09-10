@@ -23,6 +23,7 @@ csvs
 .env.development.local
 .env.test.local
 .env.production.local
+data/*.json
 
 npm-debug.log*
 yarn-debug.log*

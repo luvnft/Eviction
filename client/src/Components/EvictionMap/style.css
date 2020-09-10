@@ -14,7 +14,14 @@
     text-align: center;
     overflow: auto;
     padding: 10px;
+    
 }
+
+#legend-header > h3 {
+    /* font-size: 1.3rem; */
+    font-family: 'NotoSansKR-Light';
+}
+
 
 .legend > div > em {
     font-size: .8em;
@@ -42,6 +49,8 @@
 
 .legend-label {
     font-size: 1.2em;
+    font-family: 'NotoSansKR-Light';
+
 }
 
 #month-selector {
@@ -54,6 +63,8 @@
     padding: 5px 10px;
     border-radius: 2px;
     color: white;
+    font-family: 'NotoSansKR-Light';
+
 }
 
 #month-selector > .ui.dropdown .menu {
@@ -112,6 +123,7 @@
 
     #legend-header > h3 {
         font-size: 1.3rem;
+        font-family: 'NotoSansKR-Light';
     }
 
     .legend-symbol {

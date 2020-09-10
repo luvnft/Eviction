@@ -5,8 +5,10 @@ import EvictionChart from './Components/EvictionChart';
 import { Dropdown, Button, Icon } from 'semantic-ui-react';
 import moment from 'moment';
 import API from './utils/API.js';
-import ARClogo from './logos/ARC_logo.png';
-import Fedlogo from './logos/FedLogo2.PNG';
+import Loader from 'react-loader-spinner';
+
+// import ARClogo from './logos/ARC_logo.png';
+// import Fedlogo from './logos/FedLogo2.PNG';
 // import CSPAVlogo from './logos/CSPAV_logo.jpg';
 import './App.css';
 // import { get } from 'mongoose';
@@ -234,11 +236,13 @@ const App = () => {
         getEvictionData();
         getTractGeoJSON();
         getContent();
+        setBoundaryGeoJSON(countyBoundary)
         }, []); 
-    useEffect(() => setBoundaryGeoJSON(countyBoundary), []);
+
+    // useEffect(() => setBoundaryGeoJSON(countyBoundary), []);
     // useEffect(() => handleDateRange(), []); 
 
-    return (
+    return content ?
         <div id='eviction-tracker'>
             {
                 modalStatus ? 
@@ -393,7 +397,7 @@ const App = () => {
                         </p>
                     </div>
                 </div>
-                <p>** Current as of {dateRange ? moment(dateRange.end).format('M/D/YYYY'): null}
+                <p>** Current as of {dateRange ? moment(dateRange.end).format('MMMM Do, YYYY'): null}
                 </p>
                 
             </div>
@@ -404,7 +408,10 @@ const App = () => {
                     <Icon name='question circle' size='big'/>
             </div>
         </div>
-    );
+        : <div style={{zIndex: '99999', color: '#DC1C13', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center'}}>
+            <h1>Atlanta Eviction Tracker is Loading...</h1>
+            <Loader id='loader-box' color='#DC1C13' type='Circles' />
+        </div> ;
 }
 
 export default App;

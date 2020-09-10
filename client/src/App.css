@@ -15,6 +15,11 @@ body {
                                   supported by Chrome, Opera and Firefox */
 }
 
+p {
+    font-family: 'NotoSansKR-Light';
+
+}
+
 #info-icon {
     position: fixed;
     bottom: 17vh;
@@ -88,9 +93,12 @@ body {
     font-size: 1.1em;
     margin-top: .2em;
     font-weight: 600;
+    padding-left: .5em;
+
 }
 
 .about-team-member-department {
+    padding-left: .5em;
     font-style: italic;
 }
 
@@ -100,7 +108,7 @@ body {
 }
 .about-team-member-role {
     font-size: 1em;
-    padding-bottom: .3em;
+    padding-bottom: .5em;
     font-style: italic;
 }
 
@@ -112,7 +120,8 @@ body {
 
 .about-team-member-title {
     margin-top: .3em;
-    font-weight: 600;
+    font-weight: 700;
+    padding-left: .5em;
 }
 
 #modal-footer {
@@ -185,6 +194,7 @@ h5 {
     bottom: 0;
     background-color: white;
     height: 15vh;
+
 }
 
 #footer-logos {
@@ -203,6 +213,7 @@ h5 {
 
 #left-logo > img {
     height: 6vh;
+    transform: scale(.7);
 }
 
 #right-logo  > img {
@@ -407,28 +418,37 @@ h5 {
     }
 
     #left-logo > img {
-        height: 4vh;
+        height: 5vh;
+        position: relative;
+        left: -20%;
     }
 
     #modal-content {
         grid-template-rows: 25% 65% 10%;
     }
-
-    
     
     #center-logo > img {
         height: 5vh;
+        position: relative;
+        bottom: 1vh;
+
     }
 
     #left-logo, #center-logo {
         width: 50%;
-        float: left;
-        text-align: right;
+        /* float: ; */
+        /* text-align: right; */
         margin-bottom: .2vh;
     }
 
     #left-logo {
-        text-align: center;
+        float: left;
+        text-align: left;
+    }
+
+    #center-logo {
+        float: right;
+        text-align: right;
     }
     
     #right-logo > p {

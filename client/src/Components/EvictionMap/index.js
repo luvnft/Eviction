@@ -128,7 +128,7 @@ const EvictionMap = props => {
                         "TractID" : feature.properties['GEOID'],
                         "Month" : `${selectedMonth} 2020`,
                         "Total Eviction Filings" : rawTractData[feature.properties['GEOID']],
-                        "Eviction Filing Rate" : tractData[feature.properties['GEOID']]
+                        "Eviction Filing Rate" : Number.parseFloat(tractData[feature.properties['GEOID']] / 100).toPrecision(3)
                     })
                 ) : null;
         console.log(dataArray);
@@ -256,9 +256,9 @@ const EvictionMap = props => {
                     key={'map-layer-' + props.name + props.countyFilter + selectedMonth}
                     data={props.geojson}
                     onAdd={e => e.target.bringToBack()}
-                    onMouseover={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
+                    onMouseover={e => e.layer.feature.properties.GEOID ? setHoverID(e.layer.feature.properties.GEOID) : null}
                     onMouseout={() => setHoverID()}
-                    onMouseDown={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
+                    onClick={e => e.layer.feature.properties.GEOID ? setHoverID(e.layer.feature.properties.GEOID) : setHoverID()}
                     filter={feature => props.countyFilter !== 999 && props.countyFilter !== '999' ? 
                         feature.properties['GEOID'].slice(2,5) === props.countyFilter.toString().padStart(3, '0') :
                         props.counties.includes(feature.properties['GEOID'].slice(2,5))}
@@ -345,7 +345,7 @@ const EvictionMap = props => {
                                 .reverse()
                                 .map(bin =>
                                     <div className='legend-label'>
-                                        {`${numeral(bin.bottom).format('0,0')}% to < ${numeral(bin.top).format('0,0')}%`}
+                                        {`${numeral(bin.bottom).format('0,0')}${bin.bottom === 0 ? '.1' : ''}% to < ${numeral(bin.top).format('0,0')}%`}
                                     </div>
                                 )
                             : null
