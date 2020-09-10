@@ -26,8 +26,8 @@ import './style.css';
 const EvictionChart = props => {
 
   const sortByDate = (a, b) => {
-    var dateA = new Date(a['File.Date']).getTime();
-    var dateB = new Date(b['File.Date']).getTime();
+    var dateA = new Date(a['Filing Date']).getTime();
+    var dateB = new Date(b['Filing Date']).getTime();
     return dateA > dateB ? 1 : -1;
   };  
 
@@ -48,6 +48,7 @@ const EvictionChart = props => {
     //   .then((data) => {
         // console.log('data: ', data);
         const dataObject = {};
+
 
         // let getDateArray = (start, end) => {
 
@@ -83,13 +84,14 @@ const EvictionChart = props => {
               props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
             : true
           )
-          .map(item => {
+          .forEach(item => {
             const key = timeScale === 'daily' ? 
-                moment(item['File.Date']).format('M/D') 
+                moment(item['Filing Date']).format('M/D') 
               : timeScale === 'weekly' ?
-                moment(item['File.Date']).startOf('week')
+                // moment(item['Filing Date']).isoWeek()
+                moment(item['Filing Date']).startOf('week')
               : timeScale === 'monthly' ?
-                moment(item['File.Date']).startOf('month') 
+                moment(item['Filing Date']).startOf('month') 
             : null;
 
             dataObject[key] = {...dataObject[key]}
@@ -109,34 +111,41 @@ const EvictionChart = props => {
                 props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
               : true
             )
-            .filter(item => new Date(item['File.Date']).getTime() < new Date(moment(props.dateRange.end).subtract(1, 'y').format('M/D/YYYY')).getTime())
-            .map(item => {
-              const key = item['File.Date'] ? timeScale === 'daily' ? 
-                  moment(item['File.Date']).format('M/D')
+            .forEach(item => {
+              const key = item['Filing Date'] ? timeScale === 'daily' ? 
+                  moment(item['Filing Date']).format('M/D')
                 : timeScale === 'weekly' ?
-                  moment(item['File.Date']).add(1, 'y').startOf('week')
+                  // moment(item['Filing Date']).isoWeek()
+                  moment(item['Filing Date']).add(1, 'y').subtract(2, 'd').startOf('week')
                 : timeScale === 'monthly' ?
-                  moment(item['File.Date']).add(1, 'y').startOf('month') 
-              : null : null
+                  moment(item['Filing Date']).add(1, 'y').startOf('month') 
+              : null : null;
 
-              // console.log(item['File.Date']);
+              console.log(item);
 
               dataObject[key] = {...dataObject[key]}
 
               dataObject[key]['historic'] = dataObject[key]['historic'] ?
               dataObject[key]['historic'] + parseFloat(item['Total Filings'])
               : parseFloat(item['Total Filings']);
-
-              
-
             })
 
         console.log(dataObject);
 
 
-        const dataArray = Object.entries(dataObject).map(([key, value]) =>
+        const dataArray = Object.entries(dataObject)
+        .filter(([key, value]) => 
+          // moment(item['Filing Date']).isoWeek() <= moment(props.dateRange.end).isoWeek()  &&
+          // new Date(item['Filing Date']).getTime() < new Date('12/27/2019').getTime()
+          new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
+        )
+        .filter(([key, value]) => timeScale === 'monthly' && 
+          new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month')).getTime() ?
+          new Date(key).getTime() < new Date(moment(props.dateRange.end).startOf('month')).getTime() : true
+        )
+        .map(([key, value]) =>
           ({
-            "File.Date": key,
+            "Filing Date": key,
             "Total Filings 2020": value.current,
             "Total Filings 2019" : value.historic
           })
@@ -156,14 +165,16 @@ const EvictionChart = props => {
     caseData ?
       caseData.map(item => 
         ({
-          [timeLabel]: moment(item['File.Date']).format(timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'),
+          [timeLabel]: moment(item['Filing Date']).format(timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'),
           "Total Filings 2020": item["Total Filings 2020"],
           "Total Filings 2019" : item["Total Filings 2019"]
         })
       ) : null;
 
+  // console.log(csvData);
 
-  useEffect(() => handleData(), [props.countyFilter, timeScale]);
+
+  useEffect(() => handleData(), [props.countyFilter, timeScale, props.data]);
   useEffect(() => setCSVData(handleCSVData()), [caseData]);
 
   const county = props.counties.find(county => county.value.toString().padStart(3, '0') === props.countyFilter.toString().padStart(3,'0'));
@@ -229,7 +240,7 @@ const EvictionChart = props => {
         > 
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
-            dataKey={"File.Date"}
+            dataKey={"Filing Date"}
             angle={ timeScale === 'weekly' || timeScale === 'daily' ? -45 : null} 
             textAnchor={timeScale === 'weekly' || timeScale === 'daily'  ? 'end' : 'middle'}
             // type={'number'}

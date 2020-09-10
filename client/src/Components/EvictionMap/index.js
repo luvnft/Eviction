@@ -24,13 +24,13 @@ const EvictionMap = props => {
     const getMonthList = () => {
         const monthArray = [];
         props.data.map(item => 
-            !monthArray.includes(moment(item['File.Date']).format('MMMM')) ? 
-                monthArray.push(moment(item['File.Date']).format('MMMM'))
+            !monthArray.includes(moment(item['Filing Date']).format('MMMM')) ? 
+                monthArray.push(moment(item['Filing Date']).format('MMMM'))
             : null
         );
-        const monthOptionsArray = monthArray.map(month =>
+        const monthOptionsArray = monthArray.map((month,i) =>
             ({
-                text: `${month} ${2020}`,
+                text: `${month} ${2020}${i === monthArray.length - 1 ? '**' : ''}`,
                 value: month,
                 key: month
             })
@@ -89,7 +89,7 @@ const EvictionMap = props => {
                 : true
             )
             .filter(item => 
-                moment(item['File.Date']).format('MMMM') === selectedMonth
+                moment(item['Filing Date']).format('MMMM') === selectedMonth
             )
             .map(item =>
                 rawDataObject[item['tractID']] = rawDataObject[item['tractID']] ?
@@ -128,7 +128,7 @@ const EvictionMap = props => {
                         "TractID" : feature.properties['GEOID'],
                         "Month" : `${selectedMonth} 2020`,
                         "Total Eviction Filings" : rawTractData[feature.properties['GEOID']],
-                        "Eviction Filing Rate" : tractData[feature.properties['GEOID']]
+                        "Eviction Filing Rate" : Number.parseFloat(tractData[feature.properties['GEOID']] / 100).toPrecision(3)
                     })
                 ) : null;
         console.log(dataArray);
@@ -172,7 +172,7 @@ const EvictionMap = props => {
     const CustomTooltip = () => (
         <div className='tooltip-content'>
         <div>
-            In <span className='tooltip-data'>{selectedMonth} 2020</span>
+            In <span className='tooltip-data'>{monthOptions.find(month => month.value === selectedMonth).text}</span>
             {/* between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span> */}
         </div>
         <div>
@@ -256,9 +256,9 @@ const EvictionMap = props => {
                     key={'map-layer-' + props.name + props.countyFilter + selectedMonth}
                     data={props.geojson}
                     onAdd={e => e.target.bringToBack()}
-                    onMouseover={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
+                    onMouseover={e => e.layer.feature.properties.GEOID ? setHoverID(e.layer.feature.properties.GEOID) : null}
                     onMouseout={() => setHoverID()}
-                    onMouseDown={e => e.layer.feature ? setHoverID(e.layer.feature.properties.GEOID) : null}
+                    onClick={e => e.layer.feature.properties.GEOID ? setHoverID(e.layer.feature.properties.GEOID) : setHoverID()}
                     filter={feature => props.countyFilter !== 999 && props.countyFilter !== '999' ? 
                         feature.properties['GEOID'].slice(2,5) === props.countyFilter.toString().padStart(3, '0') :
                         props.counties.includes(feature.properties['GEOID'].slice(2,5))}
@@ -345,7 +345,7 @@ const EvictionMap = props => {
                                 .reverse()
                                 .map(bin =>
                                     <div className='legend-label'>
-                                        {`${numeral(bin.bottom).format('0,0')}% to < ${numeral(bin.top).format('0,0')}%`}
+                                        {`${numeral(bin.bottom).format('0,0')}${bin.bottom === 0 ? '.1' : ''}% to < ${numeral(bin.top).format('0,0')}%`}
                                     </div>
                                 )
                             : null
@@ -354,7 +354,7 @@ const EvictionMap = props => {
                     </div>
                 </div>
                 <div id='legend-footer'>
-                    *<em>calculated by dividing total filings by the number of renter housholds</em>
+                    <p><span>*</span>calculated by dividing total filings by the number of renter housholds</p>
                 </div>
 
             </div> : null 
