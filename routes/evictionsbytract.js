@@ -1,12 +1,12 @@
 const router = require("express").Router();
-const dataController = require("../controllers/dataController");
+const evictionDataController = require("../controllers/evictionDataController");
 
 
 router
 .route("/")
-.get(dataController.findAll)
-.put(dataController.update)
-.post(dataController.create);
+.get(evictionDataController.findAll)
+.put(evictionDataController.update)
+.post(evictionDataController.create);
 
 
 

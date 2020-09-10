@@ -154,6 +154,11 @@ body {
     padding-left: 2em;
 }
 
+.about-content-resource-note {
+    padding: .5em ;
+    font-size: .9em;
+}
+
 h5 {
     padding: 0;
     margin: 0;
@@ -402,7 +407,7 @@ h5 {
     }
 
     #left-logo > img {
-        height: 5vh;
+        height: 4vh;
     }
 
     #modal-content {
@@ -418,6 +423,7 @@ h5 {
     #left-logo, #center-logo {
         width: 50%;
         float: left;
+        text-align: right;
         margin-bottom: .2vh;
     }
 

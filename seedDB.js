@@ -1,9 +1,12 @@
 require('dotenv').config();
 const mongoose = require("mongoose");
 const db = require("./models");
-const evictionsByTractSeed = require('./seed/Data/EvictionFilingsByTract.json');
 const MONGODB_URI = process.env.MONGODB_URI;
+const evictionsByTractSeed = require('./seed/Data/EvictionFilingsByTract.json');
 const evictionsByTract = evictionsByTractSeed;
+const contentSeed = require('./seed/Data/content.json');
+const content = contentSeed;
+
 
 mongoose.connect(MONGODB_URI,
   { useNewUrlParser: true,
@@ -11,10 +14,10 @@ mongoose.connect(MONGODB_URI,
   }
 ); 
 
-db.evictionsbytract
+db.content
   .remove()
   .then(() => 
-  db.evictionsbytract.insertMany(evictionsByTract))
+  db.content.insertMany(content))
     .then(data => {
       console.log(data.length + " records inserted!");
       process.exit(0);
@@ -23,3 +26,16 @@ db.evictionsbytract
       console.error(err);
       process.exit(1);
     });
+
+// db.evictionsbytract
+//   .remove()
+//   .then(() => 
+//   db.evictionsbytract.insertMany(evictionsByTract))
+//     .then(data => {
+//       console.log(data.length + " records inserted!");
+//       process.exit(0);
+//     })
+//     .catch(err => {
+//       console.error(err);
+//       process.exit(1);
+//     });

@@ -12,9 +12,6 @@ import './App.css';
 // import { get } from 'mongoose';
 
 const App = () => {
-
-    const team = require('./Data/team.json');
-    const sources = require('./Data/sources.json');
     // const data = require('./Data/EvictionFilingsByTract.json');
     const data2019 = require('./Data/EvictionFilingsByCounty2019.json');
     const normalizeData = require('./Data/RentHHsByTract.json');
@@ -27,6 +24,7 @@ const App = () => {
 
     const [ geoJSON, setGeoJSON ] = useState();
     const [ boundaryGeoJSON, setBoundaryGeoJSON ] = useState();
+    const [ content, setContent ] = useState();
     const [ data, setData ] = useState();
     const [ vizView, setVizView ] = useState('map');
     const [countyFilter, setCountyFilter] = useState(999);
@@ -67,16 +65,28 @@ const App = () => {
                 setData(res.data);
                 handleDateRange(res.data);
             })
-            .catch(err => console.error(err))
+            .catch(err => console.error(err));
+
+    const getContent = () => 
+        API.getData('./content')
+            .then(res => {
+                setContent(res.data[0]);
+                // handleDateRange(res.data);
+            })
+            .catch(err => console.error(err));
+    
 
 
     const AboutContent = {
         Mission: () => (
             <div className='about-content-section'>
                 <h2 className='about-content-section-heading'>Mission</h2>
-                <p>
-                    The purpose of this project is to leverage the complementary technological skill, expertise, and organizational resources of the partnering organizations to create a database of eviction filings with the purpose of informing and improving the ability of Metro Atlanta policymakers, Non-government Organizations, service providers, tenant organizers, and government entities to understand and respond to eviction-related housing instability, particularly in the context of the COVID-19 pandemic. In addtion, the intent of this project is to provide access to eviction filings data for research, practice, and policy purposes beyond the immediate threat of COVID-19. This partnership behind this project will collectively work to create the technology necessary to assemble the database of filings and make the filing information available to stakeholders in an understandable, accessible, secure, and responsible manner.
-                </p>
+                {
+                    content.mission.map(item =>
+                        <p>{item}</p>
+                    )
+                }
+
             </div>
         ),
         Team: () => (
@@ -85,7 +95,7 @@ const App = () => {
                 <div id='about-team'>
                     <div className='team-member-grid-row'>
                         {
-                            team.map(member =>
+                            content.team.map(member =>
                                 member.name ?
                                     <div className='about-team-member'>
                                         <div className='about-team-member-role'>
@@ -123,12 +133,11 @@ const App = () => {
         Data: () => (
             <div className='about-content-section'>
                 <h2 className='about-content-section-heading'>About The Data</h2>
-                <p>
-                    This data captures formal evictions activity in the metro Atlanta area as it is reflected in county court websites. This data does NOT reflect the number of rental households that undergo forced moves. Research has found that forced moves due to illegal evictions and informal evictions are far larger than the number of tenants displaced through the legal, formal eviction process. While eviction or dispossessory filings are evidence of housing instability, and constitute a negative event for tenants in and of themselves, they are not equivalent to displacement of a tenant. It is difficult to know whether a tenant leaves during a formal eviction process or at what stage of the process this occurs. Eviction filings initiate the process of eviction and are distinct from a "writ of possession" which grants a landlord the legal right to remove a tenant.
-                </p>
-                <p>
-                    This data is parsed once a week from magistrate’s courts in Clayton, Cobb, DeKalb, Fulton and Gwinnett counties.  Once the evictions case data is captured, each case is geocoded based on the defendant's address and the case events are analyzed to identify associated actions. Due to misssing, incorrect, or difficult to parse addresses, approximately 1% of all filings are excluded from mapped totals.  Analysis of case actions is done with an algorithm that is under development. For this reason, estimates of these actions are currently not included in the aggregated data presented in this tool.  These estimates will, however, likely be included in future versions once the algorithm is complete and sufficiently validated.  Additionally, due to improvements in the handling of parsing errors and the occasional lag in filings being entered into courts' online systems, counts will sometimes differ from those previously reported.
-                </p>
+                {
+                    content.aboutdata.map(item =>
+                        <p>{item}</p>
+                    )
+                }
 
             </div>        
         ),
@@ -136,9 +145,9 @@ const App = () => {
             <div className='about-content-section'>
             <h2 className='about-content-section-heading'>{sourceProps.type} Sources</h2>
             <ul id='about-content-source-list'>
-            {
-                sources ?
-                    sources
+                {
+                
+                    content.sources
                         .filter(source => source.type === sourceProps.type)
                         .map((source, i) =>
                         <li className={'about-content-section-source'}>
@@ -167,11 +176,46 @@ const App = () => {
                             }
                         </li>
                     )
-                : null
-            }
+                }
             </ul>
 
         </div>
+        ),
+        Resources: () => (
+            <div className='about-content-section'>
+            <h2 className='about-content-section-heading'>Resources</h2>
+            <ul id='about-content-source-list'>
+                {
+                    content.resources.map((resource, i) =>
+                        <li className={'about-content-section-source'}>
+                            {resource.name} 
+                            { 
+                                resource.url ? 
+                                    <a 
+                                        key={`source-link-${i}`}    
+                                        href={resource.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer" 
+                                    >
+                                        <Icon key={`source-link-icon-${i}`} name='external alternate'/>
+                                    </a>
+                               : null
+                            }
+                            {
+                                resource.note ?
+                                    <p className='about-content-resource-note'>
+                                        <em>{resource.note}</em>
+                                        
+                                    </p>
+
+                                : null
+                            }
+                        </li>
+                    )
+                }
+                </ul>
+
+            </div>
         )
     }
 
@@ -186,8 +230,11 @@ const App = () => {
       ];
 
     
-    useEffect(() => getEvictionData(), []); 
-    useEffect(() => getTractGeoJSON(), []);
+    useEffect(() => {
+        getEvictionData();
+        getTractGeoJSON();
+        getContent();
+        }, []); 
     useEffect(() => setBoundaryGeoJSON(countyBoundary), []);
     // useEffect(() => handleDateRange(), []); 
 
@@ -206,15 +253,20 @@ const App = () => {
                                     EVICTION TRACKER
                                 </h1>                                
                             </div>
-
-                            <div id='modal-body'>
-                                <AboutContent.Mission />
-                                <AboutContent.Data />
-                                <AboutContent.Team />
-                                <AboutContent.Sources type={'Court Record Data'} />
-                                <AboutContent.Sources type={'Other Data'} />
-                                
-                            </div>
+                            
+                                <div id='modal-body'>
+                                    { content ?
+                                    <>
+                                        <AboutContent.Mission />
+                                        <AboutContent.Data />
+                                        <AboutContent.Team />
+                                        <AboutContent.Sources type={'Court Record Data'} />
+                                        <AboutContent.Sources type={'Other Data'} />
+                                        <AboutContent.Resources />
+                                    </>
+                                    : null
+                                    }
+                                </div> 
                             <div id='modal-footer'>
                                 <Button onClick={() => setModalStatus(false)}>OK</Button>
                             </div>
@@ -325,10 +377,10 @@ const App = () => {
                 <div id='footer-text'>Developed by</div>
                 <div id='footer-logos'>
                     <div id='left-logo'>
-                    <img src={Fedlogo} alt='Fed-logo'/>
+                    <img src={'https://www.frbatlanta.org/~/media/Images/frba_line_logo.png'} alt='Fed-logo'/>
                     </div>
                     <div id='center-logo'>
-                    <img src={ARClogo} alt='ARC-logo'/>
+                    <img src={'https://atlantaregional.org/wp-content/uploads/arc-logo-webinar.png'} alt='ARC-logo'/>
                     </div>
                     <div id='right-logo'>
                     {/* <img src={CSPAVlogo} alt='CSPAV-logo'/> */}
@@ -341,7 +393,7 @@ const App = () => {
                         </p>
                     </div>
                 </div>
-                <p>Current as of {dateRange ? moment(dateRange.end).format('M/D/YYYY'): null}
+                <p>** Current as of {dateRange ? moment(dateRange.end).format('M/D/YYYY'): null}
                 </p>
                 
             </div>

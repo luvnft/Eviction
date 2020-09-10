@@ -1,8 +1,11 @@
 const path = require('path');
 const router = require('express').Router();
-const dataRoutes = require('./evictionsbytract');
+const evictionDataRoutes = require('./evictionsbytract');
+const contentRoutes = require('./content')
 
-router.use('/evictionsbytract', dataRoutes);
+
+router.use('/evictionsbytract', evictionDataRoutes);
+router.use('/content', contentRoutes);
 
 // If no API routes are hit, send the React app
 router.use((req, res) => res.sendFile(path.join(__dirname, '../client/build/index.html')));

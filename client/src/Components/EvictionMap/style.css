@@ -1,7 +1,7 @@
 
 .legend {
     display: grid;
-    grid-template-rows: 10% 15% 60% 10%;
+    grid-template-rows: 10% 15% 65% 5%;
     width: 200px;
     height: 35vh;
     z-index: 9999;
@@ -77,11 +77,28 @@
     left: 5%;
 }
 
+#legend-footer {
+    /* text-align: lcenteft; */
+    padding: 0 1em 0 1em;
+}
+
+#legend-footer > p {
+    line-height: 1em;
+    font-size: .8em;
+}
+
+#legend-footer > p > span {
+    font-size: 2em;
+    line-height: .1em;
+    position: relative;
+    top: .4em
+}
+
 
 @media only screen and  (max-width: 850px) {
     .legend {
         font-size: .7rem;
-        grid-template-rows: 10% 16% 60%;
+        grid-template-rows: 10% 16% 65%;
         width: 200px;
         height: 35vh;
         padding: 1em;
