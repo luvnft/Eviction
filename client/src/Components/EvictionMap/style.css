@@ -112,7 +112,7 @@
         grid-template-rows: 10% 16% 65%;
         width: 200px;
         height: 35vh;
-        padding: 1em;
+        padding: .5em;
         position: fixed;
         bottom: 22vh;
     }
@@ -122,7 +122,7 @@
     }
 
     #legend-header > h3 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         font-family: 'NotoSansKR-Light';
     }
 
