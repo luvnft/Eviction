@@ -18,7 +18,7 @@ const CSVExportButton = props => {
     Object.values(props.data)
     : null;
 
-    console.log(props.data);
+    // console.log(props.data);
         
   
 

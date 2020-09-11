@@ -111,7 +111,7 @@ const EvictionMap = props => {
     };
 
     const handleCSVData = () => {
-        console.log(props.geojson);
+        // console.log(props.geojson);
         const dataArray = 
             tractData && props.geojson ?
                 props.geojson.features
@@ -131,7 +131,7 @@ const EvictionMap = props => {
                         "Eviction Filing Rate" : Number.parseFloat(tractData[feature.properties['GEOID']] / 100).toPrecision(3)
                     })
                 ) : null;
-        console.log(dataArray);
+        // console.log(dataArray);
         
         setCSVData(dataArray);
             // .map(item =>
@@ -139,7 +139,6 @@ const EvictionMap = props => {
             
             // )
     }
-
 
     const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
     const countyBounds = {
@@ -334,7 +333,11 @@ const EvictionMap = props => {
                             [...colors]
                                 .reverse()    
                                 .map(color =>
-                                    <div className='legend-symbol' style={{backgroundColor: color}}/>
+                                    <div
+                                        key={`legend-symbol-${color}`}
+                                        className='legend-symbol' 
+                                        style={{backgroundColor: color}}
+                                    />
                                 )
                         }                        
                     </div>
@@ -344,7 +347,9 @@ const EvictionMap = props => {
                                 [...bins]
                                 .reverse()
                                 .map(bin =>
-                                    <div className='legend-label'>
+                                    <div 
+                                        key={`legend-label-${bin.bottom}-to-${bin.top}`}
+                                        className='legend-label'>
                                         {`${numeral(bin.bottom).format('0,0')}${bin.bottom === 0 ? '.1' : ''}% to < ${numeral(bin.top).format('0,0')}%`}
                                     </div>
                                 )

@@ -121,7 +121,7 @@ const EvictionChart = props => {
                   moment(item['Filing Date']).add(1, 'y').startOf('month') 
               : null : null;
 
-              console.log(item);
+              // console.log(item);
 
               dataObject[key] = {...dataObject[key]}
 
@@ -130,7 +130,7 @@ const EvictionChart = props => {
               : parseFloat(item['Total Filings']);
             })
 
-        console.log(dataObject);
+        // console.log(dataObject);
 
 
         const dataArray = Object.entries(dataObject)
@@ -271,8 +271,9 @@ const EvictionChart = props => {
         
 
       </ResponsiveContainer>
-       : <div style={{zIndex: '99999', color: '#609580', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center'}}>
-           <Loader id='loader-box' color='#DC1C13' type='Circles' />
+       : <div style={{zIndex: '99999', color: '#DC1C13', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center'}}>
+          <h1>Chart is Loading...</h1>
+          <Loader id='loader-box' color='#DC1C13' type='Circles' />
        </div>
       }
 

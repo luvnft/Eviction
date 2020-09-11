@@ -77,15 +77,13 @@ const App = () => {
             })
             .catch(err => console.error(err));
     
-
-
     const AboutContent = {
         Mission: () => (
             <div className='about-content-section'>
                 <h2 className='about-content-section-heading'>Mission</h2>
                 {
-                    content.mission.map(item =>
-                        <p>{item}</p>
+                    content.mission.map((item, i) =>
+                        <p key={`mission-p-${i}`}>{item}</p>
                     )
                 }
 
@@ -97,9 +95,11 @@ const App = () => {
                 <div id='about-team'>
                     <div className='team-member-grid-row'>
                         {
-                            content.team.map(member =>
+                            content.team.map((member, i) =>
                                 member.name ?
-                                    <div className='about-team-member'>
+                                    <div 
+                                        key={`member-${i}`}
+                                        className='about-team-member'>
                                         <div className='about-team-member-role'>
                                             {member.role}
                                         </div> 
@@ -107,8 +107,10 @@ const App = () => {
                                             {member.name}
                                         </div>
                                     {
-                                        member.info.map(info =>
-                                            <div className='about-team-member-info'>
+                                        member.info.map((info,i) =>
+                                            <div 
+                                                key={`member-info-${i}`}
+                                                className='about-team-member-info'>
                                                 {info.title ? 
                                                     <div className='about-team-member-title'>
                                                         {info.title}
@@ -136,8 +138,8 @@ const App = () => {
             <div className='about-content-section'>
                 <h2 className='about-content-section-heading'>About The Data</h2>
                 {
-                    content.aboutdata.map(item =>
-                        <p>{item}</p>
+                    content.aboutdata.map((item, i) =>
+                        <p key={`about-data-p-${i}`}>{item}</p>
                     )
                 }
 
@@ -152,7 +154,7 @@ const App = () => {
                     content.sources
                         .filter(source => source.type === sourceProps.type)
                         .map((source, i) =>
-                        <li className={'about-content-section-source'}>
+                        <li key={`source-${i}`} className={'about-content-section-source'}>
                             {source.name} 
                             { 
                                 source.url ? 
@@ -189,12 +191,12 @@ const App = () => {
             <ul id='about-content-source-list'>
                 {
                     content.resources.map((resource, i) =>
-                        <li className={'about-content-section-source'}>
+                        <li key={`resource-${i}`} className={'about-content-section-source'}>
                             {resource.name} 
                             { 
                                 resource.url ? 
                                     <a 
-                                        key={`source-link-${i}`}    
+                                        key={`resource-link-${i}`}    
                                         href={resource.url}
                                         target="_blank"
                                         rel="noopener noreferrer" 
@@ -218,6 +220,31 @@ const App = () => {
                 </ul>
 
             </div>
+        ),
+        DataRequest: () => (
+            <div className='about-content-section'>
+            <h2 className='about-content-section-heading'>Data Requests</h2>
+                <p>
+                    If you or your oraganization would like access to data at a level of aggregation or format not available via the "Download Data" button on the tool, you will need to submit a formal request.  Click the button below to begin the request process.  
+                </p>
+                <p>
+                    <a 
+                        key={`data-request-link`}    
+                        href={'https://forms.gle/XUxEp5MgSEcen5Pb9'}
+                        target="_blank"
+                        rel="noopener noreferrer" 
+                    >
+                        <Button
+                            // basic
+                        >
+                            Begin Data Request
+                        </Button>
+                    </a>
+                    
+                </p>
+
+            </div>
+
         )
     }
 
@@ -238,9 +265,6 @@ const App = () => {
         getContent();
         setBoundaryGeoJSON(countyBoundary)
         }, []); 
-
-    // useEffect(() => setBoundaryGeoJSON(countyBoundary), []);
-    // useEffect(() => handleDateRange(), []); 
 
     return content ?
         <div id='eviction-tracker'>
@@ -267,8 +291,12 @@ const App = () => {
                                         <AboutContent.Sources type={'Court Record Data'} />
                                         <AboutContent.Sources type={'Other Data'} />
                                         <AboutContent.Resources />
+                                        <AboutContent.DataRequest />
                                     </>
-                                    : null
+                                    : <div style={{zIndex: '99999', color: '#DC1C13', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center'}}>
+                                        <h1>Loading...</h1>
+                                    <Loader id='loader-box' color='#DC1C13' type='Circles' />
+                                    </div>
                                     }
                                 </div> 
                             <div id='modal-footer'>
@@ -280,12 +308,9 @@ const App = () => {
                 : null
             }
             <div id='header'>
-
                 <h1>ATLANTA REGION EVICTION TRACKER</h1>
                 <div id='county-dropdown-container'>
-
                 { smallScreen ?
-
                     <select value={countyFilter} 
                         onChange={e => setCountyFilter(e.target.value)}
                     >
@@ -295,12 +320,9 @@ const App = () => {
                                 {county.text}</option>    
                         ) : null}
                     </select> :
-
                     <Dropdown
-                        // className="icon chart-dropdown"
                         placeholder="Filter by County"
                         fluid
-                        // multiple
                         selection
                         value={countyFilter}
                         options={countyOptions}
@@ -308,21 +330,7 @@ const App = () => {
                     /> 
                 }               
                 </div>
-
                 <div id='viz-toggle'>
-                    {/* <Button.Group className="button-group">
-                        <Button 
-                            active={vizView === 'map' ? true : false}
-                            onClick={() => setVizView('map')}
-                        ><h3>
-                            Map
-                        </h3></Button>
-                        <Button 
-                            active={vizView === 'chart' ? true : false}
-                            onClick={() => setVizView('chart')}
-
-                        >Chart</Button>
-                    </Button.Group> */}
                     <div
                         className='viz-tab' 
                         id={vizView === 'map' ? 'active-viz-tab' : null}
@@ -337,18 +345,7 @@ const App = () => {
 
                     >
                         <h3>CHART</h3>
-                        
                     </div>                  
-
-                    {/* MAP 
-                    <Radio
-                        style={{
-                            margin: '0 5px 0 5px'
-                        }} 
-                        toggle 
-                        checked={vizView !== 'map'} 
-                        onChange={() => setVizView(vizView === 'map' ? 'chart' : 'map')} /> 
-                    CHART */}
                 </div>
                 
             </div>
@@ -374,7 +371,11 @@ const App = () => {
                         data2019={data2019} 
                         countyFilter={countyFilter}
                         data={data}
-                        counties={countyOptions}/> : null
+                        counties={countyOptions}/> 
+                    : <div style={{zIndex: '99999', color: '#DC1C13', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center'}}>
+                        <h1>{ vizView === 'map' ? 'Map is' : 'Chart is'} Loading...</h1>
+                        <Loader id='loader-box' color='#DC1C13' type='Circles' />
+                    </div>
                 }
             </div>
             <div id='footer'>
