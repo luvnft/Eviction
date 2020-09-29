@@ -6,7 +6,8 @@ const contentSchema = new Schema({
     aboutdata : {type: Array, required: true},
     sources : {type: Array, required: true},
     resources : {type: Array, required: true},
-    team : {type: Array, required: true}
+    team : {type: Array, required: true},
+    alert: {type: Array, required: true}
 });
 
 const content = mongoose.model('content', contentSchema);

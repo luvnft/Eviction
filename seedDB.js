@@ -2,9 +2,9 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 const db = require("./models");
 const MONGODB_URI = process.env.MONGODB_URI;
-const evictionsByTractSeed = require('./seed/Data/EvictionFilingsByTract.json');
+const evictionsByTractSeed = require('./Data/EvictionFilingsByTract.json');
 const evictionsByTract = evictionsByTractSeed;
-const contentSeed = require('./seed/Data/content.json');
+const contentSeed = require('./Data/content.json');
 const content = contentSeed;
 
 

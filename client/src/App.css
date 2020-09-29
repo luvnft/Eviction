@@ -143,6 +143,15 @@ p {
     padding: 0 2em 0 1em;
 }
 
+#alert {
+  text-align: center;
+  background-color: lightgrey;
+  margin: 2em;
+  padding: 2em;
+  border-radius: 10px;
+  font-size: 1em;
+}
+
 .about-content-section-source {
     font-size: 1.1em;
     margin-bottom: 1em;
