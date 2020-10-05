@@ -7,7 +7,8 @@ const contentSchema = new Schema({
     sources : {type: Array, required: true},
     resources : {type: Array, required: true},
     team : {type: Array, required: true},
-    alert: {type: Array, required: true}
+    alert: {type: Array, required: true},
+    config: {type: Object}
 });
 
 const content = mongoose.model('content', contentSchema);

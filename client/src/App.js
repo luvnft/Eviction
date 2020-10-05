@@ -374,6 +374,7 @@ const App = () => {
               countyFilter={countyFilter}
               counties={countyOptions.map(county => county.key)}
               countyInfo={countyOptions}
+              exclude={ content.config ? content.config.exclude : null}
             />
             : vizView === 'chart' && data ?
               <EvictionChart
@@ -409,7 +410,7 @@ const App = () => {
                         </p>
           </div>
         </div>
-        <p>** Current as of {dateRange ? moment(dateRange.end).format('MMMM Do, YYYY') : null}
+        <p>Current as of {dateRange ? moment(dateRange.end).format('MMMM Do, YYYY') : null}
         </p>
 
       </div>
