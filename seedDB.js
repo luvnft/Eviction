@@ -14,23 +14,10 @@ mongoose.connect(MONGODB_URI,
   }
 ); 
 
-db.content
-  .remove()
-  .then(() => 
-  db.content.insertMany(content))
-    .then(data => {
-      console.log(data.length + " records inserted!");
-      process.exit(0);
-    })
-    .catch(err => {
-      console.error(err);
-      process.exit(1);
-    });
-
-// db.evictionsbytract
+// db.content
 //   .remove()
 //   .then(() => 
-//   db.evictionsbytract.insertMany(evictionsByTract))
+//   db.content.insertMany(content))
 //     .then(data => {
 //       console.log(data.length + " records inserted!");
 //       process.exit(0);
@@ -39,3 +26,16 @@ db.content
 //       console.error(err);
 //       process.exit(1);
 //     });
+
+db.evictionsbytract
+  .remove()
+  .then(() => 
+  db.evictionsbytract.insertMany(evictionsByTract))
+    .then(data => {
+      console.log(data.length + " records inserted!");
+      process.exit(0);
+    })
+    .catch(err => {
+      console.error(err);
+      process.exit(1);
+    });

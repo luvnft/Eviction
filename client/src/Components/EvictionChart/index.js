@@ -32,7 +32,6 @@ const EvictionChart = props => {
   };  
 
 
-    // console.log(props.data);
 
 // function to sort by date;
 
@@ -208,6 +207,14 @@ const EvictionChart = props => {
         </div>
     : null;
   }
+  console.log(caseData);
+
+  const CustomLegendText = (value, entry) => {
+    console.log(value, entry)
+    return <span style={{fontSize: '14px'}}>{value}</span>
+  }
+// const CustomTick = obj => <em>{moment(obj.tick).format('M/D')}</em>
+
 
   return (
     <>
@@ -233,9 +240,9 @@ const EvictionChart = props => {
           data={caseData}
           margin={{
             top: 30,
-            right: 20,
+            right: props.smallScreen ? 30 : 20,
             left: 10,
-            bottom: 20,
+            bottom: 30,
           }}
         > 
           <CartesianGrid strokeDasharray="3 3" />
@@ -243,8 +250,16 @@ const EvictionChart = props => {
             dataKey={"Filing Date"}
             angle={ timeScale === 'weekly' || timeScale === 'daily' ? -45 : null} 
             textAnchor={timeScale === 'weekly' || timeScale === 'daily'  ? 'end' : 'middle'}
+            // scale={'time'}
             // type={'number'}
-            tickFormatter={tick => timeScale === 'monthly' ? moment(tick).format('MMMM') : moment(tick).format('M/D')}
+            minTickGap={!props.smallScreen ? -5 : null}
+            tick={{fontSize: props.smallScreen ? 10 : null}}
+            tickFormatter={tick => 
+              timeScale === 'monthly' ? 
+                moment(tick).format(props.smallScreen ? 'MMM' : 'MMMM') 
+              // : <CustomTick />
+                : moment(tick).format('M/D')
+            }
           />
           {/* <XAxis dataKey="Month" /> */}
           <YAxis
@@ -264,8 +279,13 @@ const EvictionChart = props => {
             // legendType='circle' 
           />
           {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}  
-              <Legend />
-
+          <Legend 
+            formatter={(value,entry) =>
+              props.smallScreen ?
+                <span style={{fontSize: '14px'}}>{value}</span> 
+              : value
+            }
+          />
 
         </ComposedChart>
         
