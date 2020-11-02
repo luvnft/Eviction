@@ -28,7 +28,7 @@ const App = () => {
   const [boundaryGeoJSON, setBoundaryGeoJSON] = useState();
   const [content, setContent] = useState();
   const [data, setData] = useState();
-  const [vizView, setVizView] = useState('map');
+  const [vizView, setVizView] = useState('chart');
   const [countyFilter, setCountyFilter] = useState(999);
   const [modalStatus, setModalStatus] = useState(true);
   const [dateRange, setDateRange] = useState();
@@ -376,7 +376,7 @@ const App = () => {
               countyInfo={countyOptions}
               exclude={ content.config ? content.config.exclude : null}
             />
-            : vizView === 'chart' && data ?
+            : vizView === 'chart' && data && dateRange ?
               <EvictionChart
                 smallScreen={smallScreen}
                 dateRange={dateRange}

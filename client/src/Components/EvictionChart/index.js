@@ -138,10 +138,10 @@ const EvictionChart = props => {
           // new Date(item['Filing Date']).getTime() < new Date('12/27/2019').getTime()
           new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
         )
-        .filter(([key, value]) => timeScale === 'monthly' && 
-          new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month')).getTime() ?
-          new Date(key).getTime() < new Date(moment(props.dateRange.end).startOf('month')).getTime() : true
-        )
+        // .filter(([key, value]) => timeScale === 'monthly' && 
+        //   new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month')).getTime() ?
+        //   new Date(key).getTime() < new Date(moment(props.dateRange.end).startOf('month')).getTime() : true
+        // )
         .map(([key, value]) =>
           ({
             "Filing Date": key,
@@ -207,12 +207,12 @@ const EvictionChart = props => {
         </div>
     : null;
   }
-  console.log(caseData);
+  // console.log(caseData);
 
-  const CustomLegendText = (value, entry) => {
-    console.log(value, entry)
-    return <span style={{fontSize: '14px'}}>{value}</span>
-  }
+  // const CustomLegendText = (value, entry) => {
+  //   console.log(value, entry)
+  //   return <span style={{fontSize: '14px'}}>{value}</span>
+  // }
 // const CustomTick = obj => <em>{moment(obj.tick).format('M/D')}</em>
 
 

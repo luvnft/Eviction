@@ -30,15 +30,16 @@ const EvictionMap = props => {
     );
     const monthOptionsArray =
       monthArray
-        .filter((month, i) => i < monthArray.length - 1)
+        .filter((month, i) => i < monthArray.length)
         .map((month, i) =>
           ({
-            text: `${month} ${2020}${i === monthArray.length - 1 ? '**' : ''}`,
+            text: month,
             value: month,
             key: month
           })
         );
     setMonthOptions(monthOptionsArray);
+    setSelectedMonth(monthOptionsArray[monthOptionsArray.length - 1].value)
   }
 
   // Create function to setStats({max: value, min: value, range: value})
