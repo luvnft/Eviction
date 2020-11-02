@@ -33,7 +33,7 @@ const EvictionMap = props => {
         .filter((month, i) => i < monthArray.length)
         .map((month, i) =>
           ({
-            text: month,
+            text: `${month} 2020`,
             value: month,
             key: month
           })
@@ -183,7 +183,7 @@ const EvictionMap = props => {
   const CustomTooltip = () => (
     <div className='tooltip-content'>
       <div>
-        In <span className='tooltip-data'>{monthOptions.find(month => month.value === selectedMonth).text}</span>
+        In <span className='tooltip-data'>{monthOptions.find(month => month.value === selectedMonth).text} 2020</span>
         {/* between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span> */}
       </div>
       <div>
