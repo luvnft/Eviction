@@ -406,7 +406,7 @@ const App = () => {
               School of City and Regional Planning (SCaRP) and
                         </p>
             <p className='partner-names'>
-              Center for Spatial Analysis and Visualization (CSPAV)
+              Center for Spatial Planning Analytics and Visualization (CSPAV)
                         </p>
           </div>
         </div>
