@@ -381,7 +381,7 @@ const EvictionMap = props => {
 
           </div>
           <div id='legend-footer'>
-            <p><span>*</span>calculated by dividing total filings by the number of renter housholds</p>
+            <p><span>*</span>calculated by dividing total filings by the number of renter-occupied housing units</p>
           </div>
 
         </div> : null
