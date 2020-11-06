@@ -90,7 +90,7 @@
 
 #legend-footer {
     /* text-align: lcenteft; */
-    padding: 0 1em 0 1em;
+    padding: 0 .5em 0 .5em;
 }
 
 #legend-footer > p {
@@ -99,10 +99,11 @@
 }
 
 #legend-footer > p > span {
-    font-size: 2em;
+    font-size: 1.9em;
     line-height: .1em;
     position: relative;
-    top: .4em
+    top: .4em;
+    right: .1em;
 }
 
 
