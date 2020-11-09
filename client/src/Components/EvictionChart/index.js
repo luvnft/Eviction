@@ -43,37 +43,8 @@ const EvictionChart = props => {
   // const [selectedCounties, setSelectedCounties] = useState([63]);
   // console.log('countyFilter: ', countyFilter);
   const handleData = () => {
-    // csv(csvData)
-    //   .then((data) => {
-        // console.log('data: ', data);
         const dataObject = {};
 
-
-        // let getDateArray = (start, end) => {
-
-        //   let arr = [],
-        //     dt = new Date(start),
-        //     ed = new Date(end);
-
-        //   // console.log(dt);
-
-        //   while (dt <= ed) {
-        //     arr.push(new Date(dt));
-        //     dt.setDate(dt.getDate() + 1);
-        //   }
-
-        //   // console.log(arr)
-
-        //   return arr;
-
-        // }
-
-        // getDateArray("2020-01-01", "2020-08-21").map(date => 
-        //     timeScale === 'daily' ? 
-        //       dataObject[moment(date).format('M/D/YY')] = 0
-        //     : null
-        //   );
-        
         props.data
           .sort((a, b) => sortByDate(a, b))
           .filter(item =>
@@ -134,14 +105,12 @@ const EvictionChart = props => {
 
         const dataArray = Object.entries(dataObject)
         .filter(([key, value]) => 
-          // moment(item['Filing Date']).isoWeek() <= moment(props.dateRange.end).isoWeek()  &&
-          // new Date(item['Filing Date']).getTime() < new Date('12/27/2019').getTime()
           new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
         )
-        // .filter(([key, value]) => timeScale === 'monthly' && 
-        //   new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month')).getTime() ?
-        //   new Date(key).getTime() < new Date(moment(props.dateRange.end).startOf('month')).getTime() : true
-        // )
+        .filter(([key, value]) => timeScale === 'monthly' && 
+          new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month')).getTime() ?
+          new Date(key).getTime() < new Date(moment(props.dateRange.end).startOf('month')).getTime() : true
+        )
         .map(([key, value]) =>
           ({
             "Filing Date": key,
