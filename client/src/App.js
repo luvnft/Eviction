@@ -251,6 +251,31 @@ const App = () => {
 
       </div>
 
+    ),
+    Citations: () => (
+      <div className='about-content-section'>
+        <h2 className='about-content-section-heading'>Citation</h2>
+        <p>
+          Any use of data downloaded from this site or reference to this work must be accompanied by one of the following citations.
+        </p>
+          {
+            content.citations.map((citation, i) => 
+            <div className='about-content-citation'>
+              <h3 className='about-content-citation-type'>
+                {citation.type}:
+              </h3>
+              <div className='about-content-citation-text'>
+                <span>{citation.authors} </span>
+                <span><em>{citation.title}</em>. </span>
+                <span>{citation.publisher}, {citation.year}, </span>
+                <span>{citation.url}.</span>
+              </div>
+            </div>
+            
+          )
+          }
+
+      </div>
     )
   }
 
@@ -302,6 +327,7 @@ const App = () => {
                     <AboutContent.Sources type={'Court Record Data'} />
                     <AboutContent.Sources type={'Other Data'} />
                     <AboutContent.Resources />
+                    <AboutContent.Citations />
                     <AboutContent.DataRequest />
                   </>
                   : <div style={{ zIndex: '99999', color: '#DC1C13', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center' }}>

@@ -6,13 +6,6 @@ body {
     font-family: 'NotoSansKR-Light';
     top: 0;
     overflow: hidden;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Opera and Firefox */
 }
 
 p {
@@ -143,6 +136,22 @@ p {
     padding: 0 2em 0 1em;
 }
 
+.about-content-citation {
+  padding-left: 1em;
+  margin-bottom: 1.5em;
+}
+
+.about-content-citation-type {
+  color: #4B7A90;
+  margin: 0 0 .2em 0;
+}
+
+.about-content-citation-text {
+  background-color: rgba(211, 211, 211, 0.418);
+  border-radius: 10px;
+  padding: 1em;
+}
+
 #alert {
   text-align: center;
   background-color: lightgrey;
@@ -248,6 +257,14 @@ h5 {
 #viz-box {
     /* padding: 10px auto; */
     width: 100%;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+
     /* background-color: rgb(255, 255, 255); */
 }
 
