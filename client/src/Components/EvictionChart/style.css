@@ -10,18 +10,11 @@
     left: 5%;
 }
 
-/* the total chart div */
-/* .BarChart {
-    margin: 0 50px 50px 50px;
-} */
-
-/* icons displaying wether the case is open or closed */
 .recharts-legend-item {
     font-size: large;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
-/* BUTTON GROUP */
 .button-group-container {
     z-index: 99999;
     text-align: center; 
@@ -30,15 +23,12 @@
     width: 100%;
 }
 
-/* daily, weekly, monthly buttons */
 .ui.buttons .button {
     margin: 0 2px 0 2px;
 }
 
 @media only screen and  (max-width: 850px) {
     .button-group-container {
-        
-        /* position: relative; */
         bottom: 22vh;
     }
 
@@ -50,8 +40,8 @@
         background-color: white;
         z-index: 999999;
         border-radius: 5px;
-        /* padding: .3em; */
     }
+    
     #chart-data-export-button > .icon {
         margin: 0;
     }

@@ -37,13 +37,11 @@ const App = () => {
 
     const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='Tract' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
 
-    // `https://opendata.arcgis.com/datasets/2e73cc4a02a441ba968e6a63a8b526f5_56.geojson`;
-
-
     API.getData(url)
       .then(res => setGeoJSON(res.data))
       .catch(err => console.error(err))
   };
+
 
   const handleDateRange = data => {
 
@@ -61,13 +59,13 @@ const App = () => {
     setDateRange({ start: startDate, end: endDate });
   }
 
-  const getEvictionData = () =>
-    API.getData('./evictionsbytract')
-      .then(res => {
-        setData(res.data);
-        handleDateRange(res.data);
-      })
-      .catch(err => console.error(err));
+  // const getEvictionData = () =>
+  //   API.getData('./evictionsbytract')
+  //     .then(res => {
+  //       setData(res.data);
+  //       handleDateRange(res.data);
+  //     })
+  //     .catch(err => console.error(err));
 
   const getContent = () =>
     API.getData('./content')
@@ -76,6 +74,53 @@ const App = () => {
         // handleDateRange(res.data);
       })
       .catch(err => console.error(err));
+  
+  const getEvictionData = () => {
+    const array = [];
+    API.getData('http://evictions.design.gatech.edu/rest/atlanta_metro_area_tracts?select=id,filedate,tractid,countyfp10,totalfilings')
+    .then(res => {
+      res.data
+      .filter(item => 
+        new Date(item.filedate).getTime() >= 
+        new Date('1/1/2020').getTime()
+      )
+      .forEach(item => array.push({
+          "Filing Date": item.filedate,
+          "tractID": parseInt(item.tractid),
+          "COUNTYFP10": parseInt(item.countyfp10),
+          "Total Filings": parseInt(item.totalfilings)    
+      }));
+      API.getData('http://evictions.design.gatech.edu/rest/fulton_county_cases')
+      .then(res => {
+        const object = {}
+        res.data
+        .filter(item => 
+          new Date(item.filedate).getTime() > 
+          new Date('9/18/2020').getTime()
+        )
+        .forEach(item => 
+          object[item.filedate]
+            ? object[item.filedate] = {
+              ...object[item.filedate],
+              "Total Filings" : object[item.filedate]['Total Filings'] + 1
+            }
+            : object[item.filedate] = {
+              "Filing Date" : item.filedate,
+              "tractID" : 9999999,
+              "COUNTYFP10" : 121,
+              "Total Filings" : 1
+            }
+        );
+        Object.values(object).forEach(item => array.push(item))
+        // console.log(array);
+        setData(array);
+        handleDateRange(array);
+
+      })
+      .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+  }
 
   const AboutContent = {
     Alert: () => (
@@ -289,7 +334,6 @@ const App = () => {
 
   ];
 
-
   useEffect(() => {
     getEvictionData();
     getTractGeoJSON();
@@ -307,7 +351,7 @@ const App = () => {
                 <div id='welcome'>Welcome to the</div>
                 <h1>
                   ATLANTA REGION
-                                </h1>
+                </h1>
                 <h1>
                   EVICTION TRACKER
                                 </h1>

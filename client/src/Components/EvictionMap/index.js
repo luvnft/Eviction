@@ -21,11 +21,19 @@ const EvictionMap = props => {
 
   const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B", "#F6BDC0"].reverse();
 
+  const sortByDate = (a, b) => {
+    var dateA = new Date(a['Filing Date']).getTime();
+    var dateB = new Date(b['Filing Date']).getTime();
+    return dateA > dateB ? 1 : -1;
+  }; 
+
   const getMonthList = () => {
     const monthArray = [];
-    props.data.map(item =>
-      !monthArray.includes(moment(item['Filing Date']).format('MMMM')) ?
-        monthArray.push(moment(item['Filing Date']).format('MMMM'))
+    props.data
+    .sort((a, b) => sortByDate(a, b))
+    .map(item =>
+      !monthArray.includes(moment(item['Filing Date']).format('MMMM YYYY')) ?
+        monthArray.push(moment(item['Filing Date']).format('MMMM YYYY'))
         : null
     );
     const monthOptionsArray =
@@ -33,7 +41,7 @@ const EvictionMap = props => {
         .filter((month, i) => i < monthArray.length - 1)
         .map((month, i) =>
           ({
-            text: `${month} 2020`,
+            text: `${month}`,
             value: month,
             key: month
           })
@@ -93,7 +101,7 @@ const EvictionMap = props => {
           : true
       )
       .filter(item =>
-        moment(item['Filing Date']).format('MMMM') === selectedMonth
+        moment(item['Filing Date']).format('MMMM YYYY') === selectedMonth
       )
       .filter(item => 
         props.exclude ?
@@ -138,7 +146,7 @@ const EvictionMap = props => {
           .map(feature =>
             ({
               "TractID": feature.properties['GEOID'],
-              "Month": `${selectedMonth} 2020`,
+              "Month": `${selectedMonth}`,
               "Total Eviction Filings": rawTractData[feature.properties['GEOID']],
               "Eviction Filing Rate": Number.parseFloat(tractData[feature.properties['GEOID']] / 100).toPrecision(3)
             })

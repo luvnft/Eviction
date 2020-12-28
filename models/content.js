@@ -8,7 +8,8 @@ const contentSchema = new Schema({
     resources : {type: Array, required: true},
     team : {type: Array, required: true},
     alert: {type: Array, required: true},
-    config: {type: Object}
+    config: {type: Object},
+    citations: {type: Array, required: true}
 });
 
 const content = mongoose.model('content', contentSchema);

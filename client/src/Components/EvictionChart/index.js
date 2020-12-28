@@ -31,17 +31,10 @@ const EvictionChart = props => {
     return dateA > dateB ? 1 : -1;
   };  
 
-
-
-// function to sort by date;
-
-  // case data for csv test cases;
   const [caseData, setCaseData] = useState();
   const [csvData, setCSVData] = useState();
-  // const [countyFilter, setCountyFilter] = useState(63);
   const [timeScale, setTimeScale] = useState('weekly');
-  // const [selectedCounties, setSelectedCounties] = useState([63]);
-  // console.log('countyFilter: ', countyFilter);
+  
   const handleData = () => {
         const dataObject = {};
 
@@ -66,22 +59,20 @@ const EvictionChart = props => {
 
             dataObject[key] = {...dataObject[key]}
 
-            dataObject[key]['current'] = dataObject[key]['current'] ?
-              dataObject[key]['current'] + parseFloat(item['Total Filings'])
+            dataObject[key]['current'] = dataObject[key]['current'] 
+              ? dataObject[key]['current'] + parseFloat(item['Total Filings'])
               : parseFloat(item['Total Filings']);
           });
 
-          // console.log(props.dateRange)
-
-          props.data2019
-            .filter(item =>
-              props.countyFilter !== 999 && 
-              props.countyFilter !== '999' ? 
-                props.countyFilter === item['COUNTYFP10'] || 
-                props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
-              : true
-            )
-            .forEach(item => {
+        props.data2019
+          .filter(item =>
+            props.countyFilter !== 999 && 
+            props.countyFilter !== '999' ? 
+              props.countyFilter === item['COUNTYFP10'] || 
+              props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
+            : true
+          )
+          .forEach(item => {
               const key = item['Filing Date'] ? timeScale === 'daily' ? 
                   moment(item['Filing Date']).format('M/D')
                 : timeScale === 'weekly' ?
@@ -100,9 +91,6 @@ const EvictionChart = props => {
               : parseFloat(item['Total Filings']);
             })
 
-        // console.log(dataObject);
-
-
         const dataArray = Object.entries(dataObject)
         .filter(([key, value]) => 
           new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
@@ -114,7 +102,7 @@ const EvictionChart = props => {
         .map(([key, value]) =>
           ({
             "Filing Date": key,
-            "Total Filings 2020": value.current,
+            "Total Filings": value.current,
             "Total Filings 2019" : value.historic
           })
         );
@@ -134,7 +122,7 @@ const EvictionChart = props => {
       caseData.map(item => 
         ({
           [timeLabel]: moment(item['Filing Date']).format(timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'),
-          "Total Filings 2020": item["Total Filings 2020"],
+          "Total Filings": item["Total Filings"],
           "Total Filings 2019" : item["Total Filings 2019"]
         })
       ) : null;
@@ -217,17 +205,27 @@ const EvictionChart = props => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
             dataKey={"Filing Date"}
-            angle={ timeScale === 'weekly' || timeScale === 'daily' ? -45 : null} 
-            textAnchor={timeScale === 'weekly' || timeScale === 'daily'  ? 'end' : 'middle'}
+            angle={ timeScale === 'weekly' || 
+              timeScale === 'daily' ||
+              props.smallScreen
+                ? -45 
+                : null
+            } 
+            textAnchor={timeScale === 'weekly' || 
+              timeScale === 'daily' ||
+              props.smallScreen
+                ? 'end' 
+                : 'middle'
+            }
             // scale={'time'}
             // type={'number'}
             minTickGap={!props.smallScreen ? -5 : null}
-            tick={{fontSize: props.smallScreen ? 10 : null}}
+            tick={{fontSize: props.smallScreen ? 10 : 12}}
             tickFormatter={tick => 
               timeScale === 'monthly' ? 
-                moment(tick).format(props.smallScreen ? 'MMM' : 'MMMM') 
+                moment(tick).format(props.smallScreen ? 'MMM YYYY' : 'MMMM YYYY') 
               // : <CustomTick />
-                : moment(tick).format('M/D')
+                : moment(tick).format('M/D/YY')
             }
           />
           {/* <XAxis dataKey="Month" /> */}
@@ -238,7 +236,7 @@ const EvictionChart = props => {
           <Tooltip 
             content={ <CustomTooltip />}
           />
-          <Bar dataKey="Total Filings 2020" fill="#DC1C13" />
+          <Bar dataKey="Total Filings" fill="#DC1C13" />
           <Line 
             dataKey="Total Filings 2019"
             strokeWidth={2} 
