@@ -59,13 +59,13 @@ const App = () => {
     setDateRange({ start: startDate, end: endDate });
   }
 
-  const getEvictionDataBackup = () =>
-    API.getData('./evictionsbytract')
-      .then(res => {
-        setData(res.data);
-        handleDateRange(res.data);
-      })
-      .catch(err => console.error(err));
+  // const getEvictionDataBackup = () =>
+  //   API.getData('./evictionsbytract')
+  //     .then(res => {
+  //       setData(res.data);
+  //       handleDateRange(res.data);
+  //     })
+  //     .catch(err => console.error(err));
 
   const getContent = () =>
     API.getData('./content')
@@ -77,7 +77,7 @@ const App = () => {
   
   const getEvictionData = () => {
     const array = [];
-    API.getData('http://evictions.design.gatech.edu/rest/atlanta_metro_area_tracts?select=id,filedate,tractid,countyfp10,totalfilings')
+    API.getData('https://evictions.design.gatech.edu/rest/atlanta_metro_area_tracts?select=id,filedate,tractid,countyfp10,totalfilings')
     .then(res => {
       res.data
       .filter(item => 
@@ -90,7 +90,7 @@ const App = () => {
           "COUNTYFP10": parseInt(item.countyfp10),
           "Total Filings": parseInt(item.totalfilings)    
       }));
-      API.getData('http://evictions.design.gatech.edu/rest/fulton_county_cases')
+      API.getData('https://evictions.design.gatech.edu/rest/fulton_county_cases')
       .then(res => {
         const object = {}
         res.data
@@ -119,12 +119,12 @@ const App = () => {
       })
       .catch(err => {
         console.error(err);
-        getEvictionDataBackup();
+        // getEvictionDataBackup();
       });
     })
     .catch(err => {
       console.error(err);
-      getEvictionDataBackup();
+      // getEvictionDataBackup();
     });
   }
 
