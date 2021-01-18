@@ -49,7 +49,7 @@ const EvictionChart = props => {
           )
           .forEach(item => {
             const key = timeScale === 'daily' ? 
-                moment(item['Filing Date']).format('M/D') 
+                moment(item['Filing Date']).format('M/D/YY') 
               : timeScale === 'weekly' ?
                 // moment(item['Filing Date']).isoWeek()
                 moment(item['Filing Date']).startOf('week')
@@ -74,7 +74,7 @@ const EvictionChart = props => {
           )
           .forEach(item => {
               const key = item['Filing Date'] ? timeScale === 'daily' ? 
-                  moment(item['Filing Date']).format('M/D')
+                  moment(item['Filing Date']).format('M/D/YY')
                 : timeScale === 'weekly' ?
                   // moment(item['Filing Date']).isoWeek()
                   moment(item['Filing Date']).add(1, 'y').subtract(2, 'd').startOf('week')
@@ -91,7 +91,36 @@ const EvictionChart = props => {
               : parseFloat(item['Total Filings']);
             })
 
-        const dataArray = Object.entries(dataObject)
+        props.data2019
+          .filter(item =>
+            props.countyFilter !== 999 && 
+            props.countyFilter !== '999' ? 
+              props.countyFilter === item['COUNTYFP10'] || 
+              props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
+            : true
+          )
+          .forEach(item => {
+              const key = item['Filing Date'] ? timeScale === 'daily' ? 
+                  moment(item['Filing Date']).format('M/D/YY')
+                : timeScale === 'weekly' ?
+                  // moment(item['Filing Date']).isoWeek()
+                  moment(item['Filing Date']).add(2, 'y').subtract(4, 'd').startOf('week')
+                : timeScale === 'monthly' ?
+                  moment(item['Filing Date']).add(2, 'y').startOf('month') 
+              : null : null;
+
+            // console.log(item);
+
+            dataObject[key] = {...dataObject[key]}
+
+            dataObject[key]['historic'] = dataObject[key]['historic'] ?
+            dataObject[key]['historic'] + parseFloat(item['Total Filings'])
+            : parseFloat(item['Total Filings']);
+          })
+
+
+        
+            const dataArray = Object.entries(dataObject)
         .filter(([key, value]) => 
           new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
         )
