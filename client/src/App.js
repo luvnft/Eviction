@@ -6,23 +6,15 @@ import { Dropdown, Button, Icon } from 'semantic-ui-react';
 import moment from 'moment';
 import API from './utils/API.js';
 import Loader from 'react-loader-spinner';
-
-// import ARClogo from './logos/ARC_logo.png';
-// import Fedlogo from './logos/FedLogo2.PNG';
-// import CSPAVlogo from './logos/CSPAV_logo.jpg';
 import './App.css';
-// import { get } from 'mongoose';
 
 const App = () => {
-  // const data = require('./Data/EvictionFilingsByTract.json');
+
   const data2019 = require('./Data/EvictionFilingsByCounty2019.json');
   const normalizeData = require('./Data/RentHHsByTract.json');
   const countyBoundary = require('./Data/countyboundaries.json');
-
   const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
   const smallScreen = window.innerWidth < 850
-
 
   const [geoJSON, setGeoJSON] = useState();
   const [boundaryGeoJSON, setBoundaryGeoJSON] = useState();
@@ -33,6 +25,8 @@ const App = () => {
   const [modalStatus, setModalStatus] = useState(true);
   const [dateRange, setDateRange] = useState();
 
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+
   const getTractGeoJSON = () => {
 
     const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='Tract' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
@@ -41,7 +35,6 @@ const App = () => {
       .then(res => setGeoJSON(res.data))
       .catch(err => console.error(err))
   };
-
 
   const handleDateRange = data => {
 
@@ -52,8 +45,6 @@ const App = () => {
     };
     const dateArray = new Set([...data.map(item => item['Filing Date'])]);
     const sortedDates = [...dateArray].sort((a, b) => sortByDate(a, b))
-    // console.log(dateArray);
-    // console.log(sortedDates);
     const startDate = sortedDates[0];
     const endDate = sortedDates[sortedDates.length - 1];
     setDateRange({ start: startDate, end: endDate });
@@ -69,63 +60,57 @@ const App = () => {
 
   const getContent = () =>
     API.getData('./content')
-      .then(res => {
-        setContent(res.data[0]);
-        // handleDateRange(res.data);
-      })
+      .then(res => setContent(res.data[0]))
       .catch(err => console.error(err));
   
   const getEvictionData = () => {
     const array = [];
     API.getData('https://evictions.design.gatech.edu/rest/atlanta_metro_area_tracts?select=id,filedate,tractid,countyfp10,totalfilings')
-    .then(res => {
-      res.data
-      .filter(item => 
+      .then(res => {
+        res.data
+          .filter(item => 
         new Date(item.filedate).getTime() >= 
-        new Date('1/1/2020').getTime()
+        new Date('1/1/2020').getTime() &&
+        new Date(item.filedate).getTime() <
+        new Date('1/17/2021').getTime()
       )
-      .forEach(item => array.push({
+      .forEach(item => 
+        array.push({
           "Filing Date": item.filedate,
           "tractID": parseInt(item.tractid),
           "COUNTYFP10": parseInt(item.countyfp10),
           "Total Filings": parseInt(item.totalfilings)    
-      }));
+      })) ;
       API.getData('https://evictions.design.gatech.edu/rest/fulton_county_cases')
-      .then(res => {
-        const object = {}
-        res.data
-        .filter(item => 
-          new Date(item.filedate).getTime() > 
-          new Date('9/18/2020').getTime()
-        )
-        .forEach(item => 
-          object[item.filedate]
-            ? object[item.filedate] = {
-              ...object[item.filedate],
-              "Total Filings" : object[item.filedate]['Total Filings'] + 1
-            }
-            : object[item.filedate] = {
-              "Filing Date" : item.filedate,
-              "tractID" : 9999999,
-              "COUNTYFP10" : 121,
-              "Total Filings" : 1
-            }
-        );
-        Object.values(object).forEach(item => array.push(item))
-        // console.log(array);
-        setData(array);
-        handleDateRange(array);
-
-      })
-      .catch(err => {
-        console.error(err);
-        // getEvictionDataBackup();
-      });
+        .then(res => {
+          const object = {}
+          res.data
+          .filter(item => 
+            new Date(item.filedate).getTime() > 
+            new Date('9/18/2020').getTime() &&
+            new Date(item.filedate).getTime() <
+            new Date('1/17/2021').getTime()
+          )
+          .forEach(item => 
+            object[item.filedate]
+              ? object[item.filedate] = {
+                ...object[item.filedate],
+                "Total Filings" : object[item.filedate]['Total Filings'] + 1
+              }
+              : object[item.filedate] = {
+                "Filing Date" : item.filedate,
+                "tractID" : 9999999,
+                "COUNTYFP10" : 121,
+                "Total Filings" : 1
+              }
+          );
+          Object.values(object).forEach(item => array.push(item))
+          setData(array);
+          handleDateRange(array);
+        })
+        .catch(err => console.error(err));
     })
-    .catch(err => {
-      console.error(err);
-      // getEvictionDataBackup();
-    });
+      .catch(err => console.error(err));
   }
 
   const AboutContent = {
