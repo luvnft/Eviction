@@ -80,7 +80,10 @@ const App = () => {
           "tractID": parseInt(item.tractid),
           "COUNTYFP10": parseInt(item.countyfp10),
           "Total Filings": parseInt(item.totalfilings)    
-      })) ;
+      }));
+      setData(array);
+      handleDateRange(array);
+
       // API.getData('https://evictions.design.gatech.edu/rest/fulton_county_cases')
       //   .then(res => {
       //     const object = {}
@@ -105,10 +108,9 @@ const App = () => {
       //         }
       //     );
       //     Object.values(object).forEach(item => array.push(item))
-      //     setData(array);
-      //     handleDateRange(array);
       //   })
       //   .catch(err => console.error(err));
+
     })
       .catch(err => console.error(err));
   }
