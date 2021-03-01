@@ -118,15 +118,14 @@ const EvictionChart = props => {
             : parseFloat(item['Total Filings']);
           })
 
-
-        
-            const dataArray = Object.entries(dataObject)
+      const dataArray = Object.entries(dataObject)
         .filter(([key, value]) => 
           new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
         )
-        .filter(([key, value]) => timeScale === 'monthly' && 
-          new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month')).getTime() ?
-          new Date(key).getTime() < new Date(moment(props.dateRange.end).startOf('month')).getTime() : true
+        .filter(([key, value]) => timeScale === 'monthly' &&
+          new Date(props.dateRange.end).getTime() <= new Date(moment(props.dateRange.end).endOf('month').subtract({days: 2})).getTime() ?
+        // new Date(props.dateRange.end).getTime() <= new Date(moment(props.dateRange.end).endOf('month')).getTime() ?
+          new Date(key).getTime() <= new Date(moment(props.dateRange.end).startOf('month')).getTime() : true
         )
         .map(([key, value]) =>
           ({
