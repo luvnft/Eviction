@@ -70,9 +70,9 @@ const App = () => {
         res.data
           .filter(item => 
         new Date(item.filedate).getTime() >= 
-        new Date('1/1/2020').getTime()
-        // new Date(item.filedate).getTime() <
-        // new Date('1/17/2021').getTime()
+        new Date('1/1/2020').getTime() &&
+        new Date(item.filedate).getTime() <=
+        new Date('2/28/2021').getTime()
       )
       .forEach(item => 
         array.push({
