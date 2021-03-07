@@ -217,6 +217,8 @@ h5 {
 
 #footer-logos {
     display: grid;
+    /* flex-direction: row;
+    justify-content: space-evenly ; */
     grid-template-columns: 40% 20% 40%;
     width: 100%;
 }
@@ -231,7 +233,8 @@ h5 {
 
 #left-logo > img {
     height: 6vh;
-    transform: scale(.7);
+    /* width: 100%; */
+    transform: scale(.4);
 }
 
 #right-logo  > img {
@@ -442,11 +445,17 @@ h5 {
     .viz-tab > h3 {
         line-height: 5vh;
     }
+    #footer-logos {
+      display: inline-block;
+      margin: 0;
+      transform: scale(.8);
+  }
 
     #left-logo > img {
-        height: 5vh;
-        position: relative;
-        left: -20%;
+      float: left;  
+      height: 5vh;
+      position: relative;
+      right: 100%;
     }
 
     #modal-content {
@@ -464,7 +473,7 @@ h5 {
         width: 50%;
         /* float: ; */
         /* text-align: right; */
-        margin-bottom: .2vh;
+        /* margin-bottom: .2vh; */
     }
 
     #left-logo {
@@ -477,17 +486,22 @@ h5 {
         text-align: right;
     }
     
+    #right-logo {
+      width: 100%;
+      text-align: center;
+    }
     #right-logo > p {
-        font-size: .7em;
+        line-height: 1.4;
+        /* text-align: center; */
+        float: center;
+      /* width: 100%;
+      text-align: center; */
+        font-size: .8em;
         margin: 0;
-        padding: 0 3% 0 3%;
+        padding: 0 ;
     }
 
-    #footer-logos {
-        display: inline-block;
-        margin: 0;
-        transform: scale(.8);
-    }
+
 
     #county-dropdown-container {
         width: 100%;

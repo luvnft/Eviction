@@ -38,7 +38,7 @@ const EvictionMap = props => {
     );
     const monthOptionsArray =
       monthArray
-        .filter((month, i) => i < monthArray.length)
+        .filter((month, i) => i < monthArray.length - 1)
         .map((month, i) =>
           ({
             text: `${month}`,

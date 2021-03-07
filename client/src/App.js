@@ -72,7 +72,7 @@ const App = () => {
         new Date(item.filedate).getTime() >= 
         new Date('1/1/2020').getTime() &&
         new Date(item.filedate).getTime() <=
-        new Date('2/28/2021').getTime()
+        new Date().getTime()
       )
       .forEach(item => 
         array.push({
@@ -464,8 +464,9 @@ const App = () => {
           </div>
           <div id='right-logo'>
             {/* <img src={CSPAVlogo} alt='CSPAV-logo'/> */}
-            <p>in partnership with Georgia Tech's</p>
+            <p className='partner-names' style={{color: '#fff'}}>-</p>
             <p className='partner-names'>
+            in partnership with Georgia Tech's <br/>
               School of City and Regional Planning (SCaRP) and
                         </p>
             <p className='partner-names'>
