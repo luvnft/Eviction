@@ -297,105 +297,104 @@ h5 {
 }
 
 .viz-tab > h3 {
-    line-height: 4vh;
-    font-size: 1.3em;
+  line-height: 4vh;
+  font-size: 1.3em;
 }
 
 .viz-tab:hover {
-   opacity: 1;
-   background-color: #4B7A90;
-   ; 
+  opacity: 1;
+  background-color: #4B7A90;
 }
 
 #active-viz-tab {
-    opacity: 1; 
+  opacity: 1; 
 }
 
 
 /* chart dropdown, giving filter perimeters */
 .ui.fluid.dropdown {
-    text-align: center;
-    /* width: 25%;
-    margin: 0 auto; */
+  text-align: center;
+  /* width: 25%;
+  margin: 0 auto; */
 }
 
 #county-dropdown-container {
-    width: 100%;
-    position: fixed;
-    top: 10vh;
-    z-index: 999999;
-    padding: 0 35% 0 35%;
-    font-size: large;
+  width: 100%;
+  position: fixed;
+  top: 10vh;
+  z-index: 999999;
+  padding: 0 35% 0 35%;
+  font-size: large;
 }
 
 #right-logo > p {
-    font-size: .9em;
-    margin: 0;
-    padding: 0 5% 0 5%;
+  font-size: .9em;
+  margin: 0;
+  padding: 0 5% 0 5%;
 }
 
 .partner-names {
-    font-weight: 700;
+  font-weight: 700;
 }
 
 
 #right-logo {
-    text-align: center;
+  text-align: center;
 }
 
 .ui.dropdown .menu > .item {
-    text-align: center;
-    font-size: 1em;
-    z-index: 999999;
+  text-align: center;
+  font-size: 1em;
+  z-index: 999999;
 }
 
 .leaflet-tooltip {
-    z-index: 999999;
+  z-index: 999999;
 }
 
 .tooltip-content {
-    display: grid;
-    grid-template-rows: auto;
-    text-align: center;
-    font-size: 1.1em;
-    font-family: 'Courier New', Courier, monospace;
+  display: grid;
+  grid-template-rows: auto;
+  text-align: center;
+  font-size: 1.1em;
+  font-family: 'Courier New', Courier, monospace;
 
 }
 
 .chart-tooltip-content {
-    font-family: 'Courier New', Courier, monospace;
-    background-color: white;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid lightgrey;
-    font-size: .9em;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: white;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid lightgrey;
+  font-size: .9em;
 }
 
 .tooltip-data {
-    font-size: 1.2em;
-    font-weight: 600;
+  font-size: 1.2em;
+  font-weight: 600;
 }
 
 #footer-logos {
-    margin: 0 0 .5em 0;
+  margin: 0 0 .5em 0;
 }
 
 @media only screen and (min-width: 1100px ) {
     #modal-content {
-        width: 70%;
+      width: 70%;
     }
 }
 
 @media only screen and (min-width: 1300px ) {
     #modal-content {
-        width: 60%;
+      width: 60%;
     }
 }
 
 @media only screen and  (max-width: 850px) {
 
     .team-member-grid-row {
-        grid-template-columns: 100%;
+      grid-template-columns: 100%;
     }
 
     #info-icon {
@@ -403,9 +402,8 @@ h5 {
     }
 
     .tooltip-content {
-        min-width: 200px;
-        /* display: inline-block; */
-
+      min-width: 200px;
+      /* display: inline-block; */
     } 
 
     .leaflet-tooltip {
@@ -413,33 +411,32 @@ h5 {
     }
     
     .tooltip-content > div {
-        word-wrap: break-word;
-
+      word-wrap: break-word;
     }
 
 
     .chart-tooltip-content {
-        font-size: 1em;
-        max-width: 80%;
+      font-size: 1em;
+      max-width: 80%;
     }
 
  
 
     #header > h1 {
-        font-size: 2em;
-        line-height: 1em;
-        margin-top: 3vh;
-        padding: 0 5%;
+      font-size: 2em;
+      line-height: 1em;
+      margin-top: 3vh;
+      padding: 0 5%;
     }
 
     #eviction-tracker {
-        grid-template-rows: 25% 55% 20%;
+      grid-template-rows: 25% 55% 20%;
     
     }
     #viz-toggle {
-        top: 20vh;
-        height: 5vh;
-        font-size: 1.2em;    
+      top: 20vh;
+      height: 5vh;
+      font-size: 1.2em;    
     }
 
     .viz-tab > h3 {
@@ -459,26 +456,26 @@ h5 {
     }
 
     #modal-content {
-        grid-template-rows: 25% 65% 10%;
+      grid-template-rows: 25% 65% 10%;
     }
     
     #center-logo > img {
-        height: 5vh;
-        position: relative;
-        bottom: 1vh;
+      height: 5vh;
+      position: relative;
+      bottom: 1vh;
 
     }
 
     #left-logo, #center-logo {
-        width: 50%;
-        /* float: ; */
-        /* text-align: right; */
-        /* margin-bottom: .2vh; */
+      width: 50%;
+      /* float: ; */
+      /* text-align: right; */
+      /* margin-bottom: .2vh; */
     }
 
     #left-logo {
-        float: left;
-        text-align: left;
+      float: left;
+      text-align: left;
     }
 
     #center-logo {
@@ -487,18 +484,21 @@ h5 {
     }
     
     #right-logo {
+
       width: 100%;
       text-align: center;
     }
     #right-logo > p {
-        line-height: 1.4;
-        /* text-align: center; */
-        float: center;
+      position: relative;
+      bottom: 2vh;
+      line-height: 1.4;
+      /* text-align: center; */
+      float: center;
       /* width: 100%;
       text-align: center; */
-        font-size: .8em;
-        margin: 0;
-        padding: 0 ;
+      font-size: .8em;
+      margin: 0;
+      padding: 0 ;
     }
 
 
@@ -528,6 +528,8 @@ h5 {
     }
 
     #footer > p {
+      position: relative;
+      bottom: 2vh;
         font-size: .8em;
     }
 
