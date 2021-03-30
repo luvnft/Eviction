@@ -464,7 +464,7 @@ const App = () => {
           </div>
           <div id='right-logo'>
             {/* <img src={CSPAVlogo} alt='CSPAV-logo'/> */}
-            <p className='partner-names' style={{color: '#fff'}}>-</p>
+            {/* <p className='partner-names' style={{color: '#fff'}}>-</p> */}
             <p className='partner-names'>
             in partnership with Georgia Tech's <br/>
               School of City and Regional Planning (SCaRP) and
@@ -474,8 +474,8 @@ const App = () => {
                         </p>
           </div>
         </div>
-        <p>Current as of {dateRange ? moment(dateRange.end).format('MMMM Do, YYYY') : null}
-        </p>
+        <div>Current as of {dateRange ? moment(dateRange.end).format('MMMM Do, YYYY') : null}
+        </div>
 
       </div>
       <div

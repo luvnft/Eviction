@@ -54,7 +54,6 @@ const EvictionMap = props => {
     setSelectedMonth(monthOptionsArray[monthOptionsArray.length - 1].value)
   }
 
-  // Create function to setStats({max: value, min: value, range: value})
   const calcStats = data => {
     const valueArray = Object.values(data).filter(a => a > 0).sort((a, b) => a > b ? -1 : 1);
     // console.log(valueArray);
@@ -86,9 +85,7 @@ const EvictionMap = props => {
           : null
 
     createBins('defined', [1, 2, 5, 10, 18]);
-    // createBins('quantile')
     setBins(bins);
-    // console.log(bins);
   }
 
   const handleData = () => {
@@ -126,14 +123,12 @@ const EvictionMap = props => {
 
     props.normalizeData.map(item => normalizeData[item['GEOID']] = item['RentHHs'])
 
-
     calcStats(dataObject);
     setTractData(dataObject);
     setRawTractData(rawDataObject);
   };
 
   const handleCSVData = () => {
-    // console.log(props.geojson);
     const dataArray =
       tractData && props.geojson ?
         props.geojson.features
@@ -153,13 +148,8 @@ const EvictionMap = props => {
               "Eviction Filing Rate": Number.parseFloat(tractData[feature.properties['GEOID']] / 100).toPrecision(3)
             })
           ) : null;
-    // console.log(dataArray);
 
     setCSVData(dataArray);
-    // .map(item =>
-
-
-    // )
   }
 
   const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
@@ -209,10 +199,6 @@ const EvictionMap = props => {
     </div>
   );
 
-  // const Legend = () => (
-
-  // );
-
   const featureStyler = feature => {
 
     const geoid = feature.properties['GEOID'];
@@ -235,13 +221,7 @@ const EvictionMap = props => {
 
   useEffect(() => { handleData() }, [props.countyFilter, selectedMonth]);
   useEffect(() => handleCSVData(), [tractData, props.geojson]);
-  // useEffect(() => { handleDateRange() }, []);
-
-  // console.log(props.boundaryGeoJSON);
   useEffect(() => getMonthList(), []);
-  // console.log(monthOptions);
-  // console.log(bins);
-
   return (
     <>
       <LeafletMap

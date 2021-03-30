@@ -217,24 +217,25 @@ h5 {
 
 #footer-logos {
     display: grid;
-    /* flex-direction: row;
-    justify-content: space-evenly ; */
+    height: 6vh;
+    align-items: center;
+    /* /* flex-direction: row; */
+    /* justify-content: space-between ; */
     grid-template-columns: 40% 20% 40%;
     width: 100%;
 }
 
-#left-logo {
-    text-align: right;
-}
-
 #right-logo {
-    text-align: left;
+    text-align: center;
 }
 
 #left-logo > img {
-    height: 6vh;
-    /* width: 100%; */
-    transform: scale(.4);
+  /* align-content: left; */
+  /* transform: scale(.4); */
+  width: 60%;
+  display: block;
+  /* text-align: left; */
+  margin: auto;
 }
 
 #right-logo  > img {
@@ -321,10 +322,19 @@ h5 {
 #county-dropdown-container {
   width: 100%;
   position: fixed;
-  top: 10vh;
+  top: 8.5vh;
   z-index: 999999;
-  padding: 0 35% 0 35%;
-  font-size: large;
+  /* padding: 0 35% 0 35%; */
+  font-size: 1.3em;
+}
+
+.ui.fluid.selection.dropdown {
+  width: 300px;
+  margin: auto;
+}
+
+.divider.text {
+  font-size: 1.5em;
 }
 
 #right-logo > p {
@@ -449,10 +459,12 @@ h5 {
   }
 
     #left-logo > img {
-      float: left;  
-      height: 5vh;
-      position: relative;
-      right: 100%;
+      display: inline;
+      width: 100%;
+      /* float: left;   */
+      /* height: 5vh; */
+      /* position: relative;
+      right: 100%; */
     }
 
     #modal-content {
@@ -479,25 +491,27 @@ h5 {
     }
 
     #center-logo {
-        float: right;
-        text-align: right;
+      display: inline;
+        /* float: right; */
+        /* text-align: right; */
     }
     
     #right-logo {
-
+      display: block;
       width: 100%;
-      text-align: center;
+      /* text-align: center; */
     }
     #right-logo > p {
-      position: relative;
-      bottom: 2vh;
+      width: 100%;
+      /* position: relative;
+      bottom: 2vh; */
       line-height: 1.4;
       /* text-align: center; */
-      float: center;
+      /* float: center; */
       /* width: 100%;
       text-align: center; */
       font-size: .8em;
-      margin: 0;
+      margin: auto;
       padding: 0 ;
     }
 

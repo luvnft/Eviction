@@ -109,7 +109,7 @@
 
 @media only screen and  (max-width: 850px) {
     .legend {
-        font-size: .7rem;
+        font-size: .8rem;
         grid-template-rows: 10% 16% 65%;
         width: 200px;
         height: 35vh;
@@ -118,9 +118,10 @@
         bottom: 22vh;
     }
 
-    .legend {
+    /* .legend {
         font-size: .8em;
-    }
+        padding: .1em;
+    } */
 
     #legend-header > h3 {
         font-size: 1.2rem;
@@ -135,7 +136,7 @@
     }
 
     #month-selector {
-        font-size: 1.5em;
+        font-size: 1.3em;
         position: relative;
         top: .5vh;
     }
