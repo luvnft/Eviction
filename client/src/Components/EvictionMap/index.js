@@ -38,7 +38,11 @@ const EvictionMap = props => {
     );
     const monthOptionsArray =
       monthArray
-        .filter((month, i) => i < monthArray.length - 1)
+        .filter((month, i) => 
+          new Date('3/25/2021').getTime() >= new Date(moment('3/25/2021').endOf('month').subtract({days: 3})).getTime()
+            ? true
+            : i < monthArray.length - 1
+        )
         .map((month, i) =>
           ({
             text: `${month}`,
