@@ -39,7 +39,7 @@ const EvictionMap = props => {
     const monthOptionsArray =
       monthArray
         .filter((month, i) => 
-          new Date('3/25/2021').getTime() >= new Date(moment('3/25/2021').endOf('month').subtract({days: 3})).getTime()
+          new Date(props.dateRange.end).getTime() >= new Date(moment(props.dateRange.end).endOf('month').subtract({days: 3})).getTime()
             ? true
             : i < monthArray.length - 1
         )
