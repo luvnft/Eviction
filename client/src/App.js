@@ -7,6 +7,7 @@ import moment from 'moment';
 import API from './utils/API.js';
 import Loader from 'react-loader-spinner';
 import './App.css';
+// import { use } from 'passport';
 
 const App = () => {
 
@@ -25,8 +26,32 @@ const App = () => {
   const [modalStatus, setModalStatus] = useState(true);
   const [dateRange, setDateRange] = useState();
 
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
+  // const elem = document.getElementById("root");
 
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+  // const toggleFullscreen = () => {
+  //   const doc = window.document;
+  //   const docEl = doc.documentElement;
+  
+  //   const requestFullScreen = 
+  //     docEl.requestFullscreen || 
+  //     docEl.mozRequestFullScreen || 
+  //     docEl.webkitRequestFullScreen || 
+  //     docEl.msRequestFullscreen;
+  //   const cancelFullScreen = 
+  //     doc.exitFullscreen || 
+  //     doc.mozCancelFullScreen || 
+  //     doc.webkitExitFullscreen || 
+  //     doc.msExitFullscreen;
+  
+  //   !doc.fullscreenElement && 
+  //   !doc.mozFullScreenElement && 
+  //   !doc.webkitFullscreenElement && 
+  //   !doc.msFullscreenElement
+  //     ? requestFullScreen.call(docEl)
+  //     : cancelFullScreen.call(doc)
+  // }
+  
   const getTractGeoJSON = () => {
 
     const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='Tract' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
@@ -71,8 +96,8 @@ const App = () => {
           .filter(item => 
         new Date(item.filedate).getTime() >= 
         new Date('1/1/2020').getTime() &&
-        new Date(item.filedate).getTime() <=
-        new Date().getTime()
+        new Date(item.filedate).getTime() <
+        moment().day(0)
       )
       .forEach(item => 
         array.push({
@@ -83,34 +108,6 @@ const App = () => {
       }));
       setData(array);
       handleDateRange(array);
-
-      // API.getData('https://evictions.design.gatech.edu/rest/fulton_county_cases')
-      //   .then(res => {
-      //     const object = {}
-      //     res.data
-      //     .filter(item => 
-      //       new Date(item.filedate).getTime() > 
-      //       new Date('9/18/2020').getTime() 
-      //       // new Date(item.filedate).getTime() <
-      //       // new Date('1/17/2021').getTime()
-      //     )
-      //     .forEach(item => 
-      //       object[item.filedate]
-      //         ? object[item.filedate] = {
-      //           ...object[item.filedate],
-      //           "Total Filings" : object[item.filedate]['Total Filings'] + 1
-      //         }
-      //         : object[item.filedate] = {
-      //           "Filing Date" : item.filedate,
-      //           "tractID" : 9999999,
-      //           "COUNTYFP10" : 121,
-      //           "Total Filings" : 1
-      //         }
-      //     );
-      //     Object.values(object).forEach(item => array.push(item))
-      //   })
-      //   .catch(err => console.error(err));
-
     })
       .catch(err => console.error(err));
   }
@@ -331,8 +328,27 @@ const App = () => {
     getEvictionData();
     getTractGeoJSON();
     getContent();
-    setBoundaryGeoJSON(countyBoundary)
+    setBoundaryGeoJSON(countyBoundary);
   }, []);
+
+//   { !smallScreen
+//     ? <Icon 
+//         id='full-screen-toggle' 
+//         name={
+//           window.document.fullscreenElement || 
+//           window.document.mozFullScreenElement || 
+//           window.document.webkitFullscreenElement || 
+//           window.document.msFullscreenElement 
+//             ? "compress"
+//             : "expand"
+//         }
+//         onClick={() => toggleFullscreen()} 
+//       />
+//     : null
+//    }
+
+
+  // useEffect(  openFullscreen, []);
 
   return content ?
     <div id='eviction-tracker'>

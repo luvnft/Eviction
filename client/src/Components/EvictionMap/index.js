@@ -237,6 +237,7 @@ const EvictionMap = props => {
         scrollWheelZoom={true}
         dragging={true}
         animate={true}
+        // trackResize={true}
       // bounds={null}
       // onViewportChange={e => console.log(e)}
       >

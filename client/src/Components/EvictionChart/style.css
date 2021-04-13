@@ -1,6 +1,13 @@
 /* responsive container housing the chart */
-.chart-responsive-container {
-    margin: 2vh auto;
+#chart-responsive-container {
+    /* margin: 0 auto; */
+    width: 100vw;
+    margin: auto;
+    /* position: fixed; */
+    /* top: 20vh;
+    left: 2.5vw; */
+    height: 65vh;
+
 }
 
 #chart-data-export-button {
@@ -31,6 +38,18 @@
     .button-group-container {
         bottom: 22vh;
     }
+
+    #chart-responsive-container {
+      height: 55vh;
+      /* position: fixed;
+      top: 25vh; */
+    }
+    .recharts-legend-item {
+      font-size: large;
+      margin-top: 20px;
+  }
+
+    
 
     #chart-data-export-button-mobile {
         position: fixed;

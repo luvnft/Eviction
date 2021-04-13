@@ -202,7 +202,7 @@ const EvictionChart = props => {
 
 
   return (
-    <>
+    <div id="chart-responsive-container">
       {/* <Dropdown
         className="icon chart-dropdown"
         placeholder="County Options"
@@ -216,9 +216,8 @@ const EvictionChart = props => {
       {caseData ?
 
       <ResponsiveContainer
-        className="chart-responsive-container"
         width="95%"
-        height="85%"
+        height="90%"
       >
         <ComposedChart
           className="barChart"
@@ -226,7 +225,7 @@ const EvictionChart = props => {
           margin={{
             top: 30,
             right: props.smallScreen ? 30 : 20,
-            left: 10,
+            left: 40,
             bottom: 30,
           }}
         > 
@@ -327,7 +326,7 @@ const EvictionChart = props => {
             : null
         } 
 
-    </>
+    </div>
   );
 };
 

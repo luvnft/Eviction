@@ -1,5 +1,11 @@
+#root {
+  background-color: white;
+  width: 100vw;
+  height: 100vh;
+
+}
 body {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     /* min-height: 700px; */
     position: fixed;
@@ -192,7 +198,7 @@ h5 {
 }
 
 #eviction-tracker {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     display: grid;
     grid-template-rows: 20% 65% 15%;
@@ -200,7 +206,7 @@ h5 {
 
 #header, #footer {
     text-align: center;
-    width: 100%;
+    width: 100vw;
     z-index: 999999;
     box-shadow: 0 0 10px lightslategrey;
     overflow: hidden;
@@ -333,8 +339,16 @@ h5 {
   margin: auto;
 }
 
-.divider.text {
+#county-dropdown-container > div > .divider.text {
   font-size: 1.5em;
+}
+
+#full-screen-toggle {
+  position: fixed;
+  top: 20px;
+  right: 10px;
+  font-size: 30px;
+
 }
 
 #right-logo > p {
@@ -402,13 +416,16 @@ h5 {
 }
 
 @media only screen and  (max-width: 850px) {
+    #modal-content {
+      height: 75vh;
+    }
 
     .team-member-grid-row {
       grid-template-columns: 100%;
     }
 
     #info-icon {
-        bottom: 22vh;
+      bottom: 22vh;
     }
 
     .tooltip-content {
@@ -429,8 +446,6 @@ h5 {
       font-size: 1em;
       max-width: 80%;
     }
-
- 
 
     #header > h1 {
       font-size: 2em;
@@ -559,9 +574,44 @@ h5 {
         font-size: 2em;
     }
 
+    /* #viz-box {
+      height: 60vh;
+    } */
+
 
 
     /* .legend {
         height: 30vh;
     } */
+}
+
+@media only screen and (max-height: 500px) {
+
+  
+  #header > h1 {
+    line-height: 10vh;
+    margin: 5vh 0 0 0;
+    /* display: grid;
+    grid-template-columns: 50% 50%; */
+    width: 75%;
+  }
+
+  #county-dropdown-container > select {
+    position: fixed;
+    top: 5vh;
+    right: 5%;
+  }
+
+  #header {
+    height: 30vh;
+  }
+
+  #viz-toggle {
+    height: 10vh;
+  }
+
+  .viz-tab > h3 {
+    height: 10vh;
+    line-height: 10vh;
+  }
 }
