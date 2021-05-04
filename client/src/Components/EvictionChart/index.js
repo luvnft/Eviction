@@ -61,7 +61,12 @@ const EvictionChart = props => {
 
             dataObject[key]['current'] = dataObject[key]['current'] 
               ? dataObject[key]['current'] + parseFloat(item['Total Filings'])
-              : parseFloat(item['Total Filings']);
+              : parseFloat(item['Total Filings']);  
+              
+            dataObject[key]['answered'] = dataObject[key]['answered'] 
+              ? dataObject[key]['answered'] + parseFloat(item['Answered Filings'])
+              : parseFloat(item['Answered Filings']); 
+
           });
 
         props.data2019
@@ -73,23 +78,23 @@ const EvictionChart = props => {
             : true
           )
           .forEach(item => {
-              const key = item['Filing Date'] ? timeScale === 'daily' ? 
-                  moment(item['Filing Date']).format('M/D/YY')
-                : timeScale === 'weekly' ?
-                  // moment(item['Filing Date']).isoWeek()
-                  moment(item['Filing Date']).add(1, 'y').subtract(2, 'd').startOf('week')
-                : timeScale === 'monthly' ?
-                  moment(item['Filing Date']).add(1, 'y').startOf('month') 
-              : null : null;
+            const key = item['Filing Date'] ? timeScale === 'daily' ? 
+                moment(item['Filing Date']).format('M/D/YY')
+              : timeScale === 'weekly' ?
+                // moment(item['Filing Date']).isoWeek()
+                moment(item['Filing Date']).add(1, 'y').subtract(2, 'd').startOf('week')
+              : timeScale === 'monthly' ?
+                moment(item['Filing Date']).add(1, 'y').startOf('month') 
+            : null : null;
 
-              // console.log(item);
+            // console.log(item);
 
-              dataObject[key] = {...dataObject[key]}
+            dataObject[key] = {...dataObject[key]}
 
-              dataObject[key]['historic'] = dataObject[key]['historic'] ?
-              dataObject[key]['historic'] + parseFloat(item['Total Filings'])
-              : parseFloat(item['Total Filings']);
-            })
+            dataObject[key]['historic'] = dataObject[key]['historic'] ?
+            dataObject[key]['historic'] + parseFloat(item['Total Filings'])
+            : parseFloat(item['Total Filings']);
+          })
 
         props.data2019
           .filter(item =>
@@ -123,15 +128,16 @@ const EvictionChart = props => {
           new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
         )
         .filter(([key, value]) => timeScale === 'monthly' &&
-          new Date(props.dateRange.end).getTime() <= new Date(moment(props.dateRange.end).endOf('month').subtract({days: 3})).getTime() 
-            ? new Date(key).getTime() < new Date(moment(props.dateRange.end).startOf('month')).getTime() 
+          new Date(props.dateRange.end).getTime() >= new Date(moment(props.dateRange.end).endOf('month').subtract({days: 3})).getTime() 
+            ? new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('month')).getTime()
             : true
         )
         .map(([key, value]) =>
           ({
             "Filing Date": key,
-            "Total Filings": value.current,
-            "Total Filings 2019" : value.historic
+            "Total Filings": value.current - value.answered,
+            "Total Filings 2019" : value.historic ,
+            "Total Answered Filings": value.answered
           })
         );
         setCaseData(dataArray);
@@ -150,7 +156,9 @@ const EvictionChart = props => {
       caseData.map(item => 
         ({
           [timeLabel]: moment(item['Filing Date']).format(timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'),
-          "Total Filings": item["Total Filings"],
+          "Total Filings": item["Total Filings"] + item["Total Answered Filings"],
+          "Total Answers": item["Total Answered Filings"],
+          "Answer Rate": item["Total Answered Filings"]/(item["Total Filings"] + item["Total Answered Filings"]),
           "Total Filings 2019" : item["Total Filings 2019"]
         })
       ) : null;
@@ -165,28 +173,28 @@ const EvictionChart = props => {
 
 
   const CustomTooltip = ({ active, payload, label }) => {
-    // console.log(payload);
+
     const dateInfo = timeScale === 'weekly' ? 
-      <div>
+      <span>
         between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
-      </div> : timeScale === 'monthly' ?
-        <div>
+      </span> : timeScale === 'monthly' ?
+        <span>
           in <span className='tooltip-data'>{moment(label).format('MMMM YYYY')}</span>  
-        </div> : timeScale === 'daily' ?
-          <div>
+        </span> : timeScale === 'daily' ?
+          <span>
             on <span className='tooltip-data'>{moment(label).format('dddd, MMMM Do YYYY')}</span>  
-          </div> : null;
+          </span> : null;
+
+    const totalFilings = payload[0] && payload[1] ? numeral(payload[0].value + payload[1].value).format('0,0') : '?';
+    const totalAnswers = payload[0] ? numeral(payload[0].value).format('0,0') : '?';
+    const answerRate = payload[0] && payload[1] ? numeral(payload[0].value/(payload[0].value + payload[1].value)).format('0.0%') : '?';
+    const total2019 = payload[2] ? numeral(payload[2].value).format('0,0') : '?';
+    
+
     return active ?
         <div className='tooltip-content chart-tooltip-content'>
           <div>
-            In {props.countyFilter === 999 || props.countyFilter === '999' ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span>
-          </div>
-          {dateInfo}
-          <div>
-            there were <span className='tooltip-data'>{payload[0] && payload[1] ? numeral(payload[0].value).format('0,0') : '?'}</span> reported eviction filings
-          </div>
-          <div>
-            compared to <span className='tooltip-data'>{payload[0] && payload[1] ? numeral(payload[1].value).format('0,0') : numeral(payload[0].value).format('0,0')}</span> for the same duration in 2019.
+            In {props.countyFilter === 999 || props.countyFilter === '999' ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span> {dateInfo}, there were <span className='tooltip-data'>{totalFilings}</span> reported eviction filings of which <span className='tooltip-data'>{totalAnswers} ({answerRate})</span> have been answered. In comparison, there were <span className='tooltip-data'>{total2019}</span> filings for the same duration in 2019.
           </div>
 
         </div>
@@ -224,8 +232,8 @@ const EvictionChart = props => {
           data={caseData}
           margin={{
             top: 30,
-            right: props.smallScreen ? 30 : 20,
-            left: 40,
+            right: props.smallScreen ? 10 : 20,
+            left: props.smallScreen ? 10 : 40,
             bottom: 30,
           }}
         > 
@@ -247,7 +255,7 @@ const EvictionChart = props => {
             // scale={'time'}
             // type={'number'}
             minTickGap={!props.smallScreen ? -5 : null}
-            tick={{fontSize: props.smallScreen ? 10 : 12}}
+            tick={{fontSize: props.smallScreen ? 8 : 12}}
             tickFormatter={tick => 
               timeScale === 'monthly' ? 
                 moment(tick).format(props.smallScreen ? 'MMM YYYY' : 'MMMM YYYY') 
@@ -263,7 +271,10 @@ const EvictionChart = props => {
           <Tooltip 
             content={ <CustomTooltip />}
           />
-          <Bar dataKey="Total Filings" fill="#DC1C13" />
+          <Bar dataKey="Total Answered Filings" stackId='a' fill="#a9a9a9" />
+
+          <Bar dataKey="Total Filings" stackId='a' fill="#DC1C13" />
+
           <Line 
             dataKey="Total Filings 2019"
             strokeWidth={2} 
@@ -275,9 +286,9 @@ const EvictionChart = props => {
           {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}  
           <Legend 
             formatter={(value,entry) =>
-              props.smallScreen ?
-                <span style={{fontSize: '14px'}}>{value}</span> 
-              : value
+                <span style={{fontSize: props.smallScreen ? '10px' : '14px'}}>
+                  {value}
+                </span> 
             }
           />
 

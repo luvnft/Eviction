@@ -90,7 +90,7 @@ const App = () => {
   
   const getEvictionData = () => {
     const array = [];
-    API.getData('https://evictions.design.gatech.edu/rest/atlanta_metro_area_tracts?select=id,filedate,tractid,countyfp10,totalfilings')
+    API.getData('https://evictions.design.gatech.edu/rest/atlanta_metro_area_tracts?select=id,filedate,tractid,countyfp10,totalfilings,totalansweredfilings')
       .then(res => {
         res.data
           .filter(item => 
@@ -104,7 +104,9 @@ const App = () => {
           "Filing Date": item.filedate,
           "tractID": parseInt(item.tractid),
           "COUNTYFP10": parseInt(item.countyfp10),
-          "Total Filings": parseInt(item.totalfilings)    
+          "Total Filings": parseInt(item.totalfilings),
+          "Answered Filings": parseInt(item.totalansweredfilings)
+
       }));
       setData(array);
       handleDateRange(array);

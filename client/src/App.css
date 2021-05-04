@@ -388,16 +388,26 @@ h5 {
 .chart-tooltip-content {
   font-family: 'Courier New', Courier, monospace;
   background-color: white;
-  padding: 5px;
+  padding: 1em;
+  opacity: .95;
   border-radius: 5px;
   border: 1px solid lightgrey;
   font-size: .9em;
+  white-space: normal;
+  word-wrap: normal;
+  max-width: 380px;
 }
 
 .tooltip-data {
   font-size: 1.2em;
   font-weight: 600;
 }
+
+/* .tooltip-footer {
+  width: 100%;
+  text-align: right;
+  margin-top: .5em;
+} */
 
 #footer-logos {
   margin: 0 0 .5em 0;
@@ -443,8 +453,14 @@ h5 {
 
 
     .chart-tooltip-content {
-      font-size: 1em;
-      max-width: 80%;
+      font-size: .8em;
+      max-width: 65%;
+      padding: 1em;
+      opacity: .95;
+      text-align: center;
+      white-space: normal;
+      word-wrap: normal;
+
     }
 
     #header > h1 {

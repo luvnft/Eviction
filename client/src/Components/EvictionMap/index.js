@@ -17,9 +17,13 @@ const EvictionMap = props => {
   const [hoverID, setHoverID] = useState();
   const [csvData, setCSVData] = useState();
   const [monthOptions, setMonthOptions] = useState();
-  const [selectedMonth, setSelectedMonth] = useState('January')
+  const [selectedMonth, setSelectedMonth] = useState('January');
+  const selectedMeasure = 'Total Filings'
 
-  const colors = ["#DC1C13", "#EA4C46", "#F07470", "#F1959B", "#F6BDC0"].reverse();
+  const colors = 
+    selectedMonth !== 'During the Pandemic**'
+      ? ["#DC1C13", "#EA4C46", "#F07470", "#F1959B", "#F6BDC0"].reverse()
+      : ["#6867da", "#618ee9", "#76afee", "#a2cdee", "#d8e8f0"].reverse();
 
   const sortByDate = (a, b) => {
     var dateA = new Date(a['Filing Date']).getTime();
@@ -31,7 +35,7 @@ const EvictionMap = props => {
     const monthArray = [];
     props.data
     .sort((a, b) => sortByDate(a, b))
-    .map(item =>
+    .forEach(item =>
       !monthArray.includes(moment(item['Filing Date']).format('MMMM YYYY')) ?
         monthArray.push(moment(item['Filing Date']).format('MMMM YYYY'))
         : null
@@ -50,6 +54,11 @@ const EvictionMap = props => {
             key: month
           })
         );
+    monthOptionsArray.push({
+      text: 'During the Pandemic**',
+      value: 'During the Pandemic**',
+      key: 'During the Pandemic**'
+    })
     setMonthOptions(monthOptionsArray);
     setSelectedMonth(monthOptionsArray[monthOptionsArray.length - 1].value)
   }
@@ -84,7 +93,12 @@ const EvictionMap = props => {
           )
           : null
 
-    createBins('defined', [1, 2, 5, 10, 18]);
+    createBins(
+      'defined', 
+      selectedMonth === 'During the Pandemic**' 
+        ? [5,10,15,30,max] 
+        : [1,2,5,10,18]
+    );
     setBins(bins);
   }
 
@@ -100,20 +114,26 @@ const EvictionMap = props => {
           : true
       )
       .filter(item =>
-        moment(item['Filing Date']).format('MMMM YYYY') === selectedMonth
+        selectedMonth !== 'During the Pandemic**'
+          ? moment(item['Filing Date']).format('MMMM YYYY') === selectedMonth
+          : new Date(item['Filing Date']) > new Date('3/15/2020')
+      )
+      .filter(item =>
+        selectedMonth === 'During the Pandemic**' && item['COUNTYFP10'] === 121 ? false : true
+
       )
       .filter(item => 
         props.exclude ?
           props.exclude.counties.includes(item['COUNTYFP10']) &&
-          new Date(item['Filing Date']).getTime() > new Date(props.exclude.date).getTime() ?
-          false 
-        : true 
-        : true
+          new Date(item['Filing Date']).getTime() > new Date(props.exclude.date).getTime() 
+          ? false 
+            : true 
+            : true
       )
       .map(item =>
         rawDataObject[item['tractID']] = rawDataObject[item['tractID']] ?
-          (rawDataObject[item['tractID']] + parseFloat(item['Total Filings']))
-          : parseFloat(item['Total Filings'])
+          (rawDataObject[item['tractID']] + parseFloat(item[selectedMeasure]))
+          : parseFloat(item[selectedMeasure])
       );
 
     props.normalizeData.map(item => rawDataObject[item['GEOID']] > 0 && item['RentHHs'] ?
@@ -183,7 +203,7 @@ const EvictionMap = props => {
   const CustomTooltip = () => (
     <div className='tooltip-content'>
       <div>
-        In <span className='tooltip-data'>{monthOptions.find(month => month.value === selectedMonth).text}</span>
+        {selectedMonth !== 'During the Pandemic**' ? 'In ' : ''} <span className='tooltip-data'>{monthOptions.find(month => month.value === selectedMonth).text}</span>
         {/* between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span> */}
       </div>
       <div>
@@ -191,7 +211,7 @@ const EvictionMap = props => {
       </div>
 
       <div>
-        there were <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> total reported eviction filings
+        there {selectedMonth !== 'During the Pandemic**' ? 'were' : 'have been'} <span className='tooltip-data'>{numeral(rawTractData[hoverID]).format('0,0')}</span> total reported eviction filings
         </div>
       <div>
         resulting in an eviction filing rate of <span className='tooltip-data'>{numeral(tractData[hoverID]).format('0.0')}%</span>.
@@ -373,6 +393,8 @@ const EvictionMap = props => {
           </div>
           <div id='legend-footer'>
             <p><span>*</span>calculated by dividing total filings by the number of renter-occupied housing units</p>
+            <p><span>**</span>Since 3/15/2020</p>
+ 
           </div>
 
         </div> : null

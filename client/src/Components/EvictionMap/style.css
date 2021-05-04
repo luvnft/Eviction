@@ -1,9 +1,9 @@
 
 .legend {
     display: grid;
-    grid-template-rows: 10% 15% 65% 5%;
-    width: 200px;
-    height: 35vh;
+    grid-template-rows: 10% 12% 63% 10%;
+    width: 250px;
+    height: 40vh;
     z-index: 9999;
     position: fixed;
     bottom: 18vh;
@@ -89,6 +89,7 @@
 }
 
 #legend-footer {
+  text-align: left;
     /* text-align: lcenteft; */
     padding: 0 .5em 0 .5em;
 }
@@ -110,12 +111,12 @@
 @media only screen and  (max-width: 850px) {
     .legend {
         font-size: .8rem;
-        grid-template-rows: 10% 16% 65%;
+        grid-template-rows: 10% 16% 55%;
         width: 200px;
-        height: 35vh;
+        height: 40vh;
         padding: .5em;
         position: fixed;
-        bottom: 22vh;
+        bottom: 23vh;
     }
 
     /* .legend {
@@ -155,7 +156,7 @@
 
     #legend-close-icon {
         position: fixed;
-        bottom: 55vh;
+        bottom: 61vh;
         z-index: 999999;
         right: 194px;
         background-color: black;

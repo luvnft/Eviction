@@ -18,9 +18,13 @@
 }
 
 .recharts-legend-item {
-    font-size: large;
-    margin-top: 40px;
+    /* font-size: large; */
+    margin: 30px 30px 0 30px;
 }
+
+/* .recharts-default-legend > li {
+  margin-right: 20px;
+} */
 
 .button-group-container {
     z-index: 99999;
@@ -44,13 +48,13 @@
       /* position: fixed;
       top: 25vh; */
     }
+
     .recharts-legend-item {
-      font-size: large;
-      margin-top: 20px;
+      /* font-size: large; */
+      margin: 5px 5px 0 5px;
   }
 
     
-
     #chart-data-export-button-mobile {
         position: fixed;
         bottom: 22vh;
