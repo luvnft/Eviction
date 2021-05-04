@@ -135,9 +135,9 @@ const EvictionChart = props => {
         .map(([key, value]) =>
           ({
             "Filing Date": key,
-            "Total Filings": value.current - value.answered,
+            "Total Filings": (value.current - value.answered) || null,
             "Total Filings 2019" : value.historic ,
-            "Total Answered Filings": value.answered
+            "Total Answered Filings": value.answered || null
           })
         );
         setCaseData(dataArray);
@@ -163,7 +163,7 @@ const EvictionChart = props => {
         })
       ) : null;
 
-  // console.log(csvData);
+  console.log(caseData);
 
 
   useEffect(() => handleData(), [props.countyFilter, timeScale, props.data]);
@@ -173,7 +173,7 @@ const EvictionChart = props => {
 
 
   const CustomTooltip = ({ active, payload, label }) => {
-
+    const info = payload[0] ? payload[0].payload : {}; 
     const dateInfo = timeScale === 'weekly' ? 
       <span>
         between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
@@ -185,10 +185,16 @@ const EvictionChart = props => {
             on <span className='tooltip-data'>{moment(label).format('dddd, MMMM Do YYYY')}</span>  
           </span> : null;
 
-    const totalFilings = payload[0] && payload[1] ? numeral(payload[0].value + payload[1].value).format('0,0') : '?';
-    const totalAnswers = payload[0] ? numeral(payload[0].value).format('0,0') : '?';
-    const answerRate = payload[0] && payload[1] ? numeral(payload[0].value/(payload[0].value + payload[1].value)).format('0.0%') : '?';
-    const total2019 = payload[2] ? numeral(payload[2].value).format('0,0') : '?';
+    // const totalFilings = payload[0] && payload[1] ? numeral(payload[0].value + payload[1].value).format('0,0') : '?';
+    // const totalAnswers = payload[0] ? numeral(payload[0].value).format('0,0') : '?';
+    // const answerRate = payload[0] && payload[1] ? numeral(payload[0].value/(payload[0].value + payload[1].value)).format('0.0%') : '?';
+    // const total2019 = payload[2] ? numeral(payload[2].value).format('0,0') : '?';
+
+    const totalFilings = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Filings'] + info['Total Answered Filings']).format('0,0') : '?';
+    const totalAnswers = info['Total Answered Filings'] ? numeral(info['Total Answered Filings']).format('0,0') : '?';
+    const answerRate = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Answered Filings']/(info['Total Filings'] + info['Total Answered Filings'])).format('0.0%') : '?';
+    const total2019 = info['Total Filings 2019'] ? numeral(info['Total Filings 2019']).format('0,0') : '?';
+
     
 
     return active ?
