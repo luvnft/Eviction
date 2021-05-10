@@ -114,8 +114,6 @@ const EvictionChart = props => {
                   moment(item['Filing Date']).add(2, 'y').startOf('month') 
               : null : null;
 
-            // console.log(item);
-
             dataObject[key] = {...dataObject[key]}
 
             dataObject[key]['historic'] = dataObject[key]['historic'] ?
@@ -127,9 +125,10 @@ const EvictionChart = props => {
         .filter(([key, value]) => 
           new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
         )
-        .filter(([key, value]) => timeScale === 'monthly' &&
-          new Date(props.dateRange.end).getTime() >= new Date(moment(props.dateRange.end).endOf('month').subtract({days: 3})).getTime() 
-            ? new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('month')).getTime()
+        .filter(([key, value]) => 
+          timeScale === 'monthly' &&
+          new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month').subtract({days: 2})).getTime()
+            ? new Date(key).getTime() !== new Date(moment(props.dateRange.end).startOf('month')).getTime()  
             : true
         )
         .map(([key, value]) =>

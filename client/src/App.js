@@ -26,32 +26,8 @@ const App = () => {
   const [modalStatus, setModalStatus] = useState(true);
   const [dateRange, setDateRange] = useState();
 
-  // const elem = document.getElementById("root");
-
   document.documentElement.style.setProperty('--vh', `${vh}px`);
-  // const toggleFullscreen = () => {
-  //   const doc = window.document;
-  //   const docEl = doc.documentElement;
-  
-  //   const requestFullScreen = 
-  //     docEl.requestFullscreen || 
-  //     docEl.mozRequestFullScreen || 
-  //     docEl.webkitRequestFullScreen || 
-  //     docEl.msRequestFullscreen;
-  //   const cancelFullScreen = 
-  //     doc.exitFullscreen || 
-  //     doc.mozCancelFullScreen || 
-  //     doc.webkitExitFullscreen || 
-  //     doc.msExitFullscreen;
-  
-  //   !doc.fullscreenElement && 
-  //   !doc.mozFullScreenElement && 
-  //   !doc.webkitFullscreenElement && 
-  //   !doc.msFullscreenElement
-  //     ? requestFullScreen.call(docEl)
-  //     : cancelFullScreen.call(doc)
-  // }
-  
+
   const getTractGeoJSON = () => {
 
     const url = `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='Tract' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`
@@ -74,14 +50,6 @@ const App = () => {
     const endDate = sortedDates[sortedDates.length - 1];
     setDateRange({ start: startDate, end: endDate });
   }
-
-  // const getEvictionDataBackup = () =>
-  //   API.getData('./evictionsbytract')
-  //     .then(res => {
-  //       setData(res.data);
-  //       handleDateRange(res.data);
-  //     })
-  //     .catch(err => console.error(err));
 
   const getContent = () =>
     API.getData('./content')
@@ -332,25 +300,6 @@ const App = () => {
     getContent();
     setBoundaryGeoJSON(countyBoundary);
   }, []);
-
-//   { !smallScreen
-//     ? <Icon 
-//         id='full-screen-toggle' 
-//         name={
-//           window.document.fullscreenElement || 
-//           window.document.mozFullScreenElement || 
-//           window.document.webkitFullscreenElement || 
-//           window.document.msFullscreenElement 
-//             ? "compress"
-//             : "expand"
-//         }
-//         onClick={() => toggleFullscreen()} 
-//       />
-//     : null
-//    }
-
-
-  // useEffect(  openFullscreen, []);
 
   return content ?
     <div id='eviction-tracker'>
