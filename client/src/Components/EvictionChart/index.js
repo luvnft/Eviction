@@ -4,13 +4,15 @@ import {
   Bar,
   ComposedChart,
   Line,
-  // Brush,
+  ReferenceArea,
+  Brush,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Label
 } from 'recharts';
 import { Button } from 'semantic-ui-react';
 import CSVExportButton from '../CSVExportButton';
@@ -31,9 +33,12 @@ const EvictionChart = props => {
     return dateA > dateB ? 1 : -1;
   };  
 
+
+
   const [caseData, setCaseData] = useState();
   const [csvData, setCSVData] = useState();
   const [timeScale, setTimeScale] = useState('weekly');
+  const [brushDomain, setBrushDomain] = useState({})
   
   const handleData = () => {
         const dataObject = {};
@@ -135,11 +140,17 @@ const EvictionChart = props => {
           ({
             "Filing Date": key,
             "Total Filings": (value.current - value.answered) || null,
-            "Total Filings 2019" : value.historic ,
+            "Total Filings Baseline (2019)" : value.historic ,
             "Total Answered Filings": value.answered || null
           })
         );
         setCaseData(dataArray);
+        setBrushDomain({
+          start: dataArray[timeScale === 'weekly' 
+            ? dataArray.length - 52 
+            : dataArray.length - 12]['Filing Date'],
+          end: dataArray[dataArray.length - 1]['Filing Date']
+        })
   };
 
   const timeLabel = 
@@ -158,11 +169,11 @@ const EvictionChart = props => {
           "Total Filings": item["Total Filings"] + item["Total Answered Filings"],
           "Total Answers": item["Total Answered Filings"],
           "Answer Rate": item["Total Answered Filings"]/(item["Total Filings"] + item["Total Answered Filings"]),
-          "Total Filings 2019" : item["Total Filings 2019"]
+          "Total Filings Baseline (2019)" : item["Total Filings Baseline (2019)"]
         })
       ) : null;
 
-  console.log(caseData);
+  // console.log(caseData);
 
 
   useEffect(() => handleData(), [props.countyFilter, timeScale, props.data]);
@@ -212,20 +223,11 @@ const EvictionChart = props => {
   //   return <span style={{fontSize: '14px'}}>{value}</span>
   // }
 // const CustomTick = obj => <em>{moment(obj.tick).format('M/D')}</em>
-
+  console.log(caseData);
+  console.log(brushDomain);
 
   return (
     <div id="chart-responsive-container">
-      {/* <Dropdown
-        className="icon chart-dropdown"
-        placeholder="County Options"
-        fluid
-        // multiple
-        selection
-        value={countyFilter}
-        options={countyOptions}
-        onChange={(e, data) => setCountyFilter(data.value)}
-      /> */}
       {caseData ?
 
       <ResponsiveContainer
@@ -236,14 +238,50 @@ const EvictionChart = props => {
           className="barChart"
           data={caseData}
           margin={{
-            top: 30,
-            right: props.smallScreen ? 10 : 20,
-            left: props.smallScreen ? 10 : 40,
+            top: 40,
+            right: props.smallScreen ? 40 : 60,
+            left: props.smallScreen ? 40 : 80,
             bottom: 30,
           }}
         > 
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
+          <ReferenceArea
+            x1={timeScale === 'weekly' 
+              ? new Date(brushDomain.start).getTime() < new Date("Sun Mar 29 2020 00:00:00 GMT-0400").getTime() 
+                ?  "Sun Mar 29 2020 00:00:00 GMT-0400"
+                : null
+              : new Date(brushDomain.start).getTime() < new Date("Wed Apr 01 2020 00:00:00 GMT-0400").getTime() 
+                ? "Wed Apr 01 2020 00:00:00 GMT-0400"
+                : null
+                            
+            } 
+            x2={timeScale === 'weekly'
+              ? new Date(brushDomain.end).getTime() > new Date("Sun Jul 26 2020 00:00:00 GMT-0400").getTime() 
+                ?  "Sun Jul 26 2020 00:00:00 GMT-0400"
+                : null
+              : new Date(brushDomain.end).getTime() > new Date("Sat Aug 01 2020 00:00:00 GMT-0400").getTime() 
+                ?  "Sat Aug 01 2020 00:00:00 GMT-0400"
+                : null
+            } 
+            y1={0}
+          >
+            <Label  position='insideTop'>CARES Act Moratorium</Label>
+          </ReferenceArea>
+          <ReferenceArea 
+            x1={timeScale === 'weekly' 
+              ? new Date(brushDomain.start).getTime() < new Date("Sun Aug 30 2020 00:00:00 GMT-0400").getTime() 
+                ? "Sun Aug 30 2020 00:00:00 GMT-0400"
+                : null
+              : new Date(brushDomain.start).getTime() < new Date("Tue Sep 01 2020 00:00:00 GMT-0400").getTime() 
+                ? "Tue Sep 01 2020 00:00:00 GMT-0400"
+                : null
+            } 
+            y1={0}
+          >
+            <Label  position='insideTop'>CDC Moratorium</Label>
+          </ReferenceArea>
+          <XAxis
+            height={50} 
             dataKey={"Filing Date"}
             angle={ timeScale === 'weekly' || 
               timeScale === 'daily' ||
@@ -280,8 +318,9 @@ const EvictionChart = props => {
 
           <Bar dataKey="Total Filings" stackId='a' fill="#DC1C13" />
 
+
           <Line 
-            dataKey="Total Filings 2019"
+            dataKey="Total Filings Baseline (2019)"
             strokeWidth={2} 
             // fill="#DC1C13"
             // dot={false}
@@ -295,6 +334,24 @@ const EvictionChart = props => {
                   {value}
                 </span> 
             }
+          />
+          <Brush
+            // y={10}
+            height={20} 
+            startIndex={timeScale === 'weekly' 
+              ? caseData.length - 52 
+              : caseData.length - 12
+            }
+            tickFormatter={index =>  
+              caseData[index]['Filing Date'] 
+                ? moment(caseData[index]['Filing Date'])
+                    .format(timeScale === 'weekly' ? 'M/D/YY' : 'MMM YYYY' )
+                : ''
+            }
+            onChange={data => setBrushDomain({
+              start: caseData[data.startIndex]['Filing Date'],
+              end: caseData[data.endIndex]['Filing Date']
+            })}
           />
 
         </ComposedChart>

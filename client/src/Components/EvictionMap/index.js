@@ -96,7 +96,7 @@ const EvictionMap = props => {
     createBins(
       'defined', 
       selectedMonth === 'During the Pandemic**' 
-        ? [5,10,15,30,max] 
+        ? [5,10,15,30,max + 1] 
         : [1,2,5,10,18]
     );
     setBins(bins);
@@ -116,7 +116,7 @@ const EvictionMap = props => {
       .filter(item =>
         selectedMonth !== 'During the Pandemic**'
           ? moment(item['Filing Date']).format('MMMM YYYY') === selectedMonth
-          : new Date(item['Filing Date']) > new Date('3/15/2020')
+          : new Date(item['Filing Date']) > new Date('4/1/2020')
       )
       .filter(item =>
         selectedMonth === 'During the Pandemic**' && item['COUNTYFP10'] === 121 ? false : true
@@ -393,7 +393,7 @@ const EvictionMap = props => {
           </div>
           <div id='legend-footer'>
             <p><span>*</span>calculated by dividing total filings by the number of renter-occupied housing units</p>
-            <p><span>**</span>Since 3/15/2020</p>
+            <p><span>**</span>Since 4/1/2020</p>
  
           </div>
 
