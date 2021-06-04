@@ -140,7 +140,7 @@ const EvictionChart = props => {
           ({
             "Filing Date": key,
             "Total Filings": (value.current - value.answered) || null,
-            "Total Filings Baseline (2019)" : value.historic ,
+            "Baseline (Total Filings, 2019)" : value.historic ,
             "Total Answered Filings": value.answered || null
           })
         );
@@ -169,7 +169,7 @@ const EvictionChart = props => {
           "Total Filings": item["Total Filings"] + item["Total Answered Filings"],
           "Total Answers": item["Total Answered Filings"],
           "Answer Rate": item["Total Answered Filings"]/(item["Total Filings"] + item["Total Answered Filings"]),
-          "Total Filings Baseline (2019)" : item["Total Filings Baseline (2019)"]
+          "Baseline (Total Filings, 2019)" : item["Baseline (Total Filings, 2019)"]
         })
       ) : null;
 
@@ -203,7 +203,7 @@ const EvictionChart = props => {
     const totalFilings = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Filings'] + info['Total Answered Filings']).format('0,0') : '?';
     const totalAnswers = info['Total Answered Filings'] ? numeral(info['Total Answered Filings']).format('0,0') : '?';
     const answerRate = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Answered Filings']/(info['Total Filings'] + info['Total Answered Filings'])).format('0.0%') : '?';
-    const total2019 = info['Total Filings 2019'] ? numeral(info['Total Filings 2019']).format('0,0') : '?';
+    const total2019 = info['Baseline (Total Filings, 2019)'] ? numeral(info['Baseline (Total Filings, 2019)']).format('0,0') : '?';
 
     
 
@@ -320,7 +320,7 @@ const EvictionChart = props => {
 
 
           <Line 
-            dataKey="Total Filings Baseline (2019)"
+            dataKey="Baseline (Total Filings, 2019)"
             strokeWidth={2} 
             // fill="#DC1C13"
             // dot={false}
