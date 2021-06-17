@@ -33,6 +33,8 @@ const EvictionChart = props => {
     return dateA > dateB ? 1 : -1;
   };  
 
+
+
   const [caseData, setCaseData] = useState();
   const [csvData, setCSVData] = useState();
   const [timeScale, setTimeScale] = useState('weekly');
@@ -137,16 +139,10 @@ const EvictionChart = props => {
         .map(([key, value]) =>
           ({
             "Filing Date": key,
-            "Total Filings": value.current || null,
+            "Total Filings": (value.current - value.answered) || null,
             "Baseline (Total Filings, 2019)" : value.historic ,
             "Total Answered Filings": value.answered || null
           })
-          // ({
-          //   "Filing Date": key,
-          //   "Total Filings": (value.current - value.answered) || null,
-          //   "Baseline (Total Filings, 2019)" : value.historic ,
-          //   "Total Answered Filings": value.answered || null
-          // })
         );
         setCaseData(dataArray);
         setBrushDomain({
@@ -170,10 +166,9 @@ const EvictionChart = props => {
       caseData.map(item => 
         ({
           [timeLabel]: moment(item['Filing Date']).format(timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'),
-          "Total Filings": item["Total Filings"], 
-          // + item["Total Answered Filings"],
-          // "Total Answers": item["Total Answered Filings"],
-          // "Answer Rate": item["Total Answered Filings"]/(item["Total Filings"] + item["Total Answered Filings"]),
+          "Total Filings": item["Total Filings"] + item["Total Answered Filings"],
+          "Total Answers": item["Total Answered Filings"],
+          "Answer Rate": item["Total Answered Filings"]/(item["Total Filings"] + item["Total Answered Filings"]),
           "Baseline (Total Filings, 2019)" : item["Baseline (Total Filings, 2019)"]
         })
       ) : null;
@@ -205,26 +200,17 @@ const EvictionChart = props => {
     // const answerRate = payload[0] && payload[1] ? numeral(payload[0].value/(payload[0].value + payload[1].value)).format('0.0%') : '?';
     // const total2019 = payload[2] ? numeral(payload[2].value).format('0,0') : '?';
 
-    const totalFilings = info['Total Filings'] 
-      // && 
-      // info['Total Answered Filings'] 
-      ? numeral(info['Total Filings'] 
-      // + info['Total Answered Filings']
-      ).format('0,0') 
-      : '?';
-    // const totalAnswers = info['Total Answered Filings'] ? numeral(info['Total Answered Filings']).format('0,0') : '?';
-    // const answerRate = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Answered Filings']/(info['Total Filings'] + info['Total Answered Filings'])).format('0.0%') : '?';
+    const totalFilings = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Filings'] + info['Total Answered Filings']).format('0,0') : '?';
+    const totalAnswers = info['Total Answered Filings'] ? numeral(info['Total Answered Filings']).format('0,0') : '?';
+    const answerRate = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Answered Filings']/(info['Total Filings'] + info['Total Answered Filings'])).format('0.0%') : '?';
     const total2019 = info['Baseline (Total Filings, 2019)'] ? numeral(info['Baseline (Total Filings, 2019)']).format('0,0') : '?';
 
     
 
     return active ?
         <div className='tooltip-content chart-tooltip-content'>
-          {/* <div>
-            In {props.countyFilter === 999 || props.countyFilter === '999' ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span> {dateInfo}, there were <span className='tooltip-data'>{totalFilings}</span> reported eviction filings of which <span className='tooltip-data'>{totalAnswers} ({answerRate})</span> have been answered. In comparison, there were <span className='tooltip-data'>{total2019}</span> filings for the same duration in 2019.
-          </div> */}
           <div>
-            In {props.countyFilter === 999 || props.countyFilter === '999' ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span> {dateInfo}, there were <span className='tooltip-data'>{totalFilings}</span> reported eviction filings. For comparison, there were <span className='tooltip-data'>{total2019}</span> filings for the same duration in 2019.
+            In {props.countyFilter === 999 || props.countyFilter === '999' ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span> {dateInfo}, there were <span className='tooltip-data'>{totalFilings}</span> reported eviction filings of which <span className='tooltip-data'>{totalAnswers} ({answerRate})</span> have been answered. In comparison, there were <span className='tooltip-data'>{total2019}</span> filings for the same duration in 2019.
           </div>
 
         </div>
@@ -237,6 +223,8 @@ const EvictionChart = props => {
   //   return <span style={{fontSize: '14px'}}>{value}</span>
   // }
 // const CustomTick = obj => <em>{moment(obj.tick).format('M/D')}</em>
+  // console.log(caseData);
+  // console.log(brushDomain);
 
   return (
     <div id="chart-responsive-container">
@@ -326,7 +314,7 @@ const EvictionChart = props => {
           <Tooltip 
             content={ <CustomTooltip />}
           />
-          {/* <Bar dataKey="Total Answered Filings" stackId='a' fill="#a9a9a9" /> */}
+          <Bar dataKey="Total Answered Filings" stackId='a' fill="#a9a9a9" />
 
           <Bar dataKey="Total Filings" stackId='a' fill="#DC1C13" />
 
