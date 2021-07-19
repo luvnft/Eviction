@@ -1,4 +1,5 @@
 module.exports = {
     evictionsbytract: require('./evictionsbytract'),
-    content: require('./content')
+    content: require('./content'),
+    building: require('./building')
 }

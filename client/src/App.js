@@ -25,6 +25,7 @@ const App = () => {
   const [countyFilter, setCountyFilter] = useState(999);
   const [modalStatus, setModalStatus] = useState(true);
   const [dateRange, setDateRange] = useState();
+  const [buildings, setBuildings] = useState();
 
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 
@@ -80,7 +81,13 @@ const App = () => {
       handleDateRange(array);
     })
       .catch(err => console.error(err));
-  }
+  };
+
+  const getMFBuildingInfo = () =>
+  API.getData('./buildings')
+    .then(res => setBuildings(res.data))
+    .catch(err => console.error(err));
+
 
   const AboutContent = {
     Alert: () => (
@@ -298,6 +305,7 @@ const App = () => {
     getEvictionData();
     getTractGeoJSON();
     getContent();
+    getMFBuildingInfo();
     setBoundaryGeoJSON(countyBoundary);
   }, []);
 
@@ -392,10 +400,18 @@ const App = () => {
       </div>
       <div id='viz-box'>
         {
-          vizView === 'map' && data ?
+          vizView === 'map' &&
+          data &&
+          buildings ?
             <EvictionMap
+              key={`eviction-map`}
               smallScreen={smallScreen}
               data={data}
+              buildings={buildings.filter(building => 
+                countyFilter.toString().padStart(3, '0') !== '999'
+                 ? countyFilter.toString().padStart(3, '0') === building.county.toString().padStart(3, '0') 
+                 : true
+              )}
               normalizeData={normalizeData}
               dateRange={dateRange}
               name={'evictionMap'}

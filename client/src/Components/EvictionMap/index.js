@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Map as LeafletMap, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
+import { 
+  Map as LeafletMap, 
+  TileLayer, 
+  GeoJSON, 
+  Tooltip, 
+  Circle,
+  Popup 
+} from 'react-leaflet';
 import numeral from 'numeral';
-import { Dropdown, Icon } from 'semantic-ui-react';
+import { Dropdown, Icon} from 'semantic-ui-react';
 import CSVExportButton from '../CSVExportButton';
 import moment from 'moment';
 import Loader from 'react-loader-spinner';
 import './style.css';
 
 const EvictionMap = props => {
+
+  console.log(props.buildings);
 
   const [legendVisble, setLegendVisible] = useState(true);
   const [tractData, setTractData] = useState();
@@ -296,6 +305,33 @@ const EvictionMap = props => {
             {/* <h2>Layers Loading...</h2> */}
             <Loader id='loader-box' color='#DC1C13' type='Circles' />
           </div>
+        }
+        {
+          props.buildings
+            .map(building =>
+              <Circle 
+                key={`building-${building._id}-${props.countyFilter}`}
+                center={[building.latitude, building.longitude]}
+                radius={Math.sqrt(building.filings.length/ Math.PI) * 20}
+                // radius={100}
+                color={'red'}
+              >
+                <Popup>
+                  <div>
+                    {building.street}
+                  </div>
+                  <div>
+                    {building.city} {building.zip}
+                  </div>
+                    total filings: {building.filings.length}
+                  <div>
+                    
+                  </div>
+                  
+                </Popup>
+
+              </Circle>
+            )
         }
         <TileLayer
           key={'tile-layer'}
