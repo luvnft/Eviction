@@ -99,23 +99,24 @@ const init = () => {
 					)
 					.filter(buildingInfo => filterForMF(buildingInfo));
 
-				// console.log(buildings);
-				db.building.remove().then(() =>
-					db.building
-						.insertMany(buildings)
-						.then(data => {
-							console.log(
-								data.length,
-								'records inserted on',
-								moment().format('MMMM Do YYYY [at] h:mm:ss a')
-							);
-							// process.exit(0);
-						})
-						.catch(err => {
-							console.log('Error Updating DB: ', err.message);
-							// process.exit(1);
-						})
-				);
+				console.log(buildings);
+
+				// db.building.remove().then(() =>
+				// 	db.building
+				// 		.insertMany(buildings)
+				// 		.then(data => {
+				// 			console.log(
+				// 				data.length,
+				// 				'records inserted on',
+				// 				moment().format('MMMM Do YYYY [at] h:mm:ss a')
+				// 			);
+				// 			// process.exit(0);
+				// 		})
+				// 		.catch(err => {
+				// 			console.log('Error Updating DB: ', err.message);
+				// 			// process.exit(1);
+				// 		})
+				// );
 			} else console.log('Error: DB not updated.');
 		})
 		.catch(err => {

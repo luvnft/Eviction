@@ -60,8 +60,6 @@ mongoose
 		console.log('DB Connection ERROR: ', err);
 	});
 
-// aggregateByBuilding();
-
 cron.schedule('0 59 23 * * Sunday', () => aggregateByBuilding());
 
 // Start the API server
