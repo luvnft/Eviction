@@ -12,9 +12,10 @@ const routes = require('./routes');
 const flash = require('express-flash');
 const app = express();
 const PORT = process.env.PORT || 3001;
+const aggregateByBuilding = require('./AggregateByBuilding');
+const cron = require('node-cron');
 
 // require('./config/passport');
-
 
 // Define middleware here
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,13 +24,11 @@ app.use(compression());
 app.use(cookieParser());
 // Serve up static assets (usually on heroku)
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+	app.use(express.static('client/build'));
 }
 
 //using the store: new MongoStore creates a new colection in our dB to store the sessions info (cookie)
 //this way the web browser refresh will not delete it
-
-
 
 // app.use(session({
 //   secret: process.env.SessionSecret || 'sessionsecret',
@@ -46,28 +45,29 @@ app.use(flash());
 //   app.use(passport.initialize());
 //   app.use(passport.session());
 
-
 // Add routes, both API and view
 app.use(routes);
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connect to the Mongo DB
-mongoose.connect(
-  MONGODB_URI,
-  { useNewUrlParser: true,
-    useUnifiedTopology: true
-  }).then(() => {
-    console.log("DB Connected")
-}).catch(err => {
-    console.log('DB Connection ERROR: ', err)
-});
+mongoose
+	.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+	.then(() => {
+		console.log('DB Connected');
+	})
+	.catch(err => {
+		console.log('DB Connection ERROR: ', err);
+	});
+
+// aggregateByBuilding();
+
+cron.schedule('0 59 23 * * Sunday', () => aggregateByBuilding());
 
 // Start the API server
 app.listen(PORT, function () {
-  console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
+	console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
 });
-
 
 // const MongoClient = require('mongodb').MongoClient;
 // const uri = "mongodb+srv://eviction-tracker:99gCLs6d62gB43V3@arcsafe0-wqosp.mongodb.net/test?retryWrites=true&w=majority";
