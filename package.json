@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/spinozist/ARC-Eviction-Tracker#readme",
   "dependencies": {
-    "axios": "^0.19.1",
+    "axios": "^0.19.2",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.17.2",
     "compression": "^1.7.4",
