@@ -51,14 +51,25 @@ const getBuildingInfo = async () => {
 			const obj = {};
 			if (type === 'countByMonth') {
 				filings.forEach(filing => {
-					const monthOfFiling = moment(filing[dateField]).format('MMM YY');
+					const monthOfFiling = moment(filing[dateField]).startOf('month');
 					obj[monthOfFiling]
 						? (obj[monthOfFiling] = obj[monthOfFiling] + 1)
 						: (obj[monthOfFiling] = 1);
 				});
-			}
+			};
 
-			return obj;
+      var getDaysArray = function(s,e) {for(var a=[],d=new Date(s);d<=e;d.setDate(d.getDate()+1)){ a.push(new Date(d));}return a;};
+
+      // const monthArray = getDaysArray
+
+      const array = Object.entries(obj)
+        .map(([key,value]) => ({
+          date: key,
+          count: value
+        }))
+        .sort((a,b) => new Date(b.date).getTime() > new Date(a.date).getTime() )
+
+			return array;
 		};
 
 		Object.entries(buildingInfo).forEach(([key, value]) => {
@@ -99,24 +110,24 @@ const init = () => {
 					)
 					.filter(buildingInfo => filterForMF(buildingInfo));
 
-				console.log(buildings);
+				// console.log(buildings);
 
-				// db.building.remove().then(() =>
-				// 	db.building
-				// 		.insertMany(buildings)
-				// 		.then(data => {
-				// 			console.log(
-				// 				data.length,
-				// 				'records inserted on',
-				// 				moment().format('MMMM Do YYYY [at] h:mm:ss a')
-				// 			);
-				// 			// process.exit(0);
-				// 		})
-				// 		.catch(err => {
-				// 			console.log('Error Updating DB: ', err.message);
-				// 			// process.exit(1);
-				// 		})
-				// );
+				db.building.deleteMany().then(() =>
+					db.building
+						.insertMany(buildings)
+						.then(data => {
+							console.log(
+								data.length,
+								'records inserted on',
+								moment().format('MMMM D, YYYY [at] h:mm:ss a')
+							);
+							// process.exit(0);
+						})
+						.catch(err => {
+							console.log('Error Updating DB: ', err.message);
+							// process.exit(1);
+						})
+				);
 			} else console.log('Error: DB not updated.');
 		})
 		.catch(err => {

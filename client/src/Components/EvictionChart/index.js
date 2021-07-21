@@ -83,14 +83,15 @@ const EvictionChart = props => {
             : true
           )
           .forEach(item => {
-            const key = item['Filing Date'] ? timeScale === 'daily' ? 
-                moment(item['Filing Date']).format('M/D/YY')
-              : timeScale === 'weekly' ?
-                // moment(item['Filing Date']).isoWeek()
-                moment(item['Filing Date']).add(1, 'y').subtract(2, 'd').startOf('week')
-              : timeScale === 'monthly' ?
-                moment(item['Filing Date']).add(1, 'y').startOf('month') 
-            : null : null;
+            const key = item['Filing Date'] 
+              ? timeScale === 'daily' 
+                ? moment(item['Filing Date']).format('M/D/YY')
+                : timeScale === 'weekly' 
+                  ? moment(item['Filing Date']).add(1, 'y').subtract(2, 'd').startOf('week')
+                  : timeScale === 'monthly' 
+                    ? moment(item['Filing Date']).add(1, 'y').startOf('month') 
+                    : null 
+              : null;
 
             // console.log(item);
 
@@ -138,7 +139,7 @@ const EvictionChart = props => {
         )
         .map(([key, value]) =>
           ({
-            "Filing Date": key,
+            "Filing Date": moment(key).format('MM/DD/YYYY'),
             "Total Filings": (value.current - value.answered) || null,
             "Baseline (Total Filings, 2019)" : value.historic ,
             "Total Answered Filings": value.answered || null
@@ -226,6 +227,8 @@ const EvictionChart = props => {
   // console.log(caseData);
   // console.log(brushDomain);
 
+  // console.log(brushDomain);
+  // console.log(caseData);
   return (
     <div id="chart-responsive-container">
       {caseData ?
@@ -247,20 +250,20 @@ const EvictionChart = props => {
           <CartesianGrid strokeDasharray="3 3" />
           <ReferenceArea
             x1={timeScale === 'weekly' 
-              ? new Date(brushDomain.start).getTime() < new Date("Sun Mar 29 2020 00:00:00 GMT-0400").getTime() 
-                ?  "Sun Mar 29 2020 00:00:00 GMT-0400"
+              ? new Date(brushDomain.start).getTime() < new Date('03/29/2020').getTime() 
+                ?  '03/29/2020'
                 : null
-              : new Date(brushDomain.start).getTime() < new Date("Wed Apr 01 2020 00:00:00 GMT-0400").getTime() 
-                ? "Wed Apr 01 2020 00:00:00 GMT-0400"
+              : new Date(brushDomain.start).getTime() < new Date('04/01/2020').getTime() 
+                ? '04/01/2020'
                 : null
                             
             } 
             x2={timeScale === 'weekly'
-              ? new Date(brushDomain.end).getTime() > new Date("Sun Jul 26 2020 00:00:00 GMT-0400").getTime() 
-                ?  "Sun Jul 26 2020 00:00:00 GMT-0400"
+              ? new Date(brushDomain.end).getTime() > new Date('06/28/2020').getTime() 
+                ?  '06/28/2020'
                 : null
-              : new Date(brushDomain.end).getTime() > new Date("Sat Aug 01 2020 00:00:00 GMT-0400").getTime() 
-                ?  "Sat Aug 01 2020 00:00:00 GMT-0400"
+              : new Date(brushDomain.end).getTime() > new Date('08/01/2020').getTime() 
+                ?  '08/01/2020'
                 : null
             } 
             y1={0}
@@ -269,13 +272,16 @@ const EvictionChart = props => {
           </ReferenceArea>
           <ReferenceArea 
             x1={timeScale === 'weekly' 
-              ? new Date(brushDomain.start).getTime() < new Date("Sun Aug 30 2020 00:00:00 GMT-0400").getTime() 
-                ? "Sun Aug 30 2020 00:00:00 GMT-0400"
+              ? new Date(brushDomain.start).getTime() < new Date('08/30/2020').getTime() 
+                ? '08/30/2020'
                 : null
-              : new Date(brushDomain.start).getTime() < new Date("Tue Sep 01 2020 00:00:00 GMT-0400").getTime() 
-                ? "Tue Sep 01 2020 00:00:00 GMT-0400"
+              : new Date(brushDomain.start).getTime() < new Date('09/01/2020').getTime() 
+                ? '09/01/2020'
                 : null
             } 
+            // x2={
+
+            // }
             y1={0}
           >
             <Label  position='insideTop'>CDC Moratorium</Label>

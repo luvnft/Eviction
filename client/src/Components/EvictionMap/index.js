@@ -4,11 +4,12 @@ import {
   TileLayer, 
   GeoJSON, 
   Tooltip, 
-  Circle,
+  CircleMarker,
   Popup 
 } from 'react-leaflet';
 import numeral from 'numeral';
-import { Dropdown, Icon} from 'semantic-ui-react';
+import { Dropdown, Icon, Radio} from 'semantic-ui-react';
+// import { BarChart, Bar, XAxis, ResponsiveContainer} from 'recharts';
 import CSVExportButton from '../CSVExportButton';
 import moment from 'moment';
 import Loader from 'react-loader-spinner';
@@ -16,7 +17,7 @@ import './style.css';
 
 const EvictionMap = props => {
 
-  console.log(props.buildings);
+  // console.log(props.buildings);
 
   const [legendVisble, setLegendVisible] = useState(true);
   const [tractData, setTractData] = useState();
@@ -27,6 +28,7 @@ const EvictionMap = props => {
   const [csvData, setCSVData] = useState();
   const [monthOptions, setMonthOptions] = useState();
   const [selectedMonth, setSelectedMonth] = useState('January');
+  const [showBuildings, setShowBuildings] = useState(true);
   const selectedMeasure = 'Total Filings'
 
   const colors = 
@@ -244,11 +246,11 @@ const EvictionMap = props => {
       color: color ? color : 'lightgrey',
       weight: 1,
       fillColor: color ? color : 'lightgrey',
-      fillOpacity: .7
+      fillOpacity: .65
     })
   };
 
-  useEffect(() => { handleData() }, [props.countyFilter, selectedMonth]);
+  useEffect(() => handleData(), [props.countyFilter, selectedMonth]);
   useEffect(() => handleCSVData(), [tractData, props.geojson]);
   useEffect(() => getMonthList(), []);
   return (
@@ -284,17 +286,23 @@ const EvictionMap = props => {
           tractData &&
           stats ?
           <GeoJSON
-            key={'map-layer-' + props.name + props.countyFilter + selectedMonth}
+            key={`map-layer-${props.name}-${props.countyFilter}-${selectedMonth}`}
             data={props.geojson}
             onAdd={e => e.target.bringToBack()}
-            onMouseover={e => e.layer.feature.properties.GEOID ? setHoverID(e.layer.feature.properties.GEOID) : null}
+            onMouseover={e => e.layer.feature.properties.GEOID 
+              ? setHoverID(e.layer.feature.properties.GEOID) 
+              : null
+            }
             onMouseout={() => setHoverID()}
-            onClick={e => e.layer.feature.properties.GEOID ? setHoverID(e.layer.feature.properties.GEOID) : setHoverID()}
+            onClick={e => e.layer.feature.properties.GEOID 
+              ? setHoverID(e.layer.feature.properties.GEOID) 
+              : setHoverID()
+            }
             filter={feature => props.countyFilter !== 999 && props.countyFilter !== '999' ?
               feature.properties['GEOID'].slice(2, 5) === props.countyFilter.toString().padStart(3, '0') :
               props.counties.includes(feature.properties['GEOID'].slice(2, 5))}
             style={feature => featureStyler(feature)}>
-            <Tooltip>
+            <Tooltip interactive>
               {
                 tractData[hoverID] ? <CustomTooltip /> : <h5>No Data</h5>
               }
@@ -306,13 +314,19 @@ const EvictionMap = props => {
             <Loader id='loader-box' color='#DC1C13' type='Circles' />
           </div>
         }
-        {
-          props.buildings
-            .map(building =>
-              <Circle 
+        {/* {
+          showBuildings
+          ? props.buildings
+            .map(building => { 
+              // const monthlyFilings = building.monthlyfilings.map(item =>
+              //   ({  
+              //     date: moment(item.date).valueOf(),
+              //     count: item.count
+              //   }))
+              return <CircleMarker
                 key={`building-${building._id}-${props.countyFilter}`}
                 center={[building.latitude, building.longitude]}
-                radius={Math.sqrt(building.filings.length/ Math.PI) * 20}
+                radius={Math.sqrt(building.filings.length/ Math.PI) * 1.3}
                 // radius={100}
                 color={'red'}
               >
@@ -323,16 +337,47 @@ const EvictionMap = props => {
                   <div>
                     {building.city} {building.zip}
                   </div>
-                    total filings: {building.filings.length}
+                    {building.filings.length} total filings since 1/1/2020
                   <div>
+                  { 
+                    monthlyFilings[0]
+                      // ? <ResponsiveContainer>
+                      ? <BarChart
+                          width={200} 
+                          height={100} 
+                          data={monthlyFilings.map(item => ({
+                              date: moment(item.date).valueOf(),
+                              count: item.count
+                            }))
+                          }
+                        >
+                          <Bar dataKey='count' />
+                          <XAxis 
+                            dataKey='date' 
+                            type='category'
+                            scale='time'
+                            domain={[
+                              moment('1/1/2020').valueOf(),
+                              moment('7/1/2021').valueOf()
+                            ]}
+                            tickFormatter={tick => moment(tick).format('M/YY')}/>
+
+                        </BarChart>
+
+                        // </ResponsiveContainer>
+                      : null
+                  
+                  }
+
                     
                   </div>
                   
                 </Popup>
 
-              </Circle>
-            )
-        }
+              </CircleMarker>
+            })
+          : null
+        } */}
         <TileLayer
           key={'tile-layer'}
           attribution={'&copy <a href="http://osm.org/copyright">OpenStreetMap contributors</a>'}
@@ -357,6 +402,17 @@ const EvictionMap = props => {
         </div> : null
 
       }
+      {/* {
+        <div id='building-legend'>
+          <Radio 
+          label='Show Buildings***'
+          toggle
+          checked={showBuildings}
+          onChange={() => setShowBuildings(!showBuildings)} 
+          />
+
+        </div>
+      } */}
       {legendVisble ?
         <div className='legend'>
           <div id='legend-header'>

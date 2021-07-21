@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(compression());
 app.use(cookieParser());
+
 // Serve up static assets (usually on heroku)
 if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'));
@@ -41,7 +42,6 @@ if (process.env.NODE_ENV === 'production') {
 app.use(flash());
 
 // // Incorporate PASSPORT
-
 //   app.use(passport.initialize());
 //   app.use(passport.session());
 
@@ -60,18 +60,11 @@ mongoose
 		console.log('DB Connection ERROR: ', err);
 	});
 
-cron.schedule('0 59 23 * * Sunday', () => aggregateByBuilding());
+// Aggregate filings by building and insert into DB 
+// cron.schedule('0 59 23 * * Sunday', () => aggregateByBuilding());
+// aggregateByBuilding()
 
 // Start the API server
 app.listen(PORT, function () {
 	console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
 });
-
-// const MongoClient = require('mongodb').MongoClient;
-// const uri = "mongodb+srv://eviction-tracker:99gCLs6d62gB43V3@arcsafe0-wqosp.mongodb.net/test?retryWrites=true&w=majority";
-// const client = new MongoClient(uri, { useNewUrlParser: true });
-// client.connect(err => {
-//   const collection = client.db("test").collection("devices");
-//   // perform actions on the collection object
-//   client.close();
-// });

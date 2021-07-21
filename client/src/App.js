@@ -83,10 +83,10 @@ const App = () => {
       .catch(err => console.error(err));
   };
 
-  const getMFBuildingInfo = () =>
-  API.getData('./buildings')
-    .then(res => setBuildings(res.data))
-    .catch(err => console.error(err));
+  // const getMFBuildingInfo = () =>
+  // API.getData('./buildings')
+  //   .then(res => setBuildings(res.data))
+  //   .catch(err => console.error(err));
 
 
   const AboutContent = {
@@ -305,7 +305,7 @@ const App = () => {
     getEvictionData();
     getTractGeoJSON();
     getContent();
-    getMFBuildingInfo();
+    // getMFBuildingInfo();
     setBoundaryGeoJSON(countyBoundary);
   }, []);
 
@@ -401,17 +401,17 @@ const App = () => {
       <div id='viz-box'>
         {
           vizView === 'map' &&
-          data &&
-          buildings ?
-            <EvictionMap
+          data
+          // buildings 
+          ? <EvictionMap
               key={`eviction-map`}
               smallScreen={smallScreen}
               data={data}
-              buildings={buildings.filter(building => 
-                countyFilter.toString().padStart(3, '0') !== '999'
-                 ? countyFilter.toString().padStart(3, '0') === building.county.toString().padStart(3, '0') 
-                 : true
-              )}
+              // buildings={buildings.filter(building => 
+              //   countyFilter.toString().padStart(3, '0') !== '999'
+              //    ? countyFilter.toString().padStart(3, '0') === building.county.toString().padStart(3, '0') 
+              //    : true
+              // )}
               normalizeData={normalizeData}
               dateRange={dateRange}
               name={'evictionMap'}

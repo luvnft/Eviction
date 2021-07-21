@@ -17,10 +17,27 @@
     
 }
 
+#building-legend {
+  position: fixed;
+  z-index: 99999;
+  top: 21vh;
+  right: 1%;
+  background-color: white;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  text-align: center;
+  overflow: auto;
+  padding: 10px;
+}
+
 #legend-header > h3 {
     /* font-size: 1.3rem; */
     font-family: 'NotoSansKR-Light';
 }
+
+/* .building-popup-chart {
+  margin: 10px;
+} */
 
 
 .legend > div > em {
@@ -185,4 +202,9 @@
     #map-data-export-button > .icon {
         margin: 0;
     }
+
+    #building-legend {
+      top: 26vh;
+    }
+
 }
