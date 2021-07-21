@@ -35,9 +35,9 @@
     font-family: 'NotoSansKR-Light';
 }
 
-/* .building-popup-chart {
-  margin: 10px;
-} */
+.building-popup-chart {
+ margin: 10px 0;
+}
 
 
 .legend > div > em {

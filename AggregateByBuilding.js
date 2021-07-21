@@ -47,27 +47,37 @@ const getBuildingInfo = async () => {
 				  });
 		});
 
+    var getMonthArray = function(s,e) {for(var a=[],d=new Date(s);d<=e;d.setDate(d.getDate()+1)){ a.push(moment(new Date(d)).startOf('month').format('MM/DD/YYYY'));}return a;};
+
+    const monthArray = [...new Set(getMonthArray(new Date('01/1/2020'), new Date('06/30/2021')))];
+    console.log(monthArray);
+
+
+
 		const aggregateBy = (filings, dateField, type) => {
 			const obj = {};
 			if (type === 'countByMonth') {
 				filings.forEach(filing => {
-					const monthOfFiling = moment(filing[dateField]).startOf('month');
+					const monthOfFiling = moment(filing[dateField]).startOf('month').format('MM/DD/YYYY');
 					obj[monthOfFiling]
 						? (obj[monthOfFiling] = obj[monthOfFiling] + 1)
 						: (obj[monthOfFiling] = 1);
 				});
 			};
 
-      var getDaysArray = function(s,e) {for(var a=[],d=new Date(s);d<=e;d.setDate(d.getDate()+1)){ a.push(new Date(d));}return a;};
 
-      // const monthArray = getDaysArray
 
-      const array = Object.entries(obj)
-        .map(([key,value]) => ({
-          date: key,
-          count: value
+      // const array = Object.entries(obj)
+      //   .map(([key,value]) => ({
+      //     date: key,
+      //     count: value
+      //   }))
+      //   .sort((a,b) => new Date(b.date).getTime() > new Date(a.date).getTime() )
+
+      const array = monthArray.map(month => ({
+          date: month,
+          count: obj[month] || 0
         }))
-        .sort((a,b) => new Date(b.date).getTime() > new Date(a.date).getTime() )
 
 			return array;
 		};

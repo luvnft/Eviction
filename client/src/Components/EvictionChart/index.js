@@ -259,8 +259,8 @@ const EvictionChart = props => {
                             
             } 
             x2={timeScale === 'weekly'
-              ? new Date(brushDomain.end).getTime() > new Date('06/28/2020').getTime() 
-                ?  '06/28/2020'
+              ? new Date(brushDomain.end).getTime() > new Date('07/26/2020').getTime() 
+                ?  '07/26/2020'
                 : null
               : new Date(brushDomain.end).getTime() > new Date('08/01/2020').getTime() 
                 ?  '08/01/2020'
