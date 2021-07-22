@@ -17,7 +17,7 @@
     
 }
 
-#building-legend {
+#building-toggle {
   position: fixed;
   z-index: 99999;
   top: 21vh;
@@ -28,6 +28,21 @@
   text-align: center;
   overflow: auto;
   padding: 10px;
+  text-align: center;
+  color: black;
+}
+
+.building-toggle-sublabel {
+  margin: .5em 0 0 0;
+  font-size: .8em;
+  width: 100px;
+  line-height: 1.2em;
+  font-style: italic;
+}
+
+.building-toggle-label {
+  font-weight: 800;
+  font-size: 1.1em;
 }
 
 #legend-header > h3 {
@@ -122,6 +137,11 @@
     position: relative;
     top: .4em;
     right: .1em;
+}
+
+.building-popup-value {
+  font-size: 1.4em;
+  font-weight: 700;
 }
 
 

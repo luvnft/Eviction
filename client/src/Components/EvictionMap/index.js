@@ -393,16 +393,20 @@ const EvictionMap = props => {
                   
                   }
                   <div>
-                    {building.filings.length} filings since January 2020
+                  <span className='building-popup-value'>
+                    {building.filings.length}
+                  </span> filings since January 2020
 
                   </div>
                   <div>
-                    {building.filings.filter(filing =>
+                    <span className='building-popup-value'>{
+                      building.filings.filter(filing =>
                         moment(filing['filingdate']).valueOf() >= 
                         moment('04/01/2020').valueOf()
 
-                      ).length} filings during the COVID-19 pandemic**.
-                    
+                      ).length
+                    }
+                    </span> filings during the COVID-19 pandemic**.
                   </div>
                   
                 </Popup>
@@ -436,13 +440,19 @@ const EvictionMap = props => {
 
       }
       {
-        <div id='building-legend'>
+        <div id='building-toggle'>
           <Radio 
-          label='Show Buildings***'
+          // label='Show Buildings***'
           toggle
           checked={showBuildings}
           onChange={() => setShowBuildings(!showBuildings)} 
           />
+          <div className='building-toggle-label'>
+            Show Buildings
+          </div>
+          <div className='building-toggle-sublabel'>
+            with 10 or more eviction filings since 1/1/2020
+          </div>
 
         </div>
       }
