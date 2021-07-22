@@ -349,7 +349,7 @@ const EvictionMap = props => {
                     monthlyFilings[0]
                       ? <div className='building-popup-chart'>
                         <BarChart
-                          width={200} 
+                          width={220} 
                           height={100} 
                           margin={{
                             top: 25,
@@ -392,13 +392,13 @@ const EvictionMap = props => {
                       : null
                   
                   }
-                  <div>
+                  <div className='building-popup-summary'>
                   <span className='building-popup-value'>
                     {building.filings.length}
-                  </span> filings since January 2020
+                  </span> eviction filings since 1/1/2020
 
                   </div>
-                  <div>
+                  <div className='building-popup-summary'>
                     <span className='building-popup-value'>{
                       building.filings.filter(filing =>
                         moment(filing['filingdate']).valueOf() >= 
@@ -406,7 +406,7 @@ const EvictionMap = props => {
 
                       ).length
                     }
-                    </span> filings during the COVID-19 pandemic**.
+                    </span> eviction filings during the COVID-19 pandemic**
                   </div>
                   
                 </Popup>

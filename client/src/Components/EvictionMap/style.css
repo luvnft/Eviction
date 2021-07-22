@@ -54,6 +54,9 @@
  margin: 10px 0;
 }
 
+.building-popup-summary {
+  width: 220px;
+}
 
 .legend > div > em {
     font-size: .8em;
