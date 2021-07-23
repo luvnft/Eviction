@@ -29,12 +29,30 @@ const EvictionMap = props => {
   const [monthOptions, setMonthOptions] = useState();
   const [selectedMonth, setSelectedMonth] = useState('January');
   const [showBuildings, setShowBuildings] = useState(true);
-  const selectedMeasure = 'Total Filings'
+  const [evictionThreshold, setEvictionThreshold] = useState(100);
+
+  const selectedMeasure = 'Total Filings';
+  const buildingScaler = 2
 
   const colors = 
     selectedMonth !== 'During the Pandemic**'
       ? ["#DC1C13", "#EA4C46", "#F07470", "#F1959B", "#F6BDC0"].reverse()
       : ["#6867da", "#618ee9", "#76afee", "#a2cdee", "#d8e8f0"].reverse();
+
+  // const colors2 = [
+  //   '#59fd00',
+  //   // '#85fe00',
+  //   // '#a6ff00',
+  //   '#c3ff00',
+  //   '#dcff00',
+  //   '#ebf100',
+  //   '#f6e400',
+  //   '#ffd604',
+  //   '#ffb821',
+  //   '#ff9b39',
+  //   '#ff814d',
+  //   '#fb6a5f'
+  // ];
 
   const sortByDate = (a, b) => {
     var dateA = new Date(a['Filing Date']).getTime();
@@ -72,14 +90,35 @@ const EvictionMap = props => {
     })
     setMonthOptions(monthOptionsArray);
     setSelectedMonth(monthOptionsArray[monthOptionsArray.length - 1].value)
+  };
+
+  const createBins = (binningType, binsArray, valueArray, colorArray) => {
+    const bins = [];
+    binningType === 'quantile' ?
+    colorArray.map((color, j) =>
+      bins.push({
+        top: valueArray[Math.floor(j * valueArray.length / colorArray.length)],
+        bottom: valueArray[Math.floor((j + 1) * valueArray.length / colorArray.length) - 1]
+      })
+    )
+    : binningType === 'defined' ?
+      binsArray.map((bin, i) =>
+        bins.push({
+          bottom: i !== 0 ? binsArray[i - 1] : 0,
+          top: bin
+        })
+      )
+      : bins.push(null);
+    return bins;
   }
+
+    
 
   const calcStats = data => {
     const valueArray = Object.values(data).filter(a => a > 0).sort((a, b) => a > b ? -1 : 1);
     // console.log(valueArray);
     const max = Math.max(...valueArray);
     const min = Math.min(...valueArray);
-    const bins = [];
 
     setStats({
       max: max,
@@ -87,28 +126,13 @@ const EvictionMap = props => {
       range: max - min
     });
 
-    const createBins = (binningType, binsArray) =>
-      binningType === 'quantile' ?
-        colors.map((color, j) =>
-          bins.push({
-            top: valueArray[Math.floor(j * valueArray.length / colors.length)],
-            bottom: valueArray[Math.floor((j + 1) * valueArray.length / colors.length) - 1]
-          })
-        )
-        : binningType === 'defined' ?
-          binsArray.map((bin, i) =>
-            bins.push({
-              bottom: i !== 0 ? binsArray[i - 1] : 0,
-              top: bin
-            })
-          )
-          : null
-
-    createBins(
+    const bins = createBins(
       'defined', 
       selectedMonth === 'During the Pandemic**' 
         ? [5,10,15,30,max + 1] 
-        : [1,2,5,10,18]
+        : [1,2,5,10,18],
+      valueArray,
+      colors
     );
     setBins(bins);
   }
@@ -317,19 +341,30 @@ const EvictionMap = props => {
         {
           showBuildings
           ? props.buildings
+            .filter(building => 
+              building.filings.filter(filing =>
+                  moment(filing['filingdate']).valueOf() >= 
+                  moment('04/01/2020').valueOf()
+              ).length >= evictionThreshold
+            )
             .map(building => { 
               const monthlyFilings = building.monthlyfilings.map(item =>
                 ({  
                   date: moment(item.date).valueOf(),
                   count: item.count
                 }))
+              // const pandemicRatio = building.pandemicratio;
               return <CircleMarker
                 key={`building-${building._id}-${props.countyFilter}`}
                 center={[building.latitude, building.longitude]}
-                radius={Math.sqrt(building.filings.length/ Math.PI) * 1.3}
+                radius={Math.sqrt(building.totalfilings/ Math.PI) * buildingScaler}
                 // radius={100}
-                color={'orange'}
-                weight={1}
+                color={'rgb(191, 253, 0)'}
+                // color={pandemicRatio 
+                //   ? colors2[Math.floor((colors2.length - 1) * pandemicRatio)]
+                //   : 'lighgrey'}
+                fillOpacity={.7}
+                weight={1.5}
                 
               >
                 <Popup>
@@ -394,9 +429,8 @@ const EvictionMap = props => {
                   }
                   <div className='building-popup-summary'>
                   <span className='building-popup-value'>
-                    {building.filings.length}
-                  </span> eviction filings since 1/1/2020
-
+                    {building.totalfilings}
+                  </span> eviction filings since 1/1/2020 
                   </div>
                   <div className='building-popup-summary'>
                     <span className='building-popup-value'>{
@@ -408,6 +442,22 @@ const EvictionMap = props => {
                     }
                     </span> eviction filings during the COVID-19 pandemic**
                   </div>
+                  {/* <div className='building-popup-summary'>
+                  <span className='building-popup-value'>
+                    {numeral(pandemicRatio).format('0%')}
+                  </span> of the eviction filings in this building since 1/1/2020 where during the pandemic.
+                  </div> */}
+                  {
+                    building.county === '121'
+                      ? <div className='popup-data-warning'>
+                          <b>***WARNING***</b>
+                          <br />
+                          <em>
+                          These totals and calculation represent a significant undercount due to the lack of building-level data since 9/15/2020 in Fulton County.  
+                          </em>
+                        </div>
+                      : null
+                  }
                   
                 </Popup>
 
@@ -450,9 +500,64 @@ const EvictionMap = props => {
           <div className='building-toggle-label'>
             Show Buildings
           </div>
-          <div className='building-toggle-sublabel'>
-            with 10 or more eviction filings since 1/1/2020
-          </div>
+          { showBuildings
+          ? <>
+              <div className='building-toggle-sublabel'>
+                with <Dropdown 
+                  inline
+                  style={{
+                    fontSize: '1.6em',
+                    fontWeight: '700'
+                  }}
+                  value={evictionThreshold}
+                  options={[10, 25, 50, 100].map(option =>
+                    ({
+                      text: option,
+                      value: option,
+                      key: `threshold-option-${option}`
+                    })
+                  )}
+                  onChange={(e, data) => setEvictionThreshold(data.value)}
+                /> 
+                or more eviction filings during the COVID-19 pandemic**
+              </div>
+
+              {/* <div id='building-symbology-box-label'>
+                Filings per building      
+              </div>   */}
+              <div id='building-symbology-box'>
+
+                {
+                  [
+                    10,
+                    50, 
+                    100,
+                    200
+                  ]
+                    // .reverse()
+                    // .filter(bin => bin >= evictionThreshold)
+                    .map((bin, i) =>
+                      <div>
+                      <div 
+                        style={{
+                          width: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
+                          height: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
+                          border: '2px solid rgb(191, 253, 0)',
+                          backgroundColor: 'rgba(191, 253, 0, .5)'
+                        }}
+                        className='building-symbology'
+                      />
+                      <div>
+                        {bin}
+                      </div>
+                      </div>
+                          )
+                }
+
+              </div>
+            </>
+          : null
+        }
 
         </div>
       }
@@ -528,7 +633,7 @@ const EvictionMap = props => {
           </div>
           <div id='legend-footer'>
             <p><span>*</span>calculated by dividing total filings by the number of renter-occupied housing units</p>
-            <p><span>**</span>Since 4/1/2020</p>
+            <p><span>**</span>From 4/1/2020 to the most current update, with the exception of Fulton County where building- and census tract-level data has been unavailable since 9/15/2020.</p>
  
           </div>
 

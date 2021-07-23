@@ -83,13 +83,20 @@ const getBuildingInfo = async () => {
 		};
 
 		Object.entries(buildingInfo).forEach(([key, value]) => {
-			buildingInfo[key]['totalfilings'] = value.filings.length;
+      const totalFilings = value.filings.length;
+      const pandemicFilings = value.filings.filter(filing =>
+          moment(new Date(filing['filingdate'])).valueOf() >= 
+          moment(new Date('4/1/2020')).valueOf()
+        ).length
+			buildingInfo[key]['totalfilings'] = totalFilings;
+      buildingInfo[key]['pandemicfilings'] = pandemicFilings;
+      buildingInfo[key]['pandemicratio'] = pandemicFilings / totalFilings;
 			// console.log(aggregateBy(value.filings, 'filingdate', 'countByMonth'));
 			buildingInfo[key]['monthlyfilings'] = aggregateBy(
 				value.filings,
 				'filingdate',
 				'countByMonth'
-			);
+			);;
 		});
 
 		return Object.entries(buildingInfo).map(([key, value]) => ({

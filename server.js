@@ -12,8 +12,8 @@ const routes = require('./routes');
 const flash = require('express-flash');
 const app = express();
 const PORT = process.env.PORT || 3001;
-// const aggregateByBuilding = require('./AggregateByBuilding');
-// const cron = require('node-cron');
+const aggregateByBuilding = require('./AggregateByBuilding');
+const cron = require('node-cron');
 
 // require('./config/passport');
 
@@ -61,7 +61,7 @@ mongoose
 	});
 
 // Aggregate filings by building and insert into DB 
-// cron.schedule('0 59 23 * * Sunday', () => aggregateByBuilding());
+cron.schedule('0 59 23 * * Sunday', () => aggregateByBuilding());
 // aggregateByBuilding()
 
 // Start the API server

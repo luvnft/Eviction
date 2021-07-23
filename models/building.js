@@ -12,6 +12,8 @@ const buildingSchema = new Schema({
   tractid: {type: String, required: true},
   blockgroupid: {type: String, required: true},
   totalfilings: {type: Number, required: true},
+  pandemicfilings: {type: Number, required: true},
+  pandemicratio: {type: Number, required: true},
   monthlyfilings: {type: Object || Array, required: false},
   filings: {type: Array, required: true},
 });

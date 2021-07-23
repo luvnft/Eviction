@@ -1,7 +1,7 @@
 
 .legend {
     display: grid;
-    grid-template-rows: 10% 12% 63% 10%;
+    grid-template-rows: 10% 10% 55% 25%;
     width: 250px;
     height: 40vh;
     z-index: 9999;
@@ -26,16 +26,39 @@
   border: 1px solid lightgrey;
   border-radius: 5px;
   text-align: center;
-  overflow: auto;
+  overflow: visible;
   padding: 10px;
   text-align: center;
   color: black;
+  width: 250px;
+  /* overflow:; */
+}
+
+
+
+.building-symbology {
+  font-size: .8em;
+  border-radius: 50%;
+  margin-right: 3px;
+}
+
+#building-symbology-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 50%;
+  margin: 10px auto 0 auto;
+}
+#building-symbology-box > div {
+  display: flex;
+  flex-direction: column;
 }
 
 .building-toggle-sublabel {
-  margin: .5em 0 0 0;
+  margin: .5em auto 0 auto;
   font-size: .8em;
-  width: 100px;
+  /* width: 200px; */
   line-height: 1.2em;
   font-style: italic;
 }
@@ -58,6 +81,15 @@
   width: 220px;
 }
 
+.popup-data-warning {
+  background-color: rgba(211, 211, 211, 0.4);
+  width: 200px;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
 .legend > div > em {
     font-size: .8em;
     white-space: wrap;
@@ -69,6 +101,7 @@
 #symbol-container {
     display: grid;
     grid-template-columns: 25% 75%;
+    padding: 10px;
 }
 
 #symbol-column, #symbol-labels {
@@ -151,14 +184,23 @@
 @media only screen and  (max-width: 850px) {
     .legend {
         font-size: .8rem;
-        grid-template-rows: 10% 16% 55%;
-        width: 200px;
-        height: 40vh;
-        padding: .5em;
+        grid-template-rows: 10% 16% 50%;
+        width: 250px;
+        height: 35vh;
+        z-index: 9999998;
+        padding: 1%;
         position: fixed;
         bottom: 23vh;
+        overflow: auto;
     }
 
+    #symbol-container {
+      width: 80%;
+      margin-left: 10%;
+      /* display: grid;
+      grid-template-columns: 25% 75%; */
+      padding: 1px;
+  }
     /* .legend {
         font-size: .8em;
         padding: .1em;
@@ -196,9 +238,9 @@
 
     #legend-close-icon {
         position: fixed;
-        bottom: 61vh;
-        z-index: 999999;
-        right: 194px;
+        bottom: 56vh;
+        z-index: 9999999;
+        right: 244px;
         background-color: black;
         height: 20px;
         width: 20px;
@@ -228,6 +270,12 @@
 
     #building-toggle {
       top: 26vh;
+      width: 200px;
+      font-size: .9em;
+    }
+
+    #building-symbology-box {
+      width: 90%;
     }
 
 }
