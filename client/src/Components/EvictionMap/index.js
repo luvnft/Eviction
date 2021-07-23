@@ -363,7 +363,7 @@ const EvictionMap = props => {
                 // color={pandemicRatio 
                 //   ? colors2[Math.floor((colors2.length - 1) * pandemicRatio)]
                 //   : 'lighgrey'}
-                fillOpacity={.7}
+                fillOpacity={.6}
                 weight={1.5}
                 
               >
@@ -453,7 +453,7 @@ const EvictionMap = props => {
                           <b>***WARNING***</b>
                           <br />
                           <em>
-                          These totals and calculation represent a significant undercount due to the lack of building-level data since 9/15/2020 in Fulton County.  
+                          The totals for buildings in Fulton County likely represent a significant undercount due to the lack of building-level data since 9/15/2020.  
                           </em>
                         </div>
                       : null
@@ -510,7 +510,7 @@ const EvictionMap = props => {
                     fontWeight: '700'
                   }}
                   value={evictionThreshold}
-                  options={[10, 25, 50, 100].map(option =>
+                  options={[10, 50, 100].map(option =>
                     ({
                       text: option,
                       value: option,
