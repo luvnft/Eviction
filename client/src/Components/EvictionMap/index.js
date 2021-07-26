@@ -416,7 +416,7 @@ const EvictionMap = props => {
                             scale='time'
                             domain={[
                               moment('1/1/2020').valueOf(),
-                              moment('7/1/2021').valueOf()
+                              moment(props.dateRange.end).startOf('month').valueOf()
                             ]}
                             tickFormatter={tick => moment(tick).format('M/YY')}
                           />
