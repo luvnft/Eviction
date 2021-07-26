@@ -290,12 +290,12 @@ const EvictionMap = props => {
           zip: building.zip,
           county: building.county,
           tractID: building.tractid,
-          '# of filings since 1/1/2020': building.totalfilings,
-          '# of filings since 4/1/2020': building.pandemicfilings
+          'filings since 1/1/2020': building.totalfilings,
+          'filings since 4/1/2020': building.pandemicfilings
         };
 
         building.monthlyfilings.forEach(month =>
-          obj[`# of filings in ${moment(month.date).format('MMM YY')}`] = month.count
+          obj[`filings in ${moment(month.date).format('MMM YYYY')}`] = month.count
         )
 
 
@@ -694,7 +694,7 @@ const EvictionMap = props => {
               // data={props.data.filter(item => 
 
               // )}
-              content={'Filing Data by Census Tract'}
+              content={'Census Tract Data'}
             />
           </div>
           : null
@@ -711,15 +711,15 @@ const EvictionMap = props => {
               <CSVExportButton
                 // smallScreen={props.smallScreen}
                 csvTitle={
-                  `Title: ${selectedMonth} Eviction Filings by Building in ${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text} as of ${props.dateRange ? moment(props.dateRange.end).format('M/D/YYYY') : null}`
+                  `Title: List of Buildings in ${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text} with ${evictionThreshold} or eviction filings since 4/1/2020 (as of ${props.dateRange ? moment(props.dateRange.end).format('M/D/YYYY') : null})`
                   + '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
                 }
-                csvFilename={`Eviction-Filings-by-Building-${selectedMonth}-2020-${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text}`}
+                csvFilename={`ATL-Eviction-Tracker-Builings-List-${evictionThreshold}-plus-filings-${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text}`}
                 data={buildingList()}
                 // data={props.data.filter(item => 
 
                 // )}
-                content={'Filing Data by Building'}
+                content={'Building Data'}
               />
             </div>
           : null
