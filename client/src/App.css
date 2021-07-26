@@ -201,7 +201,7 @@ h5 {
     width: 100vw;
     height: 100vh;
     display: grid;
-    grid-template-rows: 20% 65% 15%;
+    grid-template-rows: 21% 64% 15%;
 }
 
 #header, #footer {
@@ -259,7 +259,7 @@ h5 {
 
 
 #header > h1 {
-    font-size: 3.5em;
+    font-size: 2.5em;
     margin: 1vh 0 0 0;
     /* font-family: 'Impact'; */
 }
@@ -282,7 +282,7 @@ h5 {
     display: grid;
     position: fixed;
     top: 16vh;
-    height: 4vh;
+    height: 5vh;
     /* padding-top: 1vh;  */
 
     width: 100%;
@@ -295,7 +295,7 @@ h5 {
 .viz-tab {
     background-color: lightgrey;
     height: 100%;
-    line-height: 4vh;
+    line-height: 5vh;
     /* align-items: center; */
     z-index: 99998;
     opacity: .5;
@@ -304,8 +304,8 @@ h5 {
 }
 
 .viz-tab > h3 {
-  line-height: 4vh;
-  font-size: 1.3em;
+  line-height: 5vh;
+  font-size: 1.2em;
 }
 
 .viz-tab:hover {
@@ -331,7 +331,7 @@ h5 {
   top: 8.5vh;
   z-index: 999999;
   /* padding: 0 35% 0 35%; */
-  font-size: 1.3em;
+  font-size: 1.1em;
 }
 
 .ui.fluid.selection.dropdown {

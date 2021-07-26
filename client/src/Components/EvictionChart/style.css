@@ -14,7 +14,7 @@
     position: fixed;
     bottom: 17vh;
     z-index: 999999;
-    left: 5%;
+    left: 70px;
 }
 
 .recharts-legend-item {

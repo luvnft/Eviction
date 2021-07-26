@@ -129,8 +129,8 @@ const EvictionMap = props => {
     const bins = createBins(
       'defined', 
       selectedMonth === 'During the Pandemic**' 
-        ? [5,10,15,30,max + 1] 
-        : [1,2,5,10,18],
+        ? [5,20,30,max + 1] 
+        : [1,5,10,18],
       valueArray,
       colors
     );
