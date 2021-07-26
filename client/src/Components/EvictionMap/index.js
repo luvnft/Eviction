@@ -29,7 +29,7 @@ const EvictionMap = props => {
   const [monthOptions, setMonthOptions] = useState();
   const [selectedMonth, setSelectedMonth] = useState('January');
   const [showBuildings, setShowBuildings] = useState(true);
-  const [evictionThreshold, setEvictionThreshold] = useState(100);
+  const [evictionThreshold, setEvictionThreshold] = useState(50);
 
   const selectedMeasure = 'Total Filings';
   const buildingScaler = 2
