@@ -50,7 +50,7 @@ const getBuildingInfo = async () => {
     var getMonthArray = function(s,e) {for(var a=[],d=new Date(s);d<=e;d.setDate(d.getDate()+1)){ a.push(moment(new Date(d)).startOf('month').format('MM/DD/YYYY'));}return a;};
 
     const monthArray = [...new Set(getMonthArray(new Date('01/1/2020'), new Date('06/30/2021')))];
-    console.log(monthArray);
+    // console.log(monthArray);
 
 
 

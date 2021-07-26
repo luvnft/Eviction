@@ -157,9 +157,16 @@
 
 #map-data-export-button {
     position: fixed;
-    bottom: 17vh;
+    bottom: calc(17vh + 100px);
     z-index: 999999;
-    left: 70px;
+    left: 20px;
+}
+
+#map-building-list-export-button {
+  position: fixed;
+  bottom: calc(17vh + 50px);
+  z-index: 999999;
+  left: 20px;
 }
 
 #legend-footer {

@@ -399,7 +399,10 @@ const EvictionChart = props => {
                         }
                         csvFilename={`${timeScale.charAt(0).toUpperCase()}${timeScale.slice(1)}-Eviction-Filings-${county.text.toUpperCase()}`}
                         data={csvData}
-                        content={'Download Data'}
+                        content={`${timeScale.toLowerCase()
+                          .split(' ')
+                          .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                          .join(' ')} Filing Data`}
                     />
                 </div>
             : null

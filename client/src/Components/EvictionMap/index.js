@@ -274,6 +274,39 @@ const EvictionMap = props => {
     })
   };
 
+  const buildingList = () => {
+    const array = [];
+    props.buildings
+      .filter(building => 
+        building.filings.filter(filing =>
+            moment(filing['filingdate']).valueOf() >= 
+            moment('04/01/2020').valueOf()
+        ).length >= evictionThreshold
+      )
+      .forEach(building =>{
+        const obj = {
+          street: building.street,
+          city: building.city,
+          zip: building.zip,
+          county: building.county,
+          tractID: building.tractid,
+          '# of filings since 1/1/2020': building.totalfilings,
+          '# of filings since 4/1/2020': building.pandemicfilings
+        };
+
+        building.monthlyfilings.forEach(month =>
+          obj[`# of filings in ${moment(month.date).format('MMM YY')}`] = month.count
+        )
+
+
+
+        // console.log(building) 
+
+        array.push(obj);
+      })
+    return array;
+  }
+
   useEffect(() => handleData(), [props.countyFilter, selectedMonth]);
   useEffect(() => handleCSVData(), [tractData, props.geojson]);
   useEffect(() => getMonthList(), []);
@@ -661,9 +694,34 @@ const EvictionMap = props => {
               // data={props.data.filter(item => 
 
               // )}
-              content={'Download Data'}
+              content={'Filing Data by Census Tract'}
             />
           </div>
+          : null
+      }
+      {
+        props.buildings.filter(building => 
+          building.filings.filter(filing =>
+              moment(filing['filingdate']).valueOf() >= 
+              moment('04/01/2020').valueOf()
+          ).length >= evictionThreshold
+        )[0] && 
+        !props.smallScreen 
+          ? <div id='map-building-list-export-button'>
+              <CSVExportButton
+                // smallScreen={props.smallScreen}
+                csvTitle={
+                  `Title: ${selectedMonth} Eviction Filings by Building in ${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text} as of ${props.dateRange ? moment(props.dateRange.end).format('M/D/YYYY') : null}`
+                  + '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
+                }
+                csvFilename={`Eviction-Filings-by-Building-${selectedMonth}-2020-${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text}`}
+                data={buildingList()}
+                // data={props.data.filter(item => 
+
+                // )}
+                content={'Filing Data by Building'}
+              />
+            </div>
           : null
       }
     </>

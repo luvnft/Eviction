@@ -18,7 +18,7 @@ const CSVExportButton = props => {
     Object.values(props.data)
     : null;
 
-    // console.log(props.data);
+    console.log(props.data);
         
   
 
@@ -60,7 +60,10 @@ const CSVExportButton = props => {
           csvExporter.generateCsv(data) 
           : console.log('No Data for CSV Button')}
       >
-        {props.content}
+        < Icon
+          id='csv-button'
+          name='download' 
+        /> {props.content}
       </Button> : 
             < Icon
             id='csv-button'
