@@ -538,22 +538,21 @@ const EvictionMap = props => {
                     // .filter(bin => bin >= evictionThreshold)
                     .map((bin, i) =>
                       <div>
-                      <div 
-                        style={{
-                          width: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
-                          height: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
-                          border: '2px solid rgb(191, 253, 0)',
-                          backgroundColor: 'rgba(191, 253, 0, .5)'
-                        }}
-                        className='building-symbology'
-                      />
-                      <div>
-                        {bin}
+                        <div 
+                          style={{
+                            width: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
+                            height: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
+                            border: '2px solid rgb(191, 253, 0)',
+                            backgroundColor: 'rgba(191, 253, 0, .5)'
+                          }}
+                          className='building-symbology'
+                        />
+                        <div>
+                          {bin}
+                        </div>
                       </div>
-                      </div>
-                          )
+                    )
                 }
-
               </div>
             </>
           : null
