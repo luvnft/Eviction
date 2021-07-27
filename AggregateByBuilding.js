@@ -125,7 +125,7 @@ const init = () => {
 						buildingInfo =>
 							buildingInfo.zip && buildingInfo.city && buildingInfo.street
 					)
-					.filter(buildingInfo => filterForMF(buildingInfo));
+					.filter(buildingInfo => buildingInfo.pandemicfilings >= 20);
 
 				// console.log(buildings);
 
