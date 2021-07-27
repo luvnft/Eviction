@@ -17,11 +17,7 @@ const CSVExportButton = props => {
   const data = props.data ? 
     Object.values(props.data)
     : null;
-
-    console.log(props.data);
-        
-  
-
+          
   const csvOptions = 
             { 
               fieldSeparator: ',',

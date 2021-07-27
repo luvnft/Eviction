@@ -445,8 +445,6 @@ const App = () => {
             <img src={'https://atlantaregional.org/wp-content/uploads/arc-logo-webinar.png'} alt='ARC-logo' />
           </div>
           <div id='right-logo'>
-            {/* <img src={CSPAVlogo} alt='CSPAV-logo'/> */}
-            {/* <p className='partner-names' style={{color: '#fff'}}>-</p> */}
             <p className='partner-names'>
             in partnership with Georgia Tech's <br/>
               School of City and Regional Planning (SCaRP) and

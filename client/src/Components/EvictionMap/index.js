@@ -285,22 +285,24 @@ const EvictionMap = props => {
       )
       .forEach(building =>{
         const obj = {
-          street: building.street,
-          city: building.city,
-          zip: building.zip,
-          county: building.county,
+          Street: building.street.toLowerCase()
+          .split(' ')
+          .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+          .join(' '),
+          City: building.city.toLowerCase()
+          .split(' ')
+          .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+          .join(' '),
+          Zip: building.zip,
+          countyFIPS: building.county,
           tractID: building.tractid,
-          'filings since 1/1/2020': building.totalfilings,
-          'filings since 4/1/2020': building.pandemicfilings
+          'Filings since 1/1/2020': building.totalfilings,
+          'Filings since 4/1/2020': building.pandemicfilings
         };
 
         building.monthlyfilings.forEach(month =>
-          obj[`filings in ${moment(month.date).format('MMM YYYY')}`] = month.count
+          obj[`Filings in ${moment(month.date).format('MMM YYYY')}`] = month.count
         )
-
-
-
-        // console.log(building) 
 
         array.push(obj);
       })

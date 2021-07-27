@@ -123,11 +123,12 @@ const init = () => {
 				const buildings = array
 					.filter(
 						buildingInfo =>
-							buildingInfo.zip && buildingInfo.city && buildingInfo.street
+							buildingInfo.zip && 
+              buildingInfo.city && 
+              buildingInfo.street &&
+              buildingInfo.tractid !== '99999999999' &&
+              buildingInfo.pandemicfilings >= 10
 					)
-					.filter(buildingInfo => buildingInfo.pandemicfilings >= 10);
-
-				// console.log(buildings);
 
 				db.building.deleteMany().then(() =>
 					db.building
