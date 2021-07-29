@@ -13,11 +13,13 @@ import { BarChart, Bar, XAxis, ReferenceArea, Label, YAxis} from 'recharts';
 import CSVExportButton from '../CSVExportButton';
 import moment from 'moment';
 import Loader from 'react-loader-spinner';
+import TextFormatter from '../../utils/TextFormatter';
+import SortByDate from '../../utils/SortByDate';
+import config from './config';
+
 import './style.css';
 
 const EvictionMap = props => {
-
-  // console.log(props.buildings);
 
   const [legendVisble, setLegendVisible] = useState(true);
   const [tractData, setTractData] = useState();
@@ -31,42 +33,21 @@ const EvictionMap = props => {
   const [showBuildings, setShowBuildings] = useState(true);
   const [evictionThreshold, setEvictionThreshold] = useState(50);
 
-  const selectedMeasure = 'Total Filings';
-  const buildingScaler = 2
+  const selectedMeasure = config.tractNumerator;
+  const dateField = config.dateField;
+  const buildingScaler = config.buildingScaler || 1;
 
-  const colors = 
-    selectedMonth !== 'During the Pandemic**'
-      ? ["#DC1C13", "#EA4C46", "#F07470", "#F1959B", "#F6BDC0"].reverse()
-      : ["#6867da", "#618ee9", "#76afee", "#a2cdee", "#d8e8f0"].reverse();
-
-  // const colors2 = [
-  //   '#59fd00',
-  //   // '#85fe00',
-  //   // '#a6ff00',
-  //   '#c3ff00',
-  //   '#dcff00',
-  //   '#ebf100',
-  //   '#f6e400',
-  //   '#ffd604',
-  //   '#ffb821',
-  //   '#ff9b39',
-  //   '#ff814d',
-  //   '#fb6a5f'
-  // ];
-
-  const sortByDate = (a, b) => {
-    var dateA = new Date(a['Filing Date']).getTime();
-    var dateB = new Date(b['Filing Date']).getTime();
-    return dateA > dateB ? 1 : -1;
-  }; 
+  const colors = selectedMonth === 'During the Pandemic**'
+      ? config.monthlyColorMap
+      : config.pandemicColorMap;
 
   const getMonthList = () => {
     const monthArray = [];
     props.data
-    .sort((a, b) => sortByDate(a, b))
+    .sort((a, b) => SortByDate(a, b, dateField))
     .forEach(item =>
-      !monthArray.includes(moment(item['Filing Date']).format('MMMM YYYY')) ?
-        monthArray.push(moment(item['Filing Date']).format('MMMM YYYY'))
+      !monthArray.includes(moment(item[dateField]).format('MMMM YYYY')) ?
+        monthArray.push(moment(item[dateField]).format('MMMM YYYY'))
         : null
     );
     const monthOptionsArray =
@@ -207,39 +188,13 @@ const EvictionMap = props => {
     setCSVData(dataArray);
   }
 
-  const countyFIPS = ['13067', '13063', '13089', '13121', '13135']
-  const countyBounds = {
-    '999': {
-      center: [33.77285, -84.33268],
-      zoom: 9.8
-    },
-    '067': {
-      center: [33.9132, -84.58030],
-      zoom: props.smallScreen ? 10.2 : 11
-    },
-    '063': {
-      center: [33.50533, -84.34112],
-      zoom: props.smallScreen ? 10.5 : 11.2
-    },
-    '121': {
-      center: [33.840747, -84.46563],
-      zoom: props.smallScreen ? 9.4 : 10
-    },
-    '135': {
-      center: [33.959468, -84.02901],
-      zoom: props.smallScreen ? 10 : 10.8
-    },
-    '089': {
-      center: [33.79857, -84.20737],
-      zoom: props.smallScreen ? 10.4 : 11
-    }
-  }
+  const countyFIPS = config.countyFIPS;
+  const countyBounds = config.countyBounds(props.smallScreen);
 
   const CustomTooltip = () => (
     <div className='tooltip-content'>
       <div>
         {selectedMonth !== 'During the Pandemic**' ? 'In ' : ''} <span className='tooltip-data'>{monthOptions.find(month => month.value === selectedMonth).text}</span>
-        {/* between <span className='tooltip-data'>{dateRange.start}</span> and <span className='tooltip-data'>{dateRange.end}</span> */}
       </div>
       <div>
         in census tract <span className='tooltip-data'>{hoverID}</span>
@@ -285,14 +240,8 @@ const EvictionMap = props => {
       )
       .forEach(building =>{
         const obj = {
-          Street: building.street.toLowerCase()
-          .split(' ')
-          .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-          .join(' '),
-          City: building.city.toLowerCase()
-          .split(' ')
-          .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-          .join(' '),
+          Street: TextFormatter.firstCharToUpper(building.street),
+          City: TextFormatter.firstCharToUpper(building.city),
           Zip: building.zip,
           countyFIPS: building.county,
           tractID: building.tractid,
@@ -308,6 +257,8 @@ const EvictionMap = props => {
       })
     return array;
   }
+
+  console.log(props.buildings);
 
   useEffect(() => handleData(), [props.countyFilter, selectedMonth]);
   useEffect(() => handleCSVData(), [tractData, props.geojson]);
@@ -327,9 +278,6 @@ const EvictionMap = props => {
         scrollWheelZoom={true}
         dragging={true}
         animate={true}
-        // trackResize={true}
-      // bounds={null}
-      // onViewportChange={e => console.log(e)}
       >
         {props.boundaryGeoJSON ?
           <GeoJSON
@@ -369,7 +317,6 @@ const EvictionMap = props => {
 
           </GeoJSON>
           : <div style={{ zIndex: '99999', color: '#609580', position: 'absolute', bottom: '35vh', width: '100%', textAlign: 'center' }}>
-            {/* <h2>Layers Loading...</h2> */}
             <Loader id='loader-box' color='#DC1C13' type='Circles' />
           </div>
         }
@@ -388,32 +335,21 @@ const EvictionMap = props => {
                   date: moment(item.date).valueOf(),
                   count: item.count
                 }))
-              // const pandemicRatio = building.pandemicratio;
               return <CircleMarker
                 key={`building-${building._id}-${props.countyFilter}`}
                 center={[building.latitude, building.longitude]}
                 radius={Math.sqrt(building.totalfilings/ Math.PI) * buildingScaler}
-                // radius={100}
                 color={'rgb(191, 253, 0)'}
-                // color={pandemicRatio 
-                //   ? colors2[Math.floor((colors2.length - 1) * pandemicRatio)]
-                //   : 'lighgrey'}
                 fillOpacity={.6}
                 weight={1.5}
                 
               >
                 <Popup>
                   <h5>
-                    {building.street.toLowerCase()
-                      .split(' ')
-                      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(' ')}
+                    {TextFormatter.firstCharToUpper(building.street)}
                   </h5>
                   <div>
-                    {building.city.toLowerCase()
-                      .split(' ')
-                      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(' ')}, GA {building.zip}
+                    {TextFormatter.firstCharToUpper(building.city)}, GA {building.zip}
                   </div>
                   { 
                     monthlyFilings[0]
@@ -477,11 +413,6 @@ const EvictionMap = props => {
                     }
                     </span> eviction filings during the COVID-19 pandemic**
                   </div>
-                  {/* <div className='building-popup-summary'>
-                  <span className='building-popup-value'>
-                    {numeral(pandemicRatio).format('0%')}
-                  </span> of the eviction filings in this building since 1/1/2020 where during the pandemic.
-                  </div> */}
                   {
                     building.county === '121'
                       ? <div className='popup-data-warning'>
@@ -504,8 +435,6 @@ const EvictionMap = props => {
           key={'tile-layer'}
           attribution={'&copy <a href="http://osm.org/copyright">OpenStreetMap contributors</a>'}
           url={'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'}
-
-
         />
 
 
@@ -517,7 +446,6 @@ const EvictionMap = props => {
           onClick={() => setLegendVisible(false)}
         >
           <Icon
-            // size='small'
             inverted
             name='close'
           />
@@ -527,72 +455,57 @@ const EvictionMap = props => {
       {
         <div id='building-toggle'>
           <Radio 
-          // label='Show Buildings***'
-          toggle
-          checked={showBuildings}
-          onChange={() => setShowBuildings(!showBuildings)} 
+            toggle
+            checked={showBuildings}
+            onChange={() => setShowBuildings(!showBuildings)} 
           />
           <div className='building-toggle-label'>
             Show Buildings
           </div>
           { showBuildings
-          ? <>
-              <div className='building-toggle-sublabel'>
-                with <Dropdown 
-                  inline
-                  style={{
-                    fontSize: '1.6em',
-                    fontWeight: '700'
-                  }}
-                  value={evictionThreshold}
-                  options={[10, 50, 100].map(option =>
-                    ({
-                      text: option,
-                      value: option,
-                      key: `threshold-option-${option}`
-                    })
-                  )}
-                  onChange={(e, data) => setEvictionThreshold(data.value)}
-                /> 
-                or more eviction filings during the COVID-19 pandemic**
-              </div>
-
-              {/* <div id='building-symbology-box-label'>
-                Filings per building      
-              </div>   */}
-              <div id='building-symbology-box'>
-
-                {
-                  [
-                    10,
-                    50, 
-                    100,
-                    200
-                  ]
-                    // .reverse()
-                    // .filter(bin => bin >= evictionThreshold)
-                    .map((bin, i) =>
-                      <div>
-                        <div 
-                          style={{
-                            width: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
-                            height: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
-                            border: '2px solid rgb(191, 253, 0)',
-                            backgroundColor: 'rgba(191, 253, 0, .5)'
-                          }}
-                          className='building-symbology'
-                        />
+              ? <>
+                  <div className='building-toggle-sublabel'>
+                    with <Dropdown 
+                      inline
+                      style={{
+                        fontSize: '1.6em',
+                        fontWeight: '700'
+                      }}
+                      value={evictionThreshold}
+                      options={[10, 50, 100].map(option =>
+                        ({
+                          text: option,
+                          value: option,
+                          key: `threshold-option-${option}`
+                        })
+                      )}
+                      onChange={(e, data) => setEvictionThreshold(data.value)}
+                    /> 
+                    or more eviction filings during the COVID-19 pandemic**
+                  </div>
+                  <div id='building-symbology-box'>
+                    {
+                      [10, 50, 100, 200].map((bin, i) =>
                         <div>
-                          {bin}
+                          <div 
+                            className='building-symbology'
+                            style={{
+                              width: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
+                              height: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
+                              border: '2px solid rgb(191, 253, 0)',
+                              backgroundColor: 'rgba(191, 253, 0, .5)'
+                            }}
+                          />
+                          <div>
+                            {bin}
+                          </div>
                         </div>
-                      </div>
-                    )
-                }
-              </div>
-            </>
-          : null
-        }
-
+                      )
+                    }
+                  </div>
+                </>
+              : null
+          }
         </div>
       }
       {legendVisble ?
@@ -616,9 +529,7 @@ const EvictionMap = props => {
 
               <Dropdown
                 style={{ float: 'center' }}
-                // selection
                 inline
-                // fluid
                 placeholder="Select Month"
                 value={selectedMonth}
                 options={monthOptions}
@@ -668,7 +579,6 @@ const EvictionMap = props => {
           <div id='legend-footer'>
             <p><span>*</span>calculated by dividing total filings by the number of renter-occupied housing units</p>
             <p><span>**</span>From 4/1/2020 to the most current update, with the exception of Fulton County where building- and census tract-level data has been unavailable since 9/15/2020.</p>
- 
           </div>
 
         </div> : null
@@ -693,9 +603,6 @@ const EvictionMap = props => {
               }
               csvFilename={`Eviction-Filings-by-Census-Tract-${selectedMonth}-2020-${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text}`}
               data={csvData}
-              // data={props.data.filter(item => 
-
-              // )}
               content={'Census Tract Data'}
             />
           </div>
@@ -711,16 +618,12 @@ const EvictionMap = props => {
         !props.smallScreen 
           ? <div id='map-building-list-export-button'>
               <CSVExportButton
-                // smallScreen={props.smallScreen}
                 csvTitle={
                   `Title: List of Buildings in ${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text} with ${evictionThreshold} or eviction filings since 4/1/2020 (as of ${props.dateRange ? moment(props.dateRange.end).format('M/D/YYYY') : null})`
                   + '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
                 }
                 csvFilename={`ATL-Eviction-Tracker-Builings-List-${evictionThreshold}-plus-filings-${props.countyInfo.find(item => item.key === props.countyFilter.toString().padStart(3, '0')).text}`}
                 data={buildingList()}
-                // data={props.data.filter(item => 
-
-                // )}
                 content={'Building Data'}
               />
             </div>

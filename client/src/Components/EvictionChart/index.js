@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  // BarChart,
   Bar,
   ComposedChart,
   Line,
@@ -14,174 +13,60 @@ import {
   ResponsiveContainer,
   Label
 } from 'recharts';
+import TextFormatter from '../../utils/TextFormatter';
 import { Button } from 'semantic-ui-react';
 import CSVExportButton from '../CSVExportButton';
 import moment from 'moment';
 import numeral from 'numeral';
 import Loader from 'react-loader-spinner';
-
-// STYLESHEET
+// import SortByDate from '../../utils/SortByDate';
+import config from './config';
+import utils from './utils';
 import './style.css';
-// CSV TEST-DATA IMPORT
-
 
 const EvictionChart = props => {
-
-  const sortByDate = (a, b) => {
-    var dateA = new Date(a['Filing Date']).getTime();
-    var dateB = new Date(b['Filing Date']).getTime();
-    return dateA > dateB ? 1 : -1;
-  };  
-
-
 
   const [caseData, setCaseData] = useState();
   const [csvData, setCSVData] = useState();
   const [timeScale, setTimeScale] = useState('weekly');
-  const [brushDomain, setBrushDomain] = useState({})
+  const [brushDomain, setBrushDomain] = useState({});
+  const dateField = config.dateField;
+  const indicator1 = config.indicator1;
+  const indicator2 = config.indicator2;
+  const county = props.counties.find(county => 
+    county.value.toString().padStart(3, '0') === 
+    props.countyFilter.toString().padStart(3,'0')
+  );
   
   const handleData = () => {
-        const dataObject = {};
-
-        props.data
-          .sort((a, b) => sortByDate(a, b))
-          .filter(item =>
-            props.countyFilter !== 999 && 
-            props.countyFilter !== '999' ? 
-              props.countyFilter === item['COUNTYFP10'] || 
-              props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
-            : true
-          )
-          .forEach(item => {
-            const key = timeScale === 'daily' ? 
-                moment(item['Filing Date']).format('M/D/YY') 
-              : timeScale === 'weekly' ?
-                // moment(item['Filing Date']).isoWeek()
-                moment(item['Filing Date']).startOf('week')
-              : timeScale === 'monthly' ?
-                moment(item['Filing Date']).startOf('month') 
-            : null;
-
-            dataObject[key] = {...dataObject[key]}
-
-            dataObject[key]['current'] = dataObject[key]['current'] 
-              ? dataObject[key]['current'] + parseFloat(item['Total Filings'])
-              : parseFloat(item['Total Filings']);  
-              
-            dataObject[key]['answered'] = dataObject[key]['answered'] 
-              ? dataObject[key]['answered'] + parseFloat(item['Answered Filings'])
-              : parseFloat(item['Answered Filings']); 
-
-          });
-
+      const dataArray = utils.dataFormattedForChart(
+        props.data,
+        dateField,
+        props.dateRange.end,
+        props.countyFilter,
+        timeScale,
+        indicator1,
+        indicator2,
         props.data2019
-          .filter(item =>
-            props.countyFilter !== 999 && 
-            props.countyFilter !== '999' ? 
-              props.countyFilter === item['COUNTYFP10'] || 
-              props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
-            : true
-          )
-          .forEach(item => {
-            const key = item['Filing Date'] 
-              ? timeScale === 'daily' 
-                ? moment(item['Filing Date']).format('M/D/YY')
-                : timeScale === 'weekly' 
-                  ? moment(item['Filing Date']).add(1, 'y').subtract(2, 'd').startOf('week')
-                  : timeScale === 'monthly' 
-                    ? moment(item['Filing Date']).add(1, 'y').startOf('month') 
-                    : null 
-              : null;
+      )
 
-            // console.log(item);
-
-            dataObject[key] = {...dataObject[key]}
-
-            dataObject[key]['historic'] = dataObject[key]['historic'] ?
-            dataObject[key]['historic'] + parseFloat(item['Total Filings'])
-            : parseFloat(item['Total Filings']);
-          })
-
-        props.data2019
-          .filter(item =>
-            props.countyFilter !== 999 && 
-            props.countyFilter !== '999' ? 
-              props.countyFilter === item['COUNTYFP10'] || 
-              props.countyFilter.toString().padStart(3, '0') === item['COUNTYFP10'].toString().padStart(3, '0') 
-            : true
-          )
-          .forEach(item => {
-              const key = item['Filing Date'] ? timeScale === 'daily' ? 
-                  moment(item['Filing Date']).format('M/D/YY')
-                : timeScale === 'weekly' ?
-                  // moment(item['Filing Date']).isoWeek()
-                  moment(item['Filing Date']).add(2, 'y').subtract(4, 'd').startOf('week')
-                : timeScale === 'monthly' ?
-                  moment(item['Filing Date']).add(2, 'y').startOf('month') 
-              : null : null;
-
-            dataObject[key] = {...dataObject[key]}
-
-            dataObject[key]['historic'] = dataObject[key]['historic'] ?
-            dataObject[key]['historic'] + parseFloat(item['Total Filings'])
-            : parseFloat(item['Total Filings']);
-          })
-
-      const dataArray = Object.entries(dataObject)
-        .filter(([key, value]) => 
-          new Date(key).getTime() <= new Date(moment(props.dateRange.end).endOf('week')).getTime()
-        )
-        .filter(([key, value]) => 
-          timeScale === 'monthly' &&
-          new Date(props.dateRange.end).getTime() < new Date(moment(props.dateRange.end).endOf('month').subtract({days: 2})).getTime()
-            ? new Date(key).getTime() !== new Date(moment(props.dateRange.end).startOf('month')).getTime()  
-            : true
-        )
-        .map(([key, value]) =>
-          ({
-            "Filing Date": moment(key).format('MM/DD/YYYY'),
-            "Total Filings": (value.current - value.answered) || null,
-            "Baseline (Total Filings, 2019)" : value.historic ,
-            "Total Answered Filings": value.answered || null
-          })
-        );
-        setCaseData(dataArray);
-        setBrushDomain({
-          start: dataArray[timeScale === 'weekly' 
-            ? dataArray.length - 52 
-            : dataArray.length - 12]['Filing Date'],
-          end: dataArray[dataArray.length - 1]['Filing Date']
-        })
+      setCaseData(dataArray);
+      setBrushDomain({
+        start: dataArray[timeScale === 'weekly' 
+          ? dataArray.length - 52 
+          : dataArray.length - 12][dateField],
+        end: dataArray[dataArray.length - 1][dateField]
+      })
   };
 
-  const timeLabel = 
-    timeScale === 'weekly' ? 
-    "Week of" 
-    : timeScale === 'monthly' ?
-      "Month"
-      : "Filing Date"
-
   const handleCSVData = () => 
-
     caseData ?
       caseData.map(item => 
-        ({
-          [timeLabel]: moment(item['Filing Date']).format(timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'),
-          "Total Filings": item["Total Filings"] + item["Total Answered Filings"],
-          "Total Answers": item["Total Answered Filings"],
-          "Answer Rate": item["Total Answered Filings"]/(item["Total Filings"] + item["Total Answered Filings"]),
-          "Baseline (Total Filings, 2019)" : item["Baseline (Total Filings, 2019)"]
-        })
+        utils.dataObjectForCSV(item, timeScale, dateField, indicator1, indicator2 )
       ) : null;
-
-  // console.log(caseData);
-
 
   useEffect(() => handleData(), [props.countyFilter, timeScale, props.data]);
   useEffect(() => setCSVData(handleCSVData()), [caseData]);
-
-  const county = props.counties.find(county => county.value.toString().padStart(3, '0') === props.countyFilter.toString().padStart(3,'0'));
-
 
   const CustomTooltip = ({ active, payload, label }) => {
     const info = payload[0] ? payload[0].payload : {}; 
@@ -196,17 +81,10 @@ const EvictionChart = props => {
             on <span className='tooltip-data'>{moment(label).format('dddd, MMMM Do YYYY')}</span>  
           </span> : null;
 
-    // const totalFilings = payload[0] && payload[1] ? numeral(payload[0].value + payload[1].value).format('0,0') : '?';
-    // const totalAnswers = payload[0] ? numeral(payload[0].value).format('0,0') : '?';
-    // const answerRate = payload[0] && payload[1] ? numeral(payload[0].value/(payload[0].value + payload[1].value)).format('0.0%') : '?';
-    // const total2019 = payload[2] ? numeral(payload[2].value).format('0,0') : '?';
-
-    const totalFilings = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Filings'] + info['Total Answered Filings']).format('0,0') : '?';
-    const totalAnswers = info['Total Answered Filings'] ? numeral(info['Total Answered Filings']).format('0,0') : '?';
-    const answerRate = info['Total Filings'] && info['Total Answered Filings'] ? numeral(info['Total Answered Filings']/(info['Total Filings'] + info['Total Answered Filings'])).format('0.0%') : '?';
+    const totalFilings = info[indicator1] && info[indicator2] ? numeral(info[indicator1] + info[indicator2]).format('0,0') : '?';
+    const totalAnswers = info[indicator2] ? numeral(info[indicator2]).format('0,0') : '?';
+    const answerRate = info[indicator1] && info[indicator2] ? numeral(info[indicator2]/(info[indicator1] + info[indicator2])).format('0.0%') : '?';
     const total2019 = info['Baseline (Total Filings, 2019)'] ? numeral(info['Baseline (Total Filings, 2019)']).format('0,0') : '?';
-
-    
 
     return active ?
         <div className='tooltip-content chart-tooltip-content'>
@@ -217,22 +95,10 @@ const EvictionChart = props => {
         </div>
     : null;
   }
-  // console.log(caseData);
 
-  // const CustomLegendText = (value, entry) => {
-  //   console.log(value, entry)
-  //   return <span style={{fontSize: '14px'}}>{value}</span>
-  // }
-// const CustomTick = obj => <em>{moment(obj.tick).format('M/D')}</em>
-  // console.log(caseData);
-  // console.log(brushDomain);
-
-  // console.log(brushDomain);
-  // console.log(caseData);
   return (
     <div id="chart-responsive-container">
       {caseData ?
-
       <ResponsiveContainer
         width="95%"
         height="90%"
@@ -268,7 +134,9 @@ const EvictionChart = props => {
             } 
             y1={0}
           >
-            <Label  position='insideTop'>CARES Act Moratorium</Label>
+            <Label  position='insideTop'>
+              CARES Act Moratorium
+            </Label>
           </ReferenceArea>
           <ReferenceArea 
             x1={timeScale === 'weekly' 
@@ -279,12 +147,11 @@ const EvictionChart = props => {
                 ? '09/01/2020'
                 : null
             } 
-            // x2={
-
-            // }
             y1={0}
           >
-            <Label  position='insideTop'>CDC Moratorium</Label>
+            <Label  position='insideTop'>
+              CDC Moratorium
+            </Label>
           </ReferenceArea>
           <XAxis
             height={50} 
@@ -301,39 +168,24 @@ const EvictionChart = props => {
                 ? 'end' 
                 : 'middle'
             }
-            // scale={'time'}
-            // type={'number'}
             minTickGap={!props.smallScreen ? -5 : null}
             tick={{fontSize: props.smallScreen ? 8 : 12}}
             tickFormatter={tick => 
-              timeScale === 'monthly' ? 
-                moment(tick).format(props.smallScreen ? 'MMM YYYY' : 'MMMM YYYY') 
-              // : <CustomTick />
+              timeScale === 'monthly' 
+                ? moment(tick).format(props.smallScreen ? 'MMM YYYY' : 'MMMM YYYY') 
                 : moment(tick).format('M/D/YY')
             }
           />
-          {/* <XAxis dataKey="Month" /> */}
-          <YAxis
-            tickFormatter={tick => numeral(tick).format('0,0')}
-          />
-          {/* <Brush /> */}
+          <YAxis tickFormatter={tick => numeral(tick).format('0,0')} />
           <Tooltip 
-            content={ <CustomTooltip />}
+            content={ 
+            // ChartTooltip
+            <CustomTooltip />
+            } 
           />
-          <Bar dataKey="Total Answered Filings" stackId='a' fill="#a9a9a9" />
-
-          <Bar dataKey="Total Filings" stackId='a' fill="#DC1C13" />
-
-
-          <Line 
-            dataKey="Baseline (Total Filings, 2019)"
-            strokeWidth={2} 
-            // fill="#DC1C13"
-            // dot={false}
-            // strokeDasharray={'5 5'}
-            // legendType='circle' 
-          />
-          {/* <Bar dataKey="tractID" stackId="a" fill="#82ca9d" /> */}  
+          <Bar dataKey={indicator2} stackId='a' fill="#a9a9a9" />
+          <Bar dataKey={indicator1} stackId='a' fill="#DC1C13" />
+          <Line dataKey="Baseline (Total Filings, 2019)" strokeWidth={2} />
           <Legend 
             formatter={(value,entry) =>
                 <span style={{fontSize: props.smallScreen ? '10px' : '14px'}}>
@@ -342,27 +194,23 @@ const EvictionChart = props => {
             }
           />
           <Brush
-            // y={10}
             height={20} 
             startIndex={timeScale === 'weekly' 
               ? caseData.length - 52 
               : caseData.length - 12
             }
             tickFormatter={index =>  
-              caseData[index]['Filing Date'] 
-                ? moment(caseData[index]['Filing Date'])
+              caseData[index][dateField] 
+                ? moment(caseData[index][dateField])
                     .format(timeScale === 'weekly' ? 'M/D/YY' : 'MMM YYYY' )
                 : ''
             }
             onChange={data => setBrushDomain({
-              start: caseData[data.startIndex]['Filing Date'],
-              end: caseData[data.endIndex]['Filing Date']
+              start: caseData[data.startIndex][dateField],
+              end: caseData[data.endIndex][dateField]
             })}
           />
-
         </ComposedChart>
-        
-
       </ResponsiveContainer>
        : <div style={{zIndex: '99999', color: '#DC1C13', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center'}}>
           <h1>Chart is Loading...</h1>
@@ -371,22 +219,19 @@ const EvictionChart = props => {
       }
 
       <div className="button-group-container">
-        <Button.Group className="button-group">
-          {/* <Button 
-            active={timeScale === 'daily' ? true : false}
-            onClick={() => setTimeScale('daily')}
-          >Daily</Button> */}
-          <Button 
-            active={timeScale === 'weekly' ? true : false}
-            onClick={() => setTimeScale('weekly')}
+      <Button.Group className="button-group">
 
-          >Weekly</Button>
-          <Button 
-            active={timeScale === 'monthly' ? true : false}
-            onClick={() => setTimeScale('monthly')}
-
-          >Monthly</Button>
-        </Button.Group>
+        {
+          ['weekly', 'monthly'].map(button =>
+            <Button 
+              active={timeScale === button ? true : false}
+              onClick={() => setTimeScale(button)}
+            >
+              {TextFormatter.firstCharToUpper(button)}
+            </Button>          
+          )
+        }
+      </Button.Group>
       </div>
       {
             csvData ?
