@@ -141,5 +141,21 @@ export default {
       })
     );
     return dataArray
-  }
+  },
+  referenceAreaStart: (timeScale,  brushDomainStart, config) => 
+    timeScale === 'weekly' 
+      ? new Date(brushDomainStart).getTime() < new Date(config.weekly.start).getTime() 
+        ? config.weekly.start
+        : null
+      : new Date(brushDomainStart).getTime() < new Date(config.monthly.start).getTime() 
+        ? config.monthly.start
+        : null,
+  referenceAreaEnd: (timeScale,  brushDomainEnd, config) => 
+    timeScale === 'weekly' 
+      ? new Date(brushDomainEnd).getTime() > new Date(config.weekly.end).getTime() 
+        ? config.weekly.end
+        : null
+      : new Date(brushDomainEnd).getTime() > new Date(config.monthly.end).getTime() 
+        ? config.monthly.end
+        : null
 }

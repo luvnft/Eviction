@@ -106,16 +106,6 @@ const getBuildingInfo = async () => {
 	}
 };
 
-const filterForMF = buildingInfo => {
-	const totalFilings = buildingInfo.filings.length;
-	// const totalFilings =
-	if (totalFilings < 10) {
-		return false;
-	}
-
-	return true;
-};
-
 const init = () => {
 	getBuildingInfo()
 		.then(array => {

@@ -1,12 +1,8 @@
 import React from 'react';
-// import API from '../../utils/API';
 import { ExportToCsv } from 'export-to-csv';
-// import { Button } from 'semantic-ui-react';
 import { Button, Icon } from 'semantic-ui-react';
-
 import moment from 'moment';
 import './style.css';
-
 
 const CSVExportButton = props => {
 
@@ -40,21 +36,11 @@ const CSVExportButton = props => {
       !props.smallScreen ?
       <Button
         id='csv-button'
-        // inverted
-        // name='download'
-        // size={props.size ? props.size : 'small'}
-        // basic={ props.basic ? props.basic : "false" }
         color={ 'black'}
-        // style={{
-        //   // padding: '5px',  
-        //   margin: props.margin ? props.margin : '10px',
-        // //   float: props.float ? props.float : 'left',
-        //   borderRadius: props.borderRadius ? props.borderRadius : '5px 5px 0 0',
-        //   height: props.height ? props.height : '40px'}}
-        onClick={data ? () =>
-         
-          csvExporter.generateCsv(data) 
-          : console.log('No Data for CSV Button')}
+        onClick={ () => 
+          data
+            ? csvExporter.generateCsv(data) 
+            : console.log('No Data for CSV Button')}
       >
         < Icon
           id='csv-button'
@@ -64,7 +50,6 @@ const CSVExportButton = props => {
             < Icon
             id='csv-button'
             name='download'
-            // size={'big'}
             onClick={data ? () =>
              
               csvExporter.generateCsv(data) 

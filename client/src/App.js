@@ -21,7 +21,7 @@ const App = () => {
   const [boundaryGeoJSON, setBoundaryGeoJSON] = useState();
   const [content, setContent] = useState();
   const [data, setData] = useState();
-  const [vizView, setVizView] = useState('chart');
+  const [vizView, setVizView] = useState('map');
   const [countyFilter, setCountyFilter] = useState(999);
   const [modalStatus, setModalStatus] = useState(true);
   const [dateRange, setDateRange] = useState();
@@ -429,6 +429,10 @@ const App = () => {
                 data2019={data2019}
                 countyFilter={countyFilter}
                 data={data}
+                county={countyOptions.find(county => 
+                  county.value.toString().padStart(3, '0') === 
+                  countyFilter.toString().padStart(3,'0'))
+                }
                 counties={countyOptions} />
               : <div style={{ zIndex: '99999', color: '#DC1C13', position: 'absolute', bottom: '50vh', width: '100%', textAlign: 'center' }}>
                 <h1>{vizView === 'map' ? 'Map is' : 'Chart is'} Loading...</h1>

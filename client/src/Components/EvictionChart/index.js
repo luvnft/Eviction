@@ -16,104 +16,111 @@ import {
 import TextFormatter from '../../utils/TextFormatter';
 import { Button } from 'semantic-ui-react';
 import CSVExportButton from '../CSVExportButton';
+import ChartTooltip from '../ChartTooltip';
 import moment from 'moment';
 import numeral from 'numeral';
 import Loader from 'react-loader-spinner';
-// import SortByDate from '../../utils/SortByDate';
 import config from './config';
 import utils from './utils';
 import './style.css';
 
-const EvictionChart = props => {
+export default props => {
 
-  const [caseData, setCaseData] = useState();
-  const [csvData, setCSVData] = useState();
-  const [timeScale, setTimeScale] = useState('weekly');
-  const [brushDomain, setBrushDomain] = useState({});
+  const county = props.county;
   const dateField = config.dateField;
   const indicator1 = config.indicator1;
   const indicator2 = config.indicator2;
-  const county = props.counties.find(county => 
-    county.value.toString().padStart(3, '0') === 
-    props.countyFilter.toString().padStart(3,'0')
-  );
+
+  const [chartData, setChartData] = useState();
+  const [csvData, setCSVData] = useState();
+  const [timeScale, setTimeScale] = useState('weekly');
+  const [brushDomain, setBrushDomain] = useState({});
+
+  useEffect(() => {
+
+    const dataArray = utils.dataFormattedForChart(
+      props.data,
+      dateField,
+      props.dateRange.end,
+      props.countyFilter,
+      timeScale,
+      indicator1,
+      indicator2,
+      props.data2019
+    );
   
-  const handleData = () => {
-      const dataArray = utils.dataFormattedForChart(
-        props.data,
-        dateField,
-        props.dateRange.end,
-        props.countyFilter,
-        timeScale,
-        indicator1,
-        indicator2,
-        props.data2019
+    const dataForCSV = dataArray.map(item => 
+      utils.dataObjectForCSV(
+        item, 
+        timeScale, 
+        dateField, 
+        indicator1, 
+        indicator2
       )
-
-      setCaseData(dataArray);
-      setBrushDomain({
-        start: dataArray[timeScale === 'weekly' 
-          ? dataArray.length - 52 
-          : dataArray.length - 12][dateField],
-        end: dataArray[dataArray.length - 1][dateField]
-      })
-  };
-
-  const handleCSVData = () => 
-    caseData ?
-      caseData.map(item => 
-        utils.dataObjectForCSV(item, timeScale, dateField, indicator1, indicator2 )
-      ) : null;
-
-  useEffect(() => handleData(), [props.countyFilter, timeScale, props.data]);
-  useEffect(() => setCSVData(handleCSVData()), [caseData]);
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    const info = payload[0] ? payload[0].payload : {}; 
-    const dateInfo = timeScale === 'weekly' ? 
-      <span>
-        between <span className='tooltip-data'>{moment(label).format('M/D/YY')}</span> and <span className='tooltip-data'>{moment(label).endOf('week').format('M/D/YY')}</span> 
-      </span> : timeScale === 'monthly' ?
-        <span>
-          in <span className='tooltip-data'>{moment(label).format('MMMM YYYY')}</span>  
-        </span> : timeScale === 'daily' ?
-          <span>
-            on <span className='tooltip-data'>{moment(label).format('dddd, MMMM Do YYYY')}</span>  
-          </span> : null;
-
-    const totalFilings = info[indicator1] && info[indicator2] ? numeral(info[indicator1] + info[indicator2]).format('0,0') : '?';
-    const totalAnswers = info[indicator2] ? numeral(info[indicator2]).format('0,0') : '?';
-    const answerRate = info[indicator1] && info[indicator2] ? numeral(info[indicator2]/(info[indicator1] + info[indicator2])).format('0.0%') : '?';
-    const total2019 = info['Baseline (Total Filings, 2019)'] ? numeral(info['Baseline (Total Filings, 2019)']).format('0,0') : '?';
-
-    return active ?
-        <div className='tooltip-content chart-tooltip-content'>
-          <div>
-            In {props.countyFilter === 999 || props.countyFilter === '999' ? 'the ' : ''} <span className='tooltip-data'>{county.text}</span> {dateInfo}, there were <span className='tooltip-data'>{totalFilings}</span> reported eviction filings of which <span className='tooltip-data'>{totalAnswers} ({answerRate})</span> have been answered. In comparison, there were <span className='tooltip-data'>{total2019}</span> filings for the same duration in 2019.
-          </div>
-
-        </div>
-    : null;
-  }
+    );
+  
+    const brushConfig = {
+      start: dataArray[timeScale === 'weekly' 
+        ? dataArray.length - 52 
+        : dataArray.length - 12][dateField],
+      end: dataArray[dataArray.length - 1][dateField]
+    }
+    setChartData(dataArray);
+    setCSVData(dataForCSV);
+    setBrushDomain(brushConfig);
+  }, [
+    props.countyFilter, 
+    timeScale, 
+    props.data
+  ]);
 
   return (
     <div id="chart-responsive-container">
-      {caseData ?
+      {chartData ?
       <ResponsiveContainer
-        width="95%"
-        height="90%"
+        width={config.dimensions.width}
+        height={config.dimensions.height}
       >
         <ComposedChart
           className="barChart"
-          data={caseData}
-          margin={{
-            top: 40,
-            right: props.smallScreen ? 40 : 60,
-            left: props.smallScreen ? 40 : 80,
-            bottom: 30,
-          }}
+          data={chartData}
+          margin={!props.smallScreen
+            ? config.margins
+            : config.smallScreenMargins
+          }
         > 
           <CartesianGrid strokeDasharray="3 3" />
+          {/* {
+            config.referenceAreas.map(referenceArea =>
+              <ReferenceArea
+                x1={() => utils.referenceAreaStart(timeScale, brushDomain.start, referenceArea)
+                  // timeScale === 'weekly' 
+                  // ? new Date(brushDomain.start).getTime() < new Date('03/29/2020').getTime() 
+                  //   ?  '03/29/2020'
+                  //   : null
+                  // : new Date(brushDomain.start).getTime() < new Date('04/01/2020').getTime() 
+                  //   ? '04/01/2020'
+                  //   : null
+                                
+                } 
+                x2={() => utils.referenceAreaEnd(timeScale, brushDomain.end, referenceArea)
+                  
+                // timeScale === 'weekly'
+                //   ? new Date(brushDomain.end).getTime() > new Date('07/26/2020').getTime() 
+                //     ?  '07/26/2020'
+                //     : null
+                //   : new Date(brushDomain.end).getTime() > new Date('08/01/2020').getTime() 
+                //     ?  '08/01/2020'
+                //     : null
+                } 
+                y1={0}
+              >
+                <Label  position='insideTop'>
+                  {referenceArea.label}
+                </Label>
+              </ReferenceArea>            
+            )
+          } */}
           <ReferenceArea
             x1={timeScale === 'weekly' 
               ? new Date(brushDomain.start).getTime() < new Date('03/29/2020').getTime() 
@@ -146,7 +153,14 @@ const EvictionChart = props => {
               : new Date(brushDomain.start).getTime() < new Date('09/01/2020').getTime() 
                 ? '09/01/2020'
                 : null
-            } 
+            }
+            x2={timeScale === 'weekly'
+              ? new Date(brushDomain.end).getTime() > new Date('08/01/2021').getTime() 
+                ? '08/01/2021'
+                : null
+              : new Date(brushDomain.end).getTime() > new Date('08/01/2021').getTime() 
+                ?  '08/01/2021'
+                : null            } 
             y1={0}
           >
             <Label  position='insideTop'>
@@ -178,9 +192,10 @@ const EvictionChart = props => {
           />
           <YAxis tickFormatter={tick => numeral(tick).format('0,0')} />
           <Tooltip 
-            content={ 
+            content={obj => 
+              ChartTooltip(obj, timeScale, indicator1, indicator2, props.countyFilter, county ) 
             // ChartTooltip
-            <CustomTooltip />
+            // <CustomTooltip />
             } 
           />
           <Bar dataKey={indicator2} stackId='a' fill="#a9a9a9" />
@@ -196,18 +211,18 @@ const EvictionChart = props => {
           <Brush
             height={20} 
             startIndex={timeScale === 'weekly' 
-              ? caseData.length - 52 
-              : caseData.length - 12
+              ? chartData.length - 52 
+              : chartData.length - 12
             }
             tickFormatter={index =>  
-              caseData[index][dateField] 
-                ? moment(caseData[index][dateField])
+              chartData[index][dateField] 
+                ? moment(chartData[index][dateField])
                     .format(timeScale === 'weekly' ? 'M/D/YY' : 'MMM YYYY' )
                 : ''
             }
             onChange={data => setBrushDomain({
-              start: caseData[data.startIndex][dateField],
-              end: caseData[data.endIndex][dateField]
+              start: chartData[data.startIndex][dateField],
+              end: chartData[data.endIndex][dateField]
             })}
           />
         </ComposedChart>
@@ -256,5 +271,3 @@ const EvictionChart = props => {
     </div>
   );
 };
-
-export default EvictionChart;
