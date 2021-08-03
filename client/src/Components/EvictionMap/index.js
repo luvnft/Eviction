@@ -264,7 +264,7 @@ const EvictionMap = props => {
     return array;
   }
 
-  console.log(props.buildings);
+  // console.log(props.buildings);
 
   useEffect(() => handleData(), [props.countyFilter, selectedMonth]);
   useEffect(() => handleCSVData(), [tractData, props.geojson]);

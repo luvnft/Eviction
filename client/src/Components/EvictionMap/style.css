@@ -262,7 +262,7 @@
     #legend-close-icon {
         position: fixed;
         bottom: 56vh;
-        z-index: 9999999;
+        z-index: 99999999;
         right: 244px;
         background-color: black;
         height: 20px;
