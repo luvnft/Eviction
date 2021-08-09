@@ -34,6 +34,7 @@ export default {
         : true,
   dataFormattedForChart: (data, dateField, endDate, countyFilter, timeScale, indicator1, indicator2, comparisonData) => {
     const dataObject = {};
+    
     data.sort((a, b) => SortByDate(a, b, dateField))
       .filter(item =>
         countyFilter !== 999 && 
@@ -120,7 +121,7 @@ export default {
       // this.filterDataToEndOfLastWeek(key, endDate)
     )
     .filter(([key, value]) => 
-      // timeScale === 'monthly'
+      timeScale === 'monthly' &&
       //  ? this.filterDataToEndOfLastFullMonth(key, endDate)
       //  : true
       new Date(endDate).getTime() < 

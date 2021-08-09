@@ -38,6 +38,8 @@ export default props => {
 
   useEffect(() => {
 
+    console.log(props.data)
+
     const dataArray = utils.dataFormattedForChart(
       props.data,
       dateField,
