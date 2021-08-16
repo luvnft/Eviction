@@ -34,11 +34,11 @@ export default {
       label: 'CDC Moratorium',
       weekly: {
         start: '08/30/2020',
-        end: '08/01/2021',
+        end: '10/03/2021',
       },
       monthly:  {
         start: '09/01/2020',
-        end: '08/01/2021',
+        end: '10/01/2021',
       }
     }
     

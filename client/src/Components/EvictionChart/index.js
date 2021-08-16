@@ -157,11 +157,11 @@ export default props => {
                 : null
             }
             x2={timeScale === 'weekly'
-              ? new Date(brushDomain.end).getTime() > new Date('08/01/2021').getTime() 
-                ? '08/01/2021'
+              ? new Date(brushDomain.end).getTime() > new Date('10/03/2021').getTime() 
+                ? '10/03/2021'
                 : null
-              : new Date(brushDomain.end).getTime() > new Date('08/01/2021').getTime() 
-                ?  '08/01/2021'
+              : new Date(brushDomain.end).getTime() > new Date('10/01/2021').getTime() 
+                ?  '10/01/2021'
                 : null            } 
             y1={0}
           >
