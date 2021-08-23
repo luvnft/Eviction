@@ -92,29 +92,11 @@ export default props => {
           }
         > 
           <CartesianGrid strokeDasharray="3 3" />
-          {/* {
+          {
             config.referenceAreas.map(referenceArea =>
               <ReferenceArea
-                x1={() => utils.referenceAreaStart(timeScale, brushDomain.start, referenceArea)
-                  // timeScale === 'weekly' 
-                  // ? new Date(brushDomain.start).getTime() < new Date('03/29/2020').getTime() 
-                  //   ?  '03/29/2020'
-                  //   : null
-                  // : new Date(brushDomain.start).getTime() < new Date('04/01/2020').getTime() 
-                  //   ? '04/01/2020'
-                  //   : null
-                                
-                } 
-                x2={() => utils.referenceAreaEnd(timeScale, brushDomain.end, referenceArea)
-                  
-                // timeScale === 'weekly'
-                //   ? new Date(brushDomain.end).getTime() > new Date('07/26/2020').getTime() 
-                //     ?  '07/26/2020'
-                //     : null
-                //   : new Date(brushDomain.end).getTime() > new Date('08/01/2020').getTime() 
-                //     ?  '08/01/2020'
-                //     : null
-                } 
+                x1={utils.referenceAreaStart(timeScale, brushDomain.start, referenceArea)} 
+                x2={utils.referenceAreaEnd(timeScale, brushDomain.end, referenceArea)} 
                 y1={0}
               >
                 <Label  position='insideTop'>
@@ -122,53 +104,7 @@ export default props => {
                 </Label>
               </ReferenceArea>            
             )
-          } */}
-          <ReferenceArea
-            x1={timeScale === 'weekly' 
-              ? new Date(brushDomain.start).getTime() < new Date('03/29/2020').getTime() 
-                ?  '03/29/2020'
-                : null
-              : new Date(brushDomain.start).getTime() < new Date('04/01/2020').getTime() 
-                ? '04/01/2020'
-                : null
-                            
-            } 
-            x2={timeScale === 'weekly'
-              ? new Date(brushDomain.end).getTime() > new Date('07/26/2020').getTime() 
-                ?  '07/26/2020'
-                : null
-              : new Date(brushDomain.end).getTime() > new Date('08/01/2020').getTime() 
-                ?  '08/01/2020'
-                : null
-            } 
-            y1={0}
-          >
-            <Label  position='insideTop'>
-              CARES Act Moratorium
-            </Label>
-          </ReferenceArea>
-          <ReferenceArea 
-            x1={timeScale === 'weekly' 
-              ? new Date(brushDomain.start).getTime() < new Date('08/30/2020').getTime() 
-                ? '08/30/2020'
-                : null
-              : new Date(brushDomain.start).getTime() < new Date('09/01/2020').getTime() 
-                ? '09/01/2020'
-                : null
-            }
-            x2={timeScale === 'weekly'
-              ? new Date(brushDomain.end).getTime() > new Date('10/03/2021').getTime() 
-                ? '10/03/2021'
-                : null
-              : new Date(brushDomain.end).getTime() > new Date('10/01/2021').getTime() 
-                ?  '10/01/2021'
-                : null            } 
-            y1={0}
-          >
-            <Label  position='insideTop'>
-              CDC Moratorium
-            </Label>
-          </ReferenceArea>
+          }
           <XAxis
             height={50} 
             dataKey={"Filing Date"}

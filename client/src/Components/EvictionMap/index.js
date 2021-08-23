@@ -41,12 +41,6 @@ const EvictionMap = props => {
       ? config.monthlyColorMap
       : config.pandemicColorMap;
 
-  // const sortByDate = (a, b, dateField) => {
-  //   var dateA = new Date(a[dateField]).getTime();
-  //   var dateB = new Date(b[dateField]).getTime();
-  //   return dateA > dateB ? 1 : -1;
-  // }; 
-
   const getMonthList = () => {
     const monthArray = [];
     props.data
