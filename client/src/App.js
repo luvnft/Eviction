@@ -5,7 +5,7 @@ import { Dropdown, Button, Icon } from "semantic-ui-react";
 import moment from "moment";
 import API from "./utils/API.js";
 import Loader from "react-loader-spinner";
-
+import util from "./util";
 import "./App.css";
 // import { use } from 'passport';
 
@@ -51,7 +51,7 @@ const App = () => {
 
   const getContent = () =>
     API.getData("./content")
-      .then((res) => setContent(res.data[0]))
+      .then((res) => res.data[0])
       .catch((err) => console.error(err));
 
   const getEvictionData = () => {
@@ -77,200 +77,10 @@ const App = () => {
             })
           );
         setData(array);
-        handleDateRange(array);
+        const currentDateRange = handleDateRange(array);
+        setDateRange(currentDateRange);
       })
       .catch((err) => console.error(err));
-  };
-
-  const getMFBuildingInfo = () =>
-    API.getData("./buildings")
-      .then((res) => setBuildings(res.data))
-      .catch((err) => console.error(err));
-
-  const AboutContent = {
-    Alert: () => (
-      <div id="alert" className="about-content-section">
-        {content.alert.map((item) => (
-          <p>{item}</p>
-        ))}
-      </div>
-    ),
-    Mission: () => (
-      <div className="about-content-section">
-        <h2 className="about-content-section-heading">Mission</h2>
-        {content.mission.map((item, i) => (
-          <p key={`mission-p-${i}`}>{item}</p>
-        ))}
-      </div>
-    ),
-    Team: () => (
-      <div className="about-content-section">
-        <h2 className="about-content-section-heading">Team</h2>
-        <div id="about-team">
-          <div className="team-member-grid-row">
-            {content.team.map((member, i) =>
-              member.name ? (
-                <div key={`member-${i}`} className="about-team-member">
-                  <div className="about-team-member-role">{member.role}</div>
-                  <div className="about-team-member-name">{member.name}</div>
-                  {member.info.map((info, i) => (
-                    <div
-                      key={`member-info-${i}`}
-                      className="about-team-member-info"
-                    >
-                      {info.title ? (
-                        <div className="about-team-member-title">
-                          {info.title}
-                        </div>
-                      ) : null}
-                      {info.department ? (
-                        <div className="about-team-member-department">
-                          {info.department}
-                        </div>
-                      ) : null}
-                      {info.institution ? (
-                        <div className="about-team-member-institution">
-                          {info.institution}
-                        </div>
-                      ) : null}
-                    </div>
-                  ))}
-                </div>
-              ) : null
-            )}
-          </div>
-        </div>
-      </div>
-    ),
-    Data: () => (
-      <div className="about-content-section">
-        <h2 className="about-content-section-heading">About The Data</h2>
-        {content.aboutdata.map((item, i) => (
-          <p key={`about-data-p-${i}`}>{item}</p>
-        ))}
-      </div>
-    ),
-    Sources: (sourceProps) => (
-      <div className="about-content-section">
-        <h2 className="about-content-section-heading">
-          {sourceProps.type} Sources
-        </h2>
-        <ul id="about-content-source-list">
-          {content.sources
-            .filter((source) => source.type === sourceProps.type)
-            .map((source, i) => (
-              <li
-                key={`source-${i}`}
-                className={"about-content-section-source"}
-              >
-                {source.name}
-                {source.url ? (
-                  <a
-                    key={`source-link-${i}`}
-                    href={source.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Icon
-                      key={`source-link-icon-${i}`}
-                      name="external alternate"
-                    />
-                  </a>
-                ) : null}
-                {source.note ? (
-                  <ul className="about-content-source-note">
-                    <li>
-                      <em>{source.note}</em>
-                    </li>
-                  </ul>
-                ) : null}
-              </li>
-            ))}
-        </ul>
-      </div>
-    ),
-    Resources: () => (
-      <div className="about-content-section">
-        <h2 className="about-content-section-heading">Resources</h2>
-        <ul id="about-content-source-list">
-          {content.resources.map((resource, i) => (
-            <li
-              key={`resource-${i}`}
-              className={"about-content-section-source"}
-            >
-              {resource.name}
-              {resource.url ? (
-                <a
-                  key={`resource-link-${i}`}
-                  href={resource.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Icon
-                    key={`source-link-icon-${i}`}
-                    name="external alternate"
-                  />
-                </a>
-              ) : null}
-              {resource.note ? (
-                <p className="about-content-resource-note">
-                  <em>{resource.note}</em>
-                </p>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      </div>
-    ),
-    DataRequest: () => (
-      <div className="about-content-section">
-        <h2 className="about-content-section-heading">Data Requests</h2>
-        <p>
-          If you or your oraganization would like access to data at a level of
-          aggregation or format not available via the "Download Data" button on
-          the tool, you will need to submit a formal request. Click the button
-          below to begin the request process.
-        </p>
-        <p>
-          <a
-            key={`data-request-link`}
-            href={"https://forms.gle/XUxEp5MgSEcen5Pb9"}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button
-            // basic
-            >
-              Begin Data Request
-            </Button>
-          </a>
-        </p>
-      </div>
-    ),
-    Citations: () => (
-      <div className="about-content-section">
-        <h2 className="about-content-section-heading">Citation</h2>
-        <p>
-          Any use of data downloaded from this site or reference to this work
-          must be accompanied by one of the following citations.
-        </p>
-        {content.citations.map((citation, i) => (
-          <div className="about-content-citation">
-            <h3 className="about-content-citation-type">{citation.type}:</h3>
-            <div className="about-content-citation-text">
-              <span>{citation.authors} </span>
-              <span>
-                <em>{citation.title}</em>.{" "}
-              </span>
-              <span>
-                {citation.publisher}, {citation.year},{" "}
-              </span>
-              <span>{citation.url}.</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    ),
   };
 
   const countyOptions = [
@@ -281,15 +91,26 @@ const App = () => {
     { key: "121", text: "Fulton County", value: 121 },
     { key: "135", text: "Gwinnett County", value: 135 },
   ];
-
   useEffect(() => {
-    getEvictionData();
-    getTractGeoJSON();
-    getContent();
-    getMFBuildingInfo();
-    setBoundaryGeoJSON(countyBoundary);
+    const asyncWrapper = async () => {
+      const evictionData = await util.getEvictionData();
+      setData(evictionData.array);
+      setDateRange(evictionData.dateRange);
+      console.log(evictionData.dateRange);
+      const currentContent = await getContent();
+      console.log(currentContent);
+      setContent(currentContent);
+      console.log(dateRange);
+    };
+    asyncWrapper();
   }, []);
 
+  useEffect(() => {
+    getTractGeoJSON();
+    const buildingInfo = util.getMFBuildingInfo();
+    setBuildings(buildingInfo);
+    setBoundaryGeoJSON(countyBoundary);
+  }, []);
   return content ? (
     <div id="eviction-tracker">
       {modalStatus ? (
@@ -304,15 +125,15 @@ const App = () => {
             <div id="modal-body">
               {content ? (
                 <>
-                  {content.alert ? <AboutContent.Alert /> : null}
-                  <AboutContent.Mission />
-                  <AboutContent.Data />
-                  <AboutContent.Team />
-                  <AboutContent.Sources type={"Court Record Data"} />
-                  <AboutContent.Sources type={"Other Data"} />
-                  <AboutContent.Resources />
-                  <AboutContent.Citations />
-                  <AboutContent.DataRequest />
+                  {content.alert ? util.AboutContent.Alert(content) : null}
+                  {util.AboutContent.Mission(content)}
+                  {util.AboutContent.Data(content)}
+                  {util.AboutContent.Team(content)}
+                  {util.AboutContent.Resources(content)}
+                  {util.AboutContent.Citations(content)}
+                  {util.AboutContent.DataRequest(content)}
+                  {util.AboutContent.Sources("Court Record Data", content)}
+                  {util.AboutContent.Sources("Other Data", content)}
                 </>
               ) : (
                 <div
