@@ -1,7 +1,12 @@
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  getData: url => {
-      return axios.get(url);
-  }
+  getData: async (url) => {
+    const data = await axios.get(url);
+    if (url === "./content") {
+      return data.data[0];
+    } else {
+      return data.data;
+    }
+  },
 };

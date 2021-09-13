@@ -166,18 +166,13 @@ export default (props) => {
           </ComposedChart>
         </ResponsiveContainer>
       ) : (
-        <div
-          style={{
-            zIndex: "99999",
-            color: "#DC1C13",
-            position: "absolute",
-            bottom: "50vh",
-            width: "100%",
-            textAlign: "center",
-          }}
-        >
+        <div style={config.loaderStyle}>
           <h1>Chart is Loading...</h1>
-          <Loader id="loader-box" color="#DC1C13" type="Circles" />
+          <Loader
+            id="loader-box"
+            color={config.loaderStyle.color}
+            type={config.loaderStyle.type}
+          />
         </div>
       )}
 

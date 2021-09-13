@@ -98,7 +98,7 @@ const EvictionMap = (props) => {
             }
           />
         ) : null}
-        {props.geojson && tractData && stats ? (
+        {props.geojson && tractData && stats && props.dateRange ? (
           <GeoJSON
             key={`map-layer-${props.name}-${props.countyFilter}-${selectedMonth}`}
             data={props.geojson}
@@ -141,20 +141,15 @@ const EvictionMap = (props) => {
             </Tooltip>
           </GeoJSON>
         ) : (
-          <div
-            style={{
-              zIndex: "99999",
-              color: "#609580",
-              position: "absolute",
-              bottom: "35vh",
-              width: "100%",
-              textAlign: "center",
-            }}
-          >
-            <Loader id="loader-box" color="#DC1C13" type="Circles" />
+          <div style={config.loaderStyle}>
+            <Loader
+              id="loader-box"
+              color={config.loaderStyle.color}
+              type={config.loaderStyle.type}
+            />
           </div>
         )}
-        {showBuildings
+        {showBuildings && props.dateRange
           ? props.buildings
               .filter(
                 (building) =>
@@ -267,12 +262,8 @@ const EvictionMap = (props) => {
           : null}
         <TileLayer
           key={"tile-layer"}
-          attribution={
-            '&copy <a href="http://osm.org/copyright">OpenStreetMap contributors</a>'
-          }
-          url={
-            "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
-          }
+          attribution={config.tileLayer.attribution}
+          url={config.tileLayer.url}
         />
       </LeafletMap>
 
@@ -295,10 +286,7 @@ const EvictionMap = (props) => {
                 with{" "}
                 <Dropdown
                   inline
-                  style={{
-                    fontSize: "1.6em",
-                    fontWeight: "700",
-                  }}
+                  style={config.dropdownStyle}
                   value={evictionThreshold}
                   options={[10, 50, 100].map((option) => ({
                     text: option,
@@ -317,8 +305,9 @@ const EvictionMap = (props) => {
                       style={{
                         width: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
                         height: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
-                        border: "2px solid rgb(191, 253, 0)",
-                        backgroundColor: "rgba(191, 253, 0, .5)",
+                        border: config.buildingSymbologyColor.border,
+                        backgroundColor:
+                          config.buildingSymbologyColor.backgroundColor,
                       }}
                     />
                     <div>{bin}</div>
