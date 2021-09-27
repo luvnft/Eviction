@@ -3,7 +3,7 @@ import Loader from "react-loader-spinner";
 import { Button } from "semantic-ui-react";
 import config from "./config.js";
 import util from "./util";
-import style from "./style.css";
+import "./style.css";
 
 const Modal = (props) => {
   return (

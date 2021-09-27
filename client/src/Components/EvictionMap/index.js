@@ -14,7 +14,6 @@ import CSVExportButton from "../CSVExportButton";
 import moment from "moment";
 import Loader from "react-loader-spinner";
 import TextFormatter from "../../utils/TextFormatter";
-import SortByDate from "../../utils/SortByDate";
 import config from "./config";
 import MapTooltip from "../MapTooltip";
 import util from "./util";
@@ -43,28 +42,41 @@ const EvictionMap = (props) => {
   const countyBounds = config.countyBounds(props.smallScreen);
 
   useEffect(() => {
-    const sortedData = util.handleData(props, selectedMonth, selectedMeasure);
-    const currentStats = util.calcStats(
-      sortedData.dataObject,
-      selectedMonth,
-      colors
-    );
+    const sortedData = util.handleData({
+      data: props.data,
+      countyFilter: props.countyFilter,
+      exclude: props.exclude,
+      normalizeData: props.normalizeData,
+      selectedMonth: selectedMonth,
+      selectedMeasure: selectedMeasure,
+    });
+    const currentStats = util.calcStats({
+      dataObject: sortedData.dataObject,
+      selectedMonth: selectedMonth,
+      colors: colors,
+    });
     setStats(currentStats.statsObj);
     setBins(currentStats.bins);
     setTractData(sortedData.dataObject);
     setRawTractData(sortedData.rawDataObject);
   }, [props.countyFilter, selectedMonth]);
   useEffect(() => {
-    const csvData = util.handleCSVData(
-      props,
-      tractData,
-      rawTractData,
-      selectedMonth
-    );
+    const csvData = util.handleCSVData({
+      geojson: props.geojson,
+      counties: props.counties,
+      countyFilter: props.countyFilter,
+      tractData: tractData,
+      rawTractData: rawTractData,
+      selectedMonth: selectedMonth,
+    });
     setCSVData(csvData);
   }, [tractData, props.geojson]);
   useEffect(() => {
-    const monthList = util.getMonthList(props, SortByDate, dateField);
+    const monthList = util.getMonthList({
+      data: props.data,
+      dateRange: props.dateRange,
+      dateField: dateField,
+    });
     setMonthOptions(monthList.monthOptionsArray);
     setSelectedMonth(monthList.selectedMonth);
   }, []);
@@ -123,18 +135,23 @@ const EvictionMap = (props) => {
                   )
             }
             style={(feature) =>
-              util.featureStyler(feature, tractData, bins, colors)
+              util.featureStyler({
+                feature: feature,
+                tractData: tractData,
+                bins: bins,
+                colors: colors,
+              })
             }
           >
             <Tooltip interactive>
               {tractData[hoverID] ? (
-                MapTooltip(
-                  selectedMonth,
-                  monthOptions,
-                  hoverID,
-                  tractData,
-                  rawTractData
-                )
+                MapTooltip({
+                  selectedMonth: selectedMonth,
+                  monthOptions: monthOptions,
+                  hoverID: hoverID,
+                  tractData: tractData,
+                  rawTractData: rawTractData,
+                })
               ) : (
                 <h5>No Data</h5>
               )}
@@ -461,7 +478,11 @@ const EvictionMap = (props) => {
                   item.key === props.countyFilter.toString().padStart(3, "0")
               ).text
             }`}
-            data={util.buildingList(props, evictionThreshold, TextFormatter)}
+            data={util.buildingList({
+              buildings: props.buildings,
+              evictionThreshold: evictionThreshold,
+              TextFormatter: TextFormatter,
+            })}
             content={"Building Data"}
           />
         </div>

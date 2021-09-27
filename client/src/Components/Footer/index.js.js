@@ -12,10 +12,7 @@ const Footer = (dateRange) => {
           <img src={config.logos.fed} alt="Fed-logo" />
         </div>
         <div id="center-logo">
-          <img
-            src="https://atlantaregional.org/wp-content/uploads/arc-logo-webinar.png"
-            alt="ARC-logo"
-          />
+          <img src={config.logos.arc} alt="ARC-logo" />
         </div>
         <div id="right-logo">
           <p className="partner-names">

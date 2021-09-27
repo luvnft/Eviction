@@ -1,63 +1,66 @@
 import moment from "moment";
+import SortByDate from "../../utils/SortByDate";
 
 export default {
-  handleCSVData(props, tractData, rawTractData, selectedMonth) {
+  handleCSVData(propObj) {
     const dataArray =
-      tractData && props.geojson
-        ? props.geojson.features
+      propObj.tractData && propObj.geojson
+        ? propObj.geojson.features
             .filter((feature) =>
-              props.countyFilter !== 999 && props.countyFilter !== "999"
+              propObj.countyFilter !== 999 && propObj.countyFilter !== "999"
                 ? feature.properties["GEOID"].slice(2, 5) ===
-                  props.countyFilter.toString().padStart(3, "0")
-                : props.counties.includes(
+                  propObj.countyFilter.toString().padStart(3, "0")
+                : propObj.counties.includes(
                     feature.properties["GEOID"].slice(2, 5)
                   )
             )
             .filter(
               (feature) =>
-                rawTractData[feature.properties["GEOID"]] &&
-                tractData[feature.properties["GEOID"]]
+                propObj.rawTractData[feature.properties["GEOID"]] &&
+                propObj.tractData[feature.properties["GEOID"]]
             )
             .map((feature) => ({
               TractID: feature.properties["GEOID"],
-              Month: `${selectedMonth}`,
+              Month: `${propObj.selectedMonth}`,
               "Total Eviction Filings":
-                rawTractData[feature.properties["GEOID"]],
+                propObj.rawTractData[feature.properties["GEOID"]],
               "Eviction Filing Rate": Number.parseFloat(
-                tractData[feature.properties["GEOID"]] / 100
+                propObj.tractData[feature.properties["GEOID"]] / 100
               ).toPrecision(3),
             }))
         : null;
 
     return dataArray;
   },
-  handleData(props, selectedMonth, selectedMeasure) {
+  handleData(propObj) {
     const dataObject = {};
     const rawDataObject = {};
-    const normalizeData = {};
+    const normalizeData = propObj.normalizeData ? propObj.normalizeData : {};
 
-    [...props.data]
+    [...propObj.data]
       .filter((item) =>
-        props.countyFilter !== 999 && props.countyFilter !== "999"
-          ? props.countyFilter.toString().padStart(3, "0") ===
+        propObj.countyFilter !== 999 && propObj.countyFilter !== "999"
+          ? propObj.countyFilter.toString().padStart(3, "0") ===
             item["COUNTYFP10"].toString().padStart(3, "0")
           : true
       )
       .filter((item) =>
-        selectedMonth !== "During the Pandemic**"
-          ? moment(item["Filing Date"]).format("MMMM YYYY") === selectedMonth
+        propObj.selectedMonth !== "During the Pandemic**"
+          ? moment(item["Filing Date"]).format("MMMM YYYY") ===
+            propObj.selectedMonth
           : new Date(item["Filing Date"]) > new Date("4/1/2020")
       )
       .filter((item) =>
-        selectedMonth === "During the Pandemic**" && item["COUNTYFP10"] === 121
+        propObj.selectedMonth === "During the Pandemic**" &&
+        item["COUNTYFP10"] === 121
           ? false
           : true
       )
       .filter((item) =>
-        props.exclude
-          ? props.exclude.counties.includes(item["COUNTYFP10"]) &&
+        propObj.exclude
+          ? propObj.exclude.counties.includes(item["COUNTYFP10"]) &&
             new Date(item["Filing Date"]).getTime() >
-              new Date(props.exclude.date).getTime()
+              new Date(propObj.exclude.date).getTime()
             ? false
             : true
           : true
@@ -65,37 +68,40 @@ export default {
       .map(
         (item) =>
           (rawDataObject[item["tractID"]] = rawDataObject[item["tractID"]]
-            ? rawDataObject[item["tractID"]] + parseFloat(item[selectedMeasure])
-            : parseFloat(item[selectedMeasure]))
+            ? rawDataObject[item["tractID"]] +
+              parseFloat(item[propObj.selectedMeasure])
+            : parseFloat(item[propObj.selectedMeasure]))
       );
 
-    props.normalizeData.map((item) =>
+    normalizeData.map((item) =>
       rawDataObject[item["GEOID"]] > 0 && item["RentHHs"]
         ? (dataObject[item["GEOID"]] =
             (rawDataObject[item["GEOID"]] * 100) / item["RentHHs"])
         : null
     );
 
-    props.normalizeData.map(
+    normalizeData.map(
       (item) => (normalizeData[item["GEOID"]] = item["RentHHs"])
     );
 
     return { dataObject: dataObject, rawDataObject: rawDataObject };
   },
-  getMonthList(props, SortByDate, dateField) {
+  getMonthList(propObj) {
     const monthArray = [];
-    props.data
-      .sort((a, b) => SortByDate(a, b, dateField))
+    propObj.data
+      .sort((a, b) => SortByDate(a, b, propObj.dateField))
       .forEach((item) =>
-        !monthArray.includes(moment(item[dateField]).format("MMMM YYYY"))
-          ? monthArray.push(moment(item[dateField]).format("MMMM YYYY"))
+        !monthArray.includes(
+          moment(item[propObj.dateField]).format("MMMM YYYY")
+        )
+          ? monthArray.push(moment(item[propObj.dateField]).format("MMMM YYYY"))
           : null
       );
     const monthOptionsArray = monthArray
       .filter((month, i) =>
-        new Date(props.dateRange.end).getTime() >=
+        new Date(propObj.dateRange.end).getTime() >=
         new Date(
-          moment(props.dateRange.end).endOf("month").subtract({ days: 3 })
+          moment(propObj.dateRange.end).endOf("month").subtract({ days: 3 })
         ).getTime()
           ? true
           : i < monthArray.length - 1
@@ -116,21 +122,21 @@ export default {
       selectedMonth: monthOptionsArray[monthOptionsArray.length - 1].value,
     };
   },
-  buildingList(props, evictionThreshold, TextFormatter) {
+  buildingList(propObj) {
     const array = [];
-    props.buildings
+    propObj.buildings
       .filter(
         (building) =>
           building.filings.filter(
             (filing) =>
               moment(filing["filingdate"]).valueOf() >=
               moment("04/01/2020").valueOf()
-          ).length >= evictionThreshold
+          ).length >= propObj.evictionThreshold
       )
       .forEach((building) => {
         const obj = {
-          Street: TextFormatter.firstCharToUpper(building.street),
-          City: TextFormatter.firstCharToUpper(building.city),
+          Street: propObj.TextFormatter.firstCharToUpper(building.street),
+          City: propObj.TextFormatter.firstCharToUpper(building.city),
           Zip: building.zip,
           countyFIPS: building.county,
           tractID: building.tractid,
@@ -148,12 +154,14 @@ export default {
       });
     return array;
   },
-  featureStyler(feature, tractData, bins, colors) {
-    const geoid = feature.properties["GEOID"];
-    const value = tractData[geoid];
+  featureStyler(propObj) {
+    const geoid = propObj.feature.properties["GEOID"];
+    const value = propObj.tractData[geoid];
     let color = null;
-    bins.forEach((bin, i) =>
-      value < bin.top && value >= bin.bottom ? (color = colors[i]) : null
+    propObj.bins.forEach((bin, i) =>
+      value < bin.top && value >= bin.bottom
+        ? (color = propObj.colors[i])
+        : null
     );
 
     return {
@@ -163,46 +171,50 @@ export default {
       fillOpacity: 0.65,
     };
   },
-  createBins(binningType, binsArray, valueArray, colorArray) {
+  createBins(propObj) {
     const bins = [];
-    binningType === "quantile"
-      ? colorArray.map((color, j) =>
+    propObj.binningType === "quantile"
+      ? propObj.colorArray.map((color, j) =>
           bins.push({
-            top: valueArray[
-              Math.floor((j * valueArray.length) / colorArray.length)
+            top: propObj.valueArray[
+              Math.floor(
+                (j * propObj.valueArray.length) / propObj.colorArray.length
+              )
             ],
             bottom:
-              valueArray[
-                Math.floor(((j + 1) * valueArray.length) / colorArray.length) -
-                  1
+              propObj.valueArray[
+                Math.floor(
+                  ((j + 1) * propObj.valueArray.length) /
+                    propObj.colorArray.length
+                ) - 1
               ],
           })
         )
-      : binningType === "defined"
-      ? binsArray.map((bin, i) =>
+      : propObj.binningType === "defined"
+      ? propObj.binsArray.map((bin, i) =>
           bins.push({
-            bottom: i !== 0 ? binsArray[i - 1] : 0,
+            bottom: i !== 0 ? propObj.binsArray[i - 1] : 0,
             top: bin,
           })
         )
       : bins.push(null);
     return bins;
   },
-  calcStats(data, selectedMonth, colors) {
-    const valueArray = Object.values(data)
+  calcStats(propObj) {
+    const valueArray = Object.values(propObj.dataObject)
       .filter((a) => a > 0)
       .sort((a, b) => (a > b ? -1 : 1));
-    // console.log(valueArray);
     const max = Math.max(...valueArray);
     const min = Math.min(...valueArray);
-    const bins = this.createBins(
-      "defined",
-      selectedMonth === "During the Pandemic**"
-        ? [5, 20, 30, max + 1]
-        : [1, 5, 10, 18],
-      valueArray,
-      colors
-    );
+    const bins = this.createBins({
+      binningType: "defined",
+      binsArray:
+        propObj.selectedMonth === "During the Pandemic**"
+          ? [5, 20, 30, max + 1]
+          : [1, 5, 10, 18],
+      valueArray: valueArray,
+      colors: propObj.colors,
+    });
     return {
       statsObj: {
         max: max,

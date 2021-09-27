@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import EvictionMap from "./Components/EvictionMap";
 import EvictionChart from "./Components/EvictionChart";
-import Footer from "./Components/Footer/Footer";
-import Header from "./Components/Header/Header";
-import Modal from "./Components/Modal/Modal";
+import Footer from "./Components/Footer/index.js";
+import Header from "./Components/Header/index.js";
+import Modal from "./Components/Modal/index.js";
 import { Icon } from "semantic-ui-react";
 import API from "./utils/API.js";
 import Loader from "react-loader-spinner";
@@ -31,7 +31,7 @@ const App = () => {
 
   const asyncWrapper = async () => {
     const currentContent = await API.getData("./content");
-    setContent(currentContent);
+    setContent(currentContent[0]);
 
     const currentBuildings = await API.getData("./buildings");
     setBuildings(currentBuildings);

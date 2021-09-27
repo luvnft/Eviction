@@ -31,22 +31,28 @@ export default (props) => {
   const indicator2 = config.indicator2;
   const [chartData, setChartData] = useState();
   const [csvData, setCSVData] = useState();
-  const [timeScale, setTimeScale] = useState("weekly");
+  const [timeScale, setTimeScale] = useState(config.initTimescale);
   const [brushDomain, setBrushDomain] = useState({});
 
   useEffect(() => {
-    const dataArray = utils.dataFormattedForChart(
-      props.data,
-      dateField,
-      props.dateRange.end,
-      props.countyFilter,
-      timeScale,
-      indicator1,
-      indicator2,
-      props.data2019
-    );
+    const dataArray = utils.dataFormattedForChart({
+      data: props.data,
+      dateField: dateField,
+      endDate: props.dateRange.end,
+      countyFilter: props.countyFilter,
+      timeScale: timeScale,
+      indicator1: indicator1,
+      indicator2: indicator2,
+      comparisonData: props.data2019,
+    });
     const dataForCSV = dataArray.map((item) =>
-      utils.dataObjectForCSV(item, timeScale, dateField, indicator1, indicator2)
+      utils.dataObjectForCSV({
+        item: item,
+        timeScale: timeScale,
+        dateField: dateField,
+        indicator1: indicator1,
+        indicator2: indicator2,
+      })
     );
     const brushConfig = {
       start:
@@ -122,14 +128,13 @@ export default (props) => {
             <YAxis tickFormatter={(tick) => numeral(tick).format("0,0")} />
             <Tooltip
               content={(obj) =>
-                ChartTooltip(
-                  obj,
-                  timeScale,
-                  indicator1,
-                  indicator2,
-                  props.countyFilter,
-                  county
-                )
+                ChartTooltip(obj, {
+                  timeScale: timeScale,
+                  indicator1: indicator1,
+                  indicator2: indicator2,
+                  countyFilter: props.countyFilter,
+                  county: county,
+                })
               }
             />
             <Bar dataKey={indicator2} stackId="a" fill="#a9a9a9" />
