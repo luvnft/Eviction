@@ -45,6 +45,7 @@ export default (props) => {
       indicator2: indicator2,
       comparisonData: props.data2019,
     });
+    console.log(dataArray);
     const dataForCSV = dataArray.map((item) =>
       utils.dataObjectForCSV({
         item: item,
