@@ -23,8 +23,8 @@ mongoose
 
 const sortByDate = (dateField) => {
   return (a, b) => {
-    var dateA = new Date(a[dateField]).getTime();
-    var dateB = new Date(b[dateField]).getTime();
+    const dateA = new Date(a[dateField]).getTime();
+    const dateB = new Date(b[dateField]).getTime();
     return dateA > dateB ? -1 : 1;
   };
 };
@@ -40,7 +40,7 @@ const fetchData = async () => {
     .then((array) => {
       const formattedArray = array.data.map((obj) => {
         return {
-          filedate: moment(obj.filedate).format("L"),
+          filedate: obj.filedate,
           tractID: obj.tractid,
           countyID: obj.countyfp10,
           totalFilings: Number(obj.totalfilings),
@@ -112,9 +112,17 @@ const aggregateTractMonth = () => {
     }
   });
   for (const [key, value] of Object.entries(aggObj)) {
+    const startOfPandemic = new Date("04/01/2020").getTime();
+    const dateComparator = new Date(
+      moment(value.filedate).startOf("month")
+    ).getTime();
     finalArray.push({
-      Key: key,
-      FilingMonth: value.filedate,
+      FilingMonth: moment(value.filedate)
+        .startOf("month")
+        .format("L")
+        .concat(
+          dateComparator >= startOfPandemic ? " During the Pandemic" : ""
+        ),
       TractID: value.tractID,
       CountyID: value.countyID,
       TotalFilings: value.totalFilings,
@@ -134,12 +142,12 @@ const aggregateCountyMonthly = () => {
       aggObj[key] = item;
     } else {
       aggObj[key].totalFilings += item.totalFilings;
+      aggObj[key].answeredFilings += item.answeredFilings;
     }
   });
   for (const [key, value] of Object.entries(aggObj)) {
     finalArray.push({
-      Key: key,
-      FilingMonth: value.filedate,
+      FilingMonth: moment(value.filedate).startOf("month").format("L"),
       CountyID: value.countyID,
       TotalFilings: value.totalFilings,
       AnsweredFilings: value.answeredFilings,
@@ -154,8 +162,7 @@ const aggregateCountyWeekly = () => {
   stitchedData.forEach((item) => {
     const dtObj = new Date(item.filedate);
     const firstOfWeek = moment(dtObj).startOf("week").format("L");
-    const endOfWeek = moment(dtObj).endOf("week").format("L");
-    const dateKey = firstOfWeek + "-" + endOfWeek;
+    const dateKey = firstOfWeek;
     const key = dateKey + "-" + item.countyID;
     if (aggObj[key] === undefined) {
       aggObj[key] = item;
@@ -166,8 +173,7 @@ const aggregateCountyWeekly = () => {
   });
   for (const [key, value] of Object.entries(aggObj)) {
     finalArray.push({
-      Key: key,
-      FilingWeek: value.filedate,
+      FilingWeek: moment(value.filedate).startOf("week").format("L"),
       CountyID: value.countyID,
       TotalFilings: value.totalFilings,
       AnsweredFilings: value.answeredFilings,
@@ -176,11 +182,13 @@ const aggregateCountyWeekly = () => {
   return finalArray;
 };
 
-fetchData().then(() => {
-  // console.log(aggregateTractMonth());
-  // console.log(aggregateCountyMonthly());
-  // console.log(aggregateCountyWeekly());
-  // db.tractMonth.insertMany(aggregateTractMonth());
-  // db.countyMonth.insertMany(aggregateCountyMonthly());
-  db.countyWeek.insertMany(aggregateCountyWeekly());
-});
+fetchData()
+  .then(() => {
+    Promise.allSettled([
+      db.tractMonth.insertMany(aggregateTractMonth()),
+      db.countyMonth.insertMany(aggregateCountyMonthly()),
+      db.countyWeek.insertMany(aggregateCountyWeekly()),
+    ]);
+  })
+  .then(() => console.log("Collection succesfully updated"))
+  .catch((err) => console.log("Error Fetching Data: ", err.message));
