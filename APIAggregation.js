@@ -11,6 +11,13 @@ const TOKEN = process.env.TOKEN;
 let gaTechData = [];
 let fultonData = [];
 let stitchedData = [];
+const includedCounties = [
+  "063",
+  "067",
+  "089",
+  "121",
+  "135"
+]
 
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -47,15 +54,7 @@ const fetchData = async () => {
         };
       });
       let dateSortedArray = formattedArray.sort(sortByDate("filedate"));
-      fultonData = dateSortedArray.filter((item) => {
-        return (
-          item.countyID === "063" ||
-          item.countyID === "067" ||
-          item.countyID === "089" ||
-          item.countyID === "121" ||
-          item.countyID === "135"
-        );
-      });
+      fultonData = dateSortedArray.filter((item) => includedCounties.includes(item.countyID));
     })
     .catch((err) => console.log("Error Fetching Data: ", err.message));
   await axios
@@ -73,15 +72,7 @@ const fetchData = async () => {
         };
       });
       let dateSortedArray = formattedArray.sort(sortByDate("filedate"));
-      gaTechData = dateSortedArray.filter((item) => {
-        return (
-          item.countyID === "063" ||
-          item.countyID === "067" ||
-          item.countyID === "089" ||
-          item.countyID === "121" ||
-          item.countyID === "135"
-        );
-      });
+      gaTechData = dateSortedArray.filter((item) => includedCounties.includes(item.countyID));
     })
     .catch((err) => console.log("Error Fetching Data: ", err.message));
 
@@ -100,17 +91,36 @@ const fetchData = async () => {
 
 const aggregateTractMonth = () => {
   const aggObj = {};
-  const finalArray = [];
-  fultonData.forEach((item) => {
+  const array = gaTechData.filter(item => item.countyID !== '121');
+  fultonData.forEach(item => array.push(item));
+
+  const finalArray = Object.values(aggObj);
+  array.forEach(item =>{
     const dtObj = new Date(item.filedate);
+    const duringPandemic = new Date(item.filedate) >= new Date('04/01/2020')
     const dateKey = dtObj.getMonth() + "-" + dtObj.getFullYear();
     const key = dateKey + "-" + item.tractID;
-    if (aggObj[key] === undefined) {
+    if (aggObj[key]) {
       aggObj[key] = item;
     } else {
       aggObj[key].totalFilings += item.totalFilings;
     }
-  });
+    // if (duringPandemic) {
+    //   aggObj['During the Pandemic']
+    // }
+  }
+  )
+
+  // fultonData.forEach((item) => {
+  //   const dtObj = new Date(item.filedate);
+  //   const dateKey = dtObj.getMonth() + "-" + dtObj.getFullYear();
+  //   const key = dateKey + "-" + item.tractID;
+  //   if (aggObj[key] === undefined) {
+  //     aggObj[key] = item;
+  //   } else {
+  //     aggObj[key].totalFilings += item.totalFilings;
+  //   }
+  // });
   for (const [key, value] of Object.entries(aggObj)) {
     const startOfPandemic = new Date("04/01/2020").getTime();
     const dateComparator = new Date(
