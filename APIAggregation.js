@@ -188,7 +188,7 @@ fetchData()
       db.tractMonth.insertMany(aggregateTractMonth()),
       db.countyMonth.insertMany(aggregateCountyMonthly()),
       db.countyWeek.insertMany(aggregateCountyWeekly()),
-    ]);
+    ]).catch((err) => console.log("Error Fetching Data: ", err.message));
   })
   .then(() => console.log("Collection succesfully updated"))
   .catch((err) => console.log("Error Fetching Data: ", err.message));
