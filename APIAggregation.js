@@ -196,29 +196,38 @@ const aggregateCountyMonthly = ([fromFulton, fromGaTech]) => {
 };
 
 const aggregateCountyWeekly = () => {
-  const aggObj = {};
-  const finalArray = [];
-  stitchedData.forEach((item) => {
-    const dtObj = new Date(item.filedate);
-    const firstOfWeek = moment(dtObj).startOf("week").format("MM/DD/YYYY");
-    const dateKey = firstOfWeek;
-    const key = dateKey + "-" + item.countyID;
-    if (aggObj[key] === undefined) {
-      aggObj[key] = item;
-    } else {
-      aggObj[key].totalFilings += item.totalFilings;
-      aggObj[key].answeredFilings += item.answeredFilings;
-    }
-  });
-  for (const [key, value] of Object.entries(aggObj)) {
-    finalArray.push({
-      FilingWeek: moment(value.filedate).startOf("week").format("MM/DD/YYYY"),
-      CountyID: value.countyID,
-      TotalFilings: value.totalFilings,
-      AnsweredFilings: value.answeredFilings,
-    });
-  }
-  return finalArray;
+  const endDateFromGaTech = fromGaTech.sort(item => sortByDate('filedate'))[0].filedate;
+  const dataArray = [
+    ...fromGaTech, 
+    ...fromFulton.filter(item => 
+      new Date(item.filedate).getTime() > new Date(endDateFromGaTech).getTime()
+    )
+  ];
+
+  const obj = {};
+  // const aggObj = {};
+  // const finalArray = [];
+  // stitchedData.forEach((item) => {
+  //   const dtObj = new Date(item.filedate);
+  //   const firstOfWeek = moment(dtObj).startOf("week").format("MM/DD/YYYY");
+  //   const dateKey = firstOfWeek;
+  //   const key = dateKey + "-" + item.countyID;
+  //   if (aggObj[key] === undefined) {
+  //     aggObj[key] = item;
+  //   } else {
+  //     aggObj[key].totalFilings += item.totalFilings;
+  //     aggObj[key].answeredFilings += item.answeredFilings;
+  //   }
+  // });
+  // for (const [key, value] of Object.entries(aggObj)) {
+  //   finalArray.push({
+  //     FilingWeek: moment(value.filedate).startOf("week").format("MM/DD/YYYY"),
+  //     CountyID: value.countyID,
+  //     TotalFilings: value.totalFilings,
+  //     AnsweredFilings: value.answeredFilings,
+  //   });
+  // }
+  // return finalArray;
 };
 
 fetchData()
