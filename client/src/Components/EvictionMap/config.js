@@ -29,14 +29,12 @@ export default {
   monthlyColorMap: [
     "#6867da",
     "#618ee9",
-    "#76afee",
     "#a2cdee",
     "#d8e8f0",
   ].reverse(),
   pandemicColorMap: [
     "#DC1C13",
     "#EA4C46",
-    "#F07470",
     "#F1959B",
     "#F6BDC0",
   ].reverse(),
@@ -55,9 +53,9 @@ export default {
     "#fb6a5f",
   ],
   buildingScaler: 2,
-  tractNumerator: "Total Filings",
+  tractNumerator: "TotalFilings",
   tractDenominator: "RentHHs",
-  dateField: "Filing Date",
+  dateField: "FilingMonth",
   loaderStyle: {
     zIndex: "99999",
     color: "#609580",

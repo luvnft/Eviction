@@ -43,9 +43,8 @@ const EvictionMap = (props) => {
 
   useEffect(() => {
     const sortedData = util.handleData({
-      data: props.data,
+      data: props.mapData,
       countyFilter: props.countyFilter,
-      exclude: props.exclude,
       normalizeData: props.normalizeData,
       selectedMonth: selectedMonth,
       selectedMeasure: selectedMeasure,
@@ -55,6 +54,7 @@ const EvictionMap = (props) => {
       selectedMonth: selectedMonth,
       colors: colors,
     });
+    // console.log(currentStats);
     setStats(currentStats.statsObj);
     setBins(currentStats.bins);
     setTractData(sortedData.dataObject);
@@ -73,13 +73,15 @@ const EvictionMap = (props) => {
   }, [tractData, props.geojson]);
   useEffect(() => {
     const monthList = util.getMonthList({
-      data: props.data,
+      data: props.mapData,
       dateRange: props.dateRange,
       dateField: dateField,
     });
     setMonthOptions(monthList.monthOptionsArray);
     setSelectedMonth(monthList.selectedMonth);
   }, []);
+
+  // console.log(props.geojson);
   return (
     <>
       <LeafletMap
@@ -110,7 +112,7 @@ const EvictionMap = (props) => {
             }
           />
         ) : null}
-        {props.geojson && tractData && stats && props.dateRange ? (
+        {props.geojson && tractData && stats ? (
           <GeoJSON
             key={`map-layer-${props.name}-${props.countyFilter}-${selectedMonth}`}
             data={props.geojson}

@@ -33,6 +33,7 @@ export default {
     return dataArray;
   },
   handleData(propObj) {
+    // console.log(propObj.data);
     const dataObject = {};
     const rawDataObject = {};
     const normalizeData = propObj.normalizeData ? propObj.normalizeData : {};
@@ -41,37 +42,33 @@ export default {
       .filter((item) =>
         propObj.countyFilter !== 999 && propObj.countyFilter !== "999"
           ? propObj.countyFilter.toString().padStart(3, "0") ===
-            item["COUNTYFP10"].toString().padStart(3, "0")
+            item["CountyID"].toString().padStart(3, "0")
           : true
       )
       .filter((item) =>
         propObj.selectedMonth !== "During the Pandemic**"
-          ? moment(item["Filing Date"]).format("MMMM YYYY") ===
+          ? moment(item["FilingMonth"]).format("MMMM YYYY") ===
             propObj.selectedMonth
-          : new Date(item["Filing Date"]) > new Date("4/1/2020")
+          : item["FilingMonth"] === 'During the Pandemic'
       )
-      .filter((item) =>
-        propObj.selectedMonth === "During the Pandemic**" &&
-        item["COUNTYFP10"] === 121
-          ? false
-          : true
-      )
-      .filter((item) =>
-        propObj.exclude
-          ? propObj.exclude.counties.includes(item["COUNTYFP10"]) &&
-            new Date(item["Filing Date"]).getTime() >
-              new Date(propObj.exclude.date).getTime()
-            ? false
-            : true
-          : true
-      )
-      .map(
-        (item) =>
-          (rawDataObject[item["tractID"]] = rawDataObject[item["tractID"]]
-            ? rawDataObject[item["tractID"]] +
-              parseFloat(item[propObj.selectedMeasure])
-            : parseFloat(item[propObj.selectedMeasure]))
-      );
+      // .filter((item) =>
+      //   propObj.selectedMonth === "During the Pandemic**" &&
+      //   item["CountyID"] === 121
+      //     ? false
+      //     : true
+      // )
+      // .filter((item) =>
+      //   propObj.exclude
+      //     ? propObj.exclude.counties.includes(item["CountyID"]) &&
+      //       new Date(item["Filing Date"]).getTime() >
+      //         new Date(propObj.exclude.date).getTime()
+      //       ? false
+      //       : true
+      //     : true
+      // )
+      .map(item => 
+        rawDataObject[item["TractID"]] = parseFloat(item[propObj.selectedMeasure]
+      ));
 
     normalizeData.map((item) =>
       rawDataObject[item["GEOID"]] > 0 && item["RentHHs"]
@@ -211,7 +208,7 @@ export default {
       binsArray:
         propObj.selectedMonth === "During the Pandemic**"
           ? [5, 20, 30, max + 1]
-          : [1, 5, 10, 18],
+          : [1, 5, 10, 20],
       valueArray: valueArray,
       colors: propObj.colors,
     });

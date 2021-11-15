@@ -37,7 +37,7 @@ export default {
       var dateB = new Date(b).getTime();
       return dateA > dateB ? 1 : -1;
     };
-    const dateArray = new Set([...data.map((item) => item["Filing Date"])]);
+    const dateArray = new Set([...data.map((item) => item["FilingDate"])]);
     const sortedDates = [...dateArray].sort((a, b) => sortByDate(a, b));
     const startDate = sortedDates[0];
     const endDate = sortedDates[sortedDates.length - 1];

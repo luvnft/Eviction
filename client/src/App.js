@@ -26,6 +26,9 @@ const App = () => {
   const [modalStatus, setModalStatus] = useState(true);
   const [dateRange, setDateRange] = useState();
   const [buildings, setBuildings] = useState();
+  const [mapData, setMapData] = useState();
+  const [chartDataWeekly, setChartDataWeekly] = useState();
+  const [chartDataMonthly, setChartDataMonthly] = useState();
   const countyOptions = config.countyOptions;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 
@@ -39,9 +42,21 @@ const App = () => {
     const currentTracts = await API.getData(config.geoURL);
     setGeoJSON(currentTracts);
 
-    const currentEvictions = await util.getEvictionData();
-    setData(currentEvictions.array);
-    setDateRange(currentEvictions.dateRange);
+    // const currentEvictions = await util.getEvictionData();
+    // setData(currentEvictions.array);
+
+    const tractByMonth = await API.getData("./tractbymonth")
+    setMapData(tractByMonth);
+    setDateRange(util.handleDateRange(tractByMonth));
+
+
+    
+
+    const countyWeekly = await API.getData("./countyweekly")
+    setChartDataWeekly(countyWeekly);
+    
+    const countyMonthly = await API.getData("./countymonthly")
+    setChartDataMonthly(countyMonthly);
   };
 
   useEffect(() => {
@@ -65,28 +80,37 @@ const App = () => {
       />
 
       <div id="viz-box">
-        {vizView === "map" && data && buildings && dateRange ? (
-          <EvictionMap
-            key={`eviction-map`}
-            smallScreen={smallScreen}
-            data={data}
-            buildings={buildings.filter((building) =>
-              countyFilter.toString().padStart(3, "0") !== "999"
+        { vizView === "map" &&
+          // data && 
+          buildings && 
+          dateRange &&
+          mapData
+          ? <EvictionMap
+              key={`eviction-map`}
+              smallScreen={smallScreen}
+              // data={data}
+              mapData={mapData.filter(tract => countyFilter.toString().padStart(3, "0") !== "999"
                 ? countyFilter.toString().padStart(3, "0") ===
-                  building.county.toString().padStart(3, "0")
-                : true
-            )}
-            normalizeData={normalizeData}
-            dateRange={dateRange}
-            name={"evictionMap"}
-            geojson={geoJSON}
-            boundaryGeoJSON={boundaryGeoJSON}
-            countyFilter={countyFilter}
-            counties={countyOptions.map((county) => county.key)}
-            countyInfo={countyOptions}
-            exclude={content.config ? content.config.exclude : null}
-          />
-        ) : vizView === "chart" && data && dateRange ? (
+                  tract.CountyID.toString().padStart(3, "0")
+                : true)
+              }
+              buildings={buildings.filter((building) =>
+                countyFilter.toString().padStart(3, "0") !== "999"
+                  ? countyFilter.toString().padStart(3, "0") ===
+                    building.county.toString().padStart(3, "0")
+                  : true
+              )}
+              normalizeData={normalizeData}
+              dateRange={dateRange}
+              name={"evictionMap"}
+              geojson={geoJSON}
+              boundaryGeoJSON={boundaryGeoJSON}
+              countyFilter={countyFilter}
+              counties={countyOptions.map((county) => county.key)}
+              countyInfo={countyOptions}
+              // exclude={content.config ? content.config.exclude : null}
+            />
+          : vizView === "chart" && data && dateRange ? (
           <EvictionChart
             smallScreen={smallScreen}
             dateRange={dateRange}
