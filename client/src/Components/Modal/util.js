@@ -5,8 +5,8 @@ export default {
   AboutContent: {
     Alert: (content) => (
       <div id="alert" className="about-content-section">
-        {content.alert.map((item) => (
-          <p>{item}</p>
+        {content.alert.map((item, i) => (
+          <p key={`alert-paragraph-${i}`}>{item}</p>
         ))}
       </div>
     ),
@@ -170,7 +170,7 @@ export default {
           must be accompanied by one of the following citations.
         </p>
         {content.citations.map((citation, i) => (
-          <div className="about-content-citation">
+          <div key={`citation-${i}`} className="about-content-citation">
             <h3 className="about-content-citation-type">{citation.type}:</h3>
             <div className="about-content-citation-text">
               <span>{citation.authors} </span>

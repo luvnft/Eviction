@@ -26,7 +26,10 @@ const getBuildingInfo = async () => {
 	if (filings) {
 		const buildingInfo = {};
 
-		await filings.forEach(record => {
+		await filings
+    
+    .filter(record => new Date(record.filingdate).getTime() >= new Date('01/01/2020').getTime() )
+    .forEach(record => {
 			const keyString = `${record.street.trim()}-${record.city.trim()}-${record.zip.trim()}`;
 			// const key = `${parseFloat(record.latitude).toFixed(5)}${parseFloat(record.longitude).toFixed(5)}`;
 			const key = keyString.replace(/ /g, '-');

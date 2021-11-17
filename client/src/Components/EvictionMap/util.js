@@ -70,16 +70,16 @@ export default {
         rawDataObject[item["TractID"]] = parseFloat(item[propObj.selectedMeasure]
       ));
 
-    normalizeData.map((item) =>
-      rawDataObject[item["GEOID"]] > 0 && item["RentHHs"]
-        ? (dataObject[item["GEOID"]] =
-            (rawDataObject[item["GEOID"]] * 100) / item["RentHHs"])
-        : null
-    );
+    normalizeData.forEach((item) => {
+      if (rawDataObject[item["GEOID"]] > 0 && item["RentHHs"]) {
+        dataObject[item["GEOID"]] = (rawDataObject[item["GEOID"]] * 100) / item["RentHHs"]
+      }
+      normalizeData[item["GEOID"]] = item["RentHHs"]
+    });
 
-    normalizeData.map(
-      (item) => (normalizeData[item["GEOID"]] = item["RentHHs"])
-    );
+    // normalizeData.forEach(
+    //   (item) => ()
+    // );
 
     return { dataObject: dataObject, rawDataObject: rawDataObject };
   },
@@ -165,7 +165,7 @@ export default {
       color: color ? color : "lightgrey",
       weight: 1,
       fillColor: color ? color : "lightgrey",
-      fillOpacity: 0.65,
+      fillOpacity: propObj.hoverID === geoid ? .1 : .8,
     };
   },
   createBins(propObj) {

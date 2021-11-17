@@ -6,6 +6,7 @@ import util from "./util";
 import "./style.css";
 
 const Modal = (props) => {
+  // console.log(props)
   return (
     <div id="modal">
       <div id="modal-content">
@@ -27,8 +28,8 @@ const Modal = (props) => {
               {util.AboutContent.Resources(props.content)}
               {util.AboutContent.Citations(props.content)}
               {util.AboutContent.DataRequest(props.content)}
-              {util.AboutContent.Sources("Court Record Data", props.content)}
-              {util.AboutContent.Sources("Other Data", props.content)}
+              {util.AboutContent.Sources({type: "Court Record Data"}, props.content)}
+              {util.AboutContent.Sources({type: "Other Data"}, props.content)}
             </>
           ) : (
             <div style={config.loaderStyle}>

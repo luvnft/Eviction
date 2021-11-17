@@ -18,7 +18,7 @@ const App = () => {
   const vh = window.innerHeight * 0.01;
   const smallScreen = window.innerWidth < 850;
   const [geoJSON, setGeoJSON] = useState();
-  const [boundaryGeoJSON, setBoundaryGeoJSON] = useState();
+  // const [boundaryGeoJSON, setBoundaryGeoJSON] = useState();
   const [content, setContent] = useState();
   const [data, setData] = useState();
   const [vizView, setVizView] = useState("map");
@@ -30,38 +30,47 @@ const App = () => {
   const [chartDataWeekly, setChartDataWeekly] = useState();
   const [chartDataMonthly, setChartDataMonthly] = useState();
   const countyOptions = config.countyOptions;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-
-  const asyncWrapper = async () => {
-    const currentContent = await API.getData("./content");
-    setContent(currentContent[0]);
-
-    const currentBuildings = await API.getData("./buildings");
-    setBuildings(currentBuildings);
-
-    const currentTracts = await API.getData(config.geoURL);
-    setGeoJSON(currentTracts);
-
-    // const currentEvictions = await util.getEvictionData();
-    // setData(currentEvictions.array);
-
-    const tractByMonth = await API.getData("./tractbymonth")
-    setMapData(tractByMonth);
-    setDateRange(util.handleDateRange(tractByMonth));
 
 
-    
-
-    const countyWeekly = await API.getData("./countyweekly")
-    setChartDataWeekly(countyWeekly);
-    
-    const countyMonthly = await API.getData("./countymonthly")
-    setChartDataMonthly(countyMonthly);
+  const handleData =  () => {
+    // API.getData("./tractbymonth")
+    //   .then(res => {
+    //     setMapData(res);
+    //     setDateRange(util.handleDateRange(res));
+    //   })
+    //   .catch(err => 
+    //     console.log('error on gettting tract by month', err));
+    API.getData("./content")
+      .then(res => 
+        setContent(res[0]))
+      .catch(err => 
+        console.log('error getting content',err));
+    // API.getData("./buildings")
+    //   .then(res => 
+    //     setBuildings(res))
+    //   .catch(err => 
+    //     console.log('error getting buildings',err));
+    // API.getData(config.geoURL)
+    //   .then(res => 
+    //     setGeoJSON(res))
+    //   .catch(err => 
+    //     console.log('error getting geojsons',err));
+    API.getData("./countyweekly")
+      .then(res => 
+        setChartDataWeekly(res))
+      .catch(err => 
+        console.log('error getting county weekly',err));
+    API.getData("./countymonthly")
+      .then(res => 
+        setChartDataMonthly(res))
+      .catch(err => 
+        console.log('error getting county monthly',err));
   };
 
   useEffect(() => {
-    asyncWrapper();
-    setBoundaryGeoJSON(countyBoundary);
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+    handleData();
+    // setBoundaryGeoJSON(countyBoundary);
   }, []);
 
   return content ? (
@@ -80,32 +89,32 @@ const App = () => {
       />
 
       <div id="viz-box">
-        { vizView === "map" &&
+        { vizView === "map"
           // data && 
-          buildings && 
-          dateRange &&
-          mapData
+          // buildings && 
+          // dateRange &&
+          // mapData
           ? <EvictionMap
               key={`eviction-map`}
               smallScreen={smallScreen}
               // data={data}
-              mapData={mapData.filter(tract => countyFilter.toString().padStart(3, "0") !== "999"
-                ? countyFilter.toString().padStart(3, "0") ===
-                  tract.CountyID.toString().padStart(3, "0")
-                : true)
-              }
-              buildings={buildings.filter((building) =>
-                countyFilter.toString().padStart(3, "0") !== "999"
-                  ? countyFilter.toString().padStart(3, "0") ===
-                    building.county.toString().padStart(3, "0")
-                  : true
-              )}
+              // mapData={mapData.filter(tract => countyFilter.toString().padStart(3, "0") !== "999"
+              //   ? countyFilter.toString().padStart(3, "0") ===
+              //     tract.CountyID.toString().padStart(3, "0")
+              //   : true)
+              // }
+              // buildings={buildings.filter((building) =>
+              //   countyFilter.toString().padStart(3, "0") !== "999"
+              //     ? countyFilter.toString().padStart(3, "0") ===
+              //       building.county.toString().padStart(3, "0")
+              //     : true
+              // )}
               normalizeData={normalizeData}
-              dateRange={dateRange}
+              // dateRange={dateRange}
               name={"evictionMap"}
-              geojson={geoJSON}
-              boundaryGeoJSON={boundaryGeoJSON}
-              countyFilter={countyFilter}
+              // geojson={geoJSON}
+              boundaryGeoJSON={countyBoundary}
+              countyFilter={countyFilter.toString().padStart(3, "0")}
               counties={countyOptions.map((county) => county.key)}
               countyInfo={countyOptions}
               // exclude={content.config ? content.config.exclude : null}

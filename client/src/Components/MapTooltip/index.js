@@ -14,21 +14,21 @@ const MapTooltip = (propObj) => (
       </span>
     </div>
     <div>
-      in census tract <span className="tooltip-data">{propObj.hoverID}</span>
+      in census tract <span className="tooltip-data">{propObj.clickID}</span>
     </div>
 
     <div>
       there{" "}
       {propObj.selectedMonth !== "During the Pandemic**" ? "were" : "have been"}{" "}
       <span className="tooltip-data">
-        {numeral(propObj.rawTractData[propObj.hoverID]).format("0,0")}
+        {numeral(propObj.rawTractData[propObj.clickID]).format("0,0")}
       </span>{" "}
       total reported eviction filings
     </div>
     <div>
       resulting in an eviction filing rate of{" "}
       <span className="tooltip-data">
-        {numeral(propObj.tractData[propObj.hoverID]).format("0.0")}%
+        {numeral(propObj.tractData[propObj.clickID]).format("0.0")}%
       </span>
       .
     </div>

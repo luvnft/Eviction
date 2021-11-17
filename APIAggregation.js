@@ -79,7 +79,7 @@ const aggregateTractMonth = ([fromGaTech, fromFulton]) => {
 	const obj = {};
 
 	dataArr
-  .filter(item => new Date(item.filedate).getTime() >= new Date('1/1/2019'))
+  .filter(item => new Date(item.filedate).getTime() >= new Date('1/1/2020'))
   .forEach(item => {
 		const filingMonth = moment(item.filedate)
 			.startOf('month')
@@ -133,7 +133,7 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 	const obj = {};
 
 	dataArr
-  .filter(item => new Date(item.filedate).getTime() >= new Date('1/1/2019'))
+  .filter(item => new Date(item.filedate).getTime() >= new Date('1/1/2020'))
   .forEach(item => {
 		const date = moment(item.filedate)
 			.startOf(type.toLowerCase())
