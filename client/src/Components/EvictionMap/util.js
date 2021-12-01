@@ -33,7 +33,6 @@ export default {
     return dataArray;
   },
   handleData(propObj) {
-    // console.log(propObj.data);
     const dataObject = {};
     const rawDataObject = {};
     const normalizeData = propObj.normalizeData ? propObj.normalizeData : {};
@@ -51,21 +50,6 @@ export default {
             propObj.selectedMonth
           : item["FilingMonth"] === 'During the Pandemic'
       )
-      // .filter((item) =>
-      //   propObj.selectedMonth === "During the Pandemic**" &&
-      //   item["CountyID"] === 121
-      //     ? false
-      //     : true
-      // )
-      // .filter((item) =>
-      //   propObj.exclude
-      //     ? propObj.exclude.counties.includes(item["CountyID"]) &&
-      //       new Date(item["Filing Date"]).getTime() >
-      //         new Date(propObj.exclude.date).getTime()
-      //       ? false
-      //       : true
-      //     : true
-      // )
       .map(item => 
         rawDataObject[item["TractID"]] = parseFloat(item[propObj.selectedMeasure]
       ));
@@ -76,10 +60,6 @@ export default {
       }
       normalizeData[item["GEOID"]] = item["RentHHs"]
     });
-
-    // normalizeData.forEach(
-    //   (item) => ()
-    // );
 
     return { dataObject: dataObject, rawDataObject: rawDataObject };
   },

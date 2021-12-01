@@ -22,6 +22,8 @@ import numeral from "numeral";
 import Loader from "react-loader-spinner";
 import config from "./config";
 import utils from "./utils";
+import SortByDate from "../../utils/SortByDate";
+
 import "./style.css";
 
 export default (props) => {
@@ -35,16 +37,20 @@ export default (props) => {
   const [brushDomain, setBrushDomain] = useState({});
 
   useEffect(() => {
-    const dataArray = utils.dataFormattedForChart({
-      data: props.data,
-      dateField: dateField,
-      endDate: props.dateRange.end,
-      countyFilter: props.countyFilter,
-      timeScale: timeScale,
-      indicator1: indicator1,
-      indicator2: indicator2,
-      comparisonData: props.data2019,
-    });
+    const dataArray = timeScale === 'weekly' 
+    ? props.chartDataWeekly.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
+ 
+    : props.chartDataMonthly.sort((a, b) => SortByDate(a, b, 'FilingMonth'))
+    // utils.dataFormattedForChart({
+    //   data: props.data,
+    //   dateField: dateField,
+    //   endDate: props.dateRange.end,
+    //   countyFilter: props.countyFilter,
+    //   timeScale: timeScale,
+    //   indicator1: indicator1,
+    //   indicator2: indicator2,
+    //   comparisonData: props.data2019,
+    // });
     // console.log(dataArray);
     const dataForCSV = dataArray.map((item) =>
       utils.dataObjectForCSV({
@@ -65,7 +71,7 @@ export default (props) => {
     setChartData(dataArray);
     setCSVData(dataForCSV);
     setBrushDomain(brushConfig);
-  }, [props.countyFilter, timeScale, props.data]);
+  }, [props.countyFilter, timeScale, props.chartDataMonthly, props.chartDataWeekly]);
 
   return (
     <div id="chart-responsive-container">
@@ -100,8 +106,9 @@ export default (props) => {
               </ReferenceArea>
             ))}
             <XAxis
+              // scale='time'
               height={50}
-              dataKey={"Filing Date"}
+              dataKey={timeScale === 'weekly' ? 'FilingWeek' : 'FilingMonth'}
               angle={
                 timeScale === "weekly" ||
                 timeScale === "daily" ||
@@ -138,9 +145,9 @@ export default (props) => {
                 })
               }
             />
-            <Bar dataKey={indicator2} stackId="a" fill="#a9a9a9" />
-            <Bar dataKey={indicator1} stackId="a" fill="#DC1C13" />
-            <Line dataKey="Baseline (Total Filings, 2019)" strokeWidth={2} />
+            <Bar dataKey={'TotalFilings'} stackId="a" fill="#a9a9a9" />
+            {/* <Bar dataKey={indicator1} stackId="a" fill="#DC1C13" /> */}
+            {/* <Line dataKey="Baseline (Total Filings, 2019)" strokeWidth={2} /> */}
             <Legend
               formatter={(value, entry) => (
                 <span style={{ fontSize: props.smallScreen ? "10px" : "14px" }}>

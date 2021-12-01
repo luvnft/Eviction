@@ -20,7 +20,7 @@ const App = () => {
   const [geoJSON, setGeoJSON] = useState();
   // const [boundaryGeoJSON, setBoundaryGeoJSON] = useState();
   const [content, setContent] = useState();
-  const [data, setData] = useState();
+  // const [data, setData] = useState();
   const [vizView, setVizView] = useState("map");
   const [countyFilter, setCountyFilter] = useState(999);
   const [modalStatus, setModalStatus] = useState(true);
@@ -33,28 +33,28 @@ const App = () => {
 
 
   const handleData =  () => {
-    // API.getData("./tractbymonth")
-    //   .then(res => {
-    //     setMapData(res);
-    //     setDateRange(util.handleDateRange(res));
-    //   })
-    //   .catch(err => 
-    //     console.log('error on gettting tract by month', err));
+    API.getData("./tractbymonth")
+      .then(res => {
+        setMapData(res);
+        setDateRange(util.handleDateRange(res));
+      })
+      .catch(err => 
+        console.log('error on gettting tract by month', err));
     API.getData("./content")
       .then(res => 
         setContent(res[0]))
       .catch(err => 
         console.log('error getting content',err));
-    // API.getData("./buildings")
-    //   .then(res => 
-    //     setBuildings(res))
-    //   .catch(err => 
-    //     console.log('error getting buildings',err));
-    // API.getData(config.geoURL)
-    //   .then(res => 
-    //     setGeoJSON(res))
-    //   .catch(err => 
-    //     console.log('error getting geojsons',err));
+    API.getData("./buildings")
+      .then(res => 
+        setBuildings(res))
+      .catch(err => 
+        console.log('error getting buildings',err));
+    API.getData(config.geoURL)
+      .then(res => 
+        setGeoJSON(res))
+      .catch(err => 
+        console.log('error getting geojsons',err));
     API.getData("./countyweekly")
       .then(res => 
         setChartDataWeekly(res))
@@ -70,7 +70,6 @@ const App = () => {
   useEffect(() => {
     document.documentElement.style.setProperty("--vh", `${vh}px`);
     handleData();
-    // setBoundaryGeoJSON(countyBoundary);
   }, []);
 
   return content ? (
@@ -89,60 +88,70 @@ const App = () => {
       />
 
       <div id="viz-box">
-        { vizView === "map"
-          // data && 
-          // buildings && 
-          // dateRange &&
-          // mapData
+        { vizView === "map" &&
+          buildings && 
+          dateRange &&
+          mapData
           ? <EvictionMap
               key={`eviction-map`}
               smallScreen={smallScreen}
-              // data={data}
-              // mapData={mapData.filter(tract => countyFilter.toString().padStart(3, "0") !== "999"
-              //   ? countyFilter.toString().padStart(3, "0") ===
-              //     tract.CountyID.toString().padStart(3, "0")
-              //   : true)
-              // }
-              // buildings={buildings.filter((building) =>
-              //   countyFilter.toString().padStart(3, "0") !== "999"
-              //     ? countyFilter.toString().padStart(3, "0") ===
-              //       building.county.toString().padStart(3, "0")
-              //     : true
-              // )}
+              mapData={mapData.filter(tract => countyFilter.toString().padStart(3, "0") !== "999"
+                ? countyFilter.toString().padStart(3, "0") ===
+                  tract.CountyID.toString().padStart(3, "0")
+                : true)
+              }
+              buildings={buildings.filter((building) =>
+                countyFilter.toString().padStart(3, "0") !== "999"
+                  ? countyFilter.toString().padStart(3, "0") ===
+                    building.county.toString().padStart(3, "0")
+                  : true
+              )}
               normalizeData={normalizeData}
-              // dateRange={dateRange}
+              dateRange={dateRange}
               name={"evictionMap"}
-              // geojson={geoJSON}
+              geojson={geoJSON}
               boundaryGeoJSON={countyBoundary}
               countyFilter={countyFilter.toString().padStart(3, "0")}
               counties={countyOptions.map((county) => county.key)}
               countyInfo={countyOptions}
-              // exclude={content.config ? content.config.exclude : null}
             />
-          : vizView === "chart" && data && dateRange ? (
-          <EvictionChart
-            smallScreen={smallScreen}
-            dateRange={dateRange}
-            data2019={data2019}
-            countyFilter={countyFilter}
-            data={data}
-            county={countyOptions.find(
-              (county) =>
-                county.value.toString().padStart(3, "0") ===
-                countyFilter.toString().padStart(3, "0")
-            )}
-            counties={countyOptions}
-          />
-        ) : (
-          <div style={config.loaderStyle}>
-            <h1>{vizView === "map" ? "Map is" : "Chart is"} Loading...</h1>
-            <Loader
-              id="loader-box"
-              color={config.loaderStyle.color}
-              type={config.loaderStyle.type}
+          : vizView === "chart" && 
+          dateRange &&
+          chartDataMonthly &&
+          chartDataWeekly
+          ? <EvictionChart
+              smallScreen={smallScreen}
+              dateRange={dateRange}
+              data2019={data2019}
+              countyFilter={countyFilter}
+              chartDataMonthly={chartDataMonthly.filter((item) =>
+                countyFilter !== 999 && countyFilter !== "999"
+                  ? countyFilter.toString().padStart(3, "0") ===
+                    item["CountyID"].toString().padStart(3, "0")
+                  : true
+              )}
+              chartDataWeekly={chartDataWeekly.filter((item) =>
+                countyFilter !== 999 && countyFilter !== "999"
+                  ? countyFilter.toString().padStart(3, "0") ===
+                    item["CountyID"].toString().padStart(3, "0")
+                  : true
+              )}
+              county={countyOptions.find(
+                (county) =>
+                  county.value.toString().padStart(3, "0") ===
+                  countyFilter.toString().padStart(3, "0")
+              )}
+              counties={countyOptions}
             />
-          </div>
-        )}
+          : <div style={config.loaderStyle}>
+              <h1>{vizView === "map" ? "Map is" : "Chart is"} Loading...</h1>
+              <Loader
+                id="loader-box"
+                color={config.loaderStyle.color}
+                type={config.loaderStyle.type}
+              />
+            </div>
+        }
       </div>
       <Footer dateRange={dateRange} />
       <div id="info-icon" onClick={() => setModalStatus(true)}>

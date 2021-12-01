@@ -74,46 +74,72 @@ const fetchData = async () => {
 };
 
 const aggregateTractMonth = ([fromGaTech, fromFulton]) => {
-	const filteredArr = fromGaTech.filter(item => item.countyfp10 !== '121');
+	const filteredArr = fromGaTech.filter(({countyfp10}) => countyfp10 !== '121');
 	const dataArr = [...filteredArr, ...fromFulton].sort(sortByDate('filedate'));
 	const obj = {};
 
 	dataArr
-  .filter(item => new Date(item.filedate).getTime() >= new Date('1/1/2020'))
-  .forEach(item => {
-		const filingMonth = moment(item.filedate)
+  .filter(({filedate}) => new Date(filedate).getTime() >= new Date('1/1/2020'))
+  .forEach(({filedate, totalfilings, tractid, countyfp10}) => {
+		const filingMonth = moment(filedate)
 			.startOf('month')
 			.format('MM/DD/YYYY');
-		const key = `${item.tractid}-${filingMonth}`;
-		const duringPandemic = new Date(item.filedate) >= new Date('04/01/2020');
-		const pandemicKey = `${item.tractid}-During-the-Pandemic`;
 
-		obj[key]
-			? (obj[key] = {
-					...obj[key],
-					TotalFilings: (obj[key].TotalFilings += item.totalfilings)
-			  })
-			: (obj[key] = {
-					FilingMonth: filingMonth,
-					TractID: item.tractid,
-					CountyID: item.countyfp10,
-					TotalFilings: item.totalfilings
-			  });
+		const key = tractid;
+		const duringPandemic = new Date(filedate) >= new Date('04/01/2020');
 
-		duringPandemic
-			? obj[pandemicKey]
-				? (obj[pandemicKey] = {
-						...obj[pandemicKey],
-						TotalFilings: (obj[pandemicKey].TotalFilings += item.totalfilings)
-				  })
-				: (obj[pandemicKey] = {
-						FilingMonth: 'During the Pandemic',
-						TractID: item.tractid,
-						CountyID: item.countyfp10,
-						TotalFilings: item.totalfilings
-				  })
-			: null;
+    if (obj[key]) {
+      if (obj[key].FilingsByMonth[filingMonth]) {
+        obj[key].FilingsByMonth[filingMonth] += totalfilings;
+      } else {
+        obj[key].FilingsByMonth[filingMonth] = totalfilings
+      }
+    } else {
+      obj[key] = {
+        TractID: tractid,
+        CountyID: countyfp10,
+        FilingsByMonth : {
+          [filingMonth] : totalfilings,
+          'During the Pandemic' : 0
+        }
+      }
+    }
+
+    if (duringPandemic) {
+      obj[key].FilingsByMonth['During the Pandemic'] += totalfilings
+    }
+
+		// obj[key]
+		// 	? (obj[key] = {
+		// 			...obj[key],
+    //       montlyFilings: {
+    //         ...obj[key],
+    //       }
+		// 			TotalFilings: (obj[key].TotalFilings += item.totalfilings)
+		// 	  })
+		// 	: (obj[key] = {
+		// 			FilingMonth: filingMonth,
+		// 			TractID: item.tractid,
+		// 			CountyID: item.countyfp10,
+		// 			TotalFilings: item.totalfilings
+		// 	  });
+
+		// duringPandemic
+		// 	? obj[pandemicKey]
+		// 		? (obj[pandemicKey] = {
+		// 				...obj[pandemicKey],
+		// 				TotalFilings: (obj[pandemicKey].TotalFilings += item.totalfilings)
+		// 		  })
+		// 		: (obj[pandemicKey] = {
+		// 				FilingMonth: 'During the Pandemic',
+		// 				TractID: item.tractid,
+		// 				CountyID: item.countyfp10,
+		// 				TotalFilings: item.totalfilings
+		// 		  })
+		// 	: null;
 	});
+
+
 
 	return Object.values(obj);
 };
@@ -164,6 +190,7 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 
 fetchData()
 	.then(data => {
+    // console.log(aggregateTractMonth(data))
 		Promise.allSettled([
 			db.tractMonth
 				.deleteMany({})
@@ -177,25 +204,25 @@ fetchData()
 				)
 				.catch(err => console.log(err)),
 
-			db.countyMonth
-				.deleteMany({})
-				.then(() =>
-					db.countyMonth
-						.insertMany(aggregateCounty(data, 'Month'))
-						.then(() => console.log('County Month Updated'))
-						.catch(err => console.log(err))
-				)
-				.catch(err => console.log(err)),
+		// 	db.countyMonth
+		// 		.deleteMany({})
+		// 		.then(() =>
+		// 			db.countyMonth
+		// 				.insertMany(aggregateCounty(data, 'Month'))
+		// 				.then(() => console.log('County Month Updated'))
+		// 				.catch(err => console.log(err))
+		// 		)
+		// 		.catch(err => console.log(err)),
 
-			db.countyWeek
-				.deleteMany({})
-				.then(() =>
-					db.countyWeek
-						.insertMany(aggregateCounty(data, 'Week'))
-						.then(() => console.log('County Week Updated'))
-						.catch(err => console.log(err))
-				)
-				.catch(err => console.log(err))
+		// 	db.countyWeek
+		// 		.deleteMany({})
+		// 		.then(() =>
+		// 			db.countyWeek
+		// 				.insertMany(aggregateCounty(data, 'Week'))
+		// 				.then(() => console.log('County Week Updated'))
+		// 				.catch(err => console.log(err))
+		// 		)
+		// 		.catch(err => console.log(err))
 		])
 			.then(() => console.log('Collection successfully updated'))
 			.catch(err => console.log('Error Settling Promise: ', err));

@@ -3,7 +3,6 @@ import {
   Map as LeafletMap,
   TileLayer,
   GeoJSON,
-  // Tooltip,
   CircleMarker,
   Popup,
 } from "react-leaflet";
@@ -17,8 +16,6 @@ import TextFormatter from "../../utils/TextFormatter";
 import config from "./config";
 import MapTooltip from "../MapTooltip";
 import util from "./util";
-import API from "../../utils/API.js";
-
 import "./style.css";
 
 const EvictionMap = (props) => {
@@ -29,27 +26,22 @@ const EvictionMap = (props) => {
   const [bins, setBins] = useState();
   const [clickID, setClickID] = useState();
   const [hoverID, setHoverID] = useState();
-  // const [csvData, setCSVData] = useState();
   const [monthOptions, setMonthOptions] = useState();
   const [selectedMonth, setSelectedMonth] = useState();
   const [showBuildings, setShowBuildings] = useState(true);
   const [evictionThreshold, setEvictionThreshold] = useState(100);
-  const [mapData, setMapData] = useState();
-  const [dateRange, setDateRange] = useState();
-  const [buildings, setBuildings] = useState();
-  const [geojson, setGeoJSON] = useState();
 
   const {
     smallScreen,
-    // mapData,
+    mapData,
     countyFilter,
     normalizeData,
-    // geojson,
+    geojson,
     counties,
-    // dateRange,
+    dateRange,
     name,
     boundaryGeoJSON,
-    // buildings,
+    buildings,
   } = props;
   
   const {
@@ -60,22 +52,19 @@ const EvictionMap = (props) => {
     pandemicColorMap,
     countyFIPS,
     countyBounds
-
   } = config;
 
   const colors = selectedMonth === "During the Pandemic**"
       ? monthlyColorMap
       : pandemicColorMap;
 
-  const sortedData = mapData 
-    ? util.handleData({
-        data: mapData,
-        countyFilter: countyFilter,
-        normalizeData: normalizeData,
-        selectedMonth: selectedMonth,
-        selectedMeasure: selectedMeasure,
-      })
-    : null;
+  const sortedData = util.handleData({
+    data: mapData,
+    countyFilter: countyFilter,
+    normalizeData: normalizeData,
+    selectedMonth: selectedMonth,
+    selectedMeasure: selectedMeasure,
+  });
 
   const currentStats = util.calcStats({
     dataObject: sortedData.dataObject,
@@ -83,41 +72,23 @@ const EvictionMap = (props) => {
     colors: colors,
   });
 
+  const monthList = util.getMonthList({
+    data: mapData,
+    dateRange: dateRange,
+    dateField: dateField,
+  });
 
-
-  useEffect(() => {
-    API.getData("./tractbymonth")
-      .then(res => {
-        const dateRange = util.handleDateRange(res)
-        const monthList = util.getMonthList({
-          data: res,
-          dateRange: dateRange,
-          dateField: dateField,
-        });
-        setMapData(res);
-        setDateRange(dateRange);
-        setSelectedMonth(monthList.selectedMonth);
-        setMonthOptions(monthList.monthOptionsArray);    
-      })
-      .catch(err => 
-        console.log('error on gettting tract by month', err));
-    API.getData("./buildings")
-      .then(res => 
-        setBuildings(res))
-      .catch(err => 
-        console.log('error getting buildings',err));
-  API.getData(config.geoURL)
-      .then(res => 
-        setGeoJSON(res))
-      .catch(err => 
-        console.log('error getting geojsons',err));
-  }, []);
   useEffect(() => {
     setStats(currentStats.statsObj);
     setBins(currentStats.bins);
     setTractData(sortedData.dataObject);
     setRawTractData(sortedData.rawDataObject);
   }, [countyFilter, selectedMonth]);
+
+  useEffect(() => {
+    setSelectedMonth(monthList.selectedMonth);
+    setMonthOptions(monthList.monthOptionsArray);
+  }, []);
 
   return (
     <>
@@ -193,7 +164,7 @@ const EvictionMap = (props) => {
               })
             }
           >
-            <Popup>
+            <Popup interactive>
               {clickID && tractData[clickID] ? (
                 MapTooltip({
                   selectedMonth: selectedMonth,
