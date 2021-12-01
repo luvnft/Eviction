@@ -59,11 +59,18 @@ const EvictionMap = (props) => {
       : pandemicColorMap;
 
   const sortedData = util.handleData({
+    // refactor this function to take in mapData and produce the same output
     data: mapData,
     countyFilter: countyFilter,
-    normalizeData: normalizeData,
+    normalizeData: normalizeData || {},
     selectedMonth: selectedMonth,
     selectedMeasure: selectedMeasure,
+  });
+
+  const monthList = util.getMonthList({
+    data: mapData,
+    dateRange: dateRange,
+    dateField: dateField,
   });
 
   const currentStats = util.calcStats({
@@ -72,11 +79,6 @@ const EvictionMap = (props) => {
     colors: colors,
   });
 
-  const monthList = util.getMonthList({
-    data: mapData,
-    dateRange: dateRange,
-    dateField: dateField,
-  });
 
   useEffect(() => {
     setStats(currentStats.statsObj);

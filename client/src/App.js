@@ -91,7 +91,8 @@ const App = () => {
         { vizView === "map" &&
           buildings && 
           dateRange &&
-          mapData
+          mapData &&
+          geoJSON
           ? <EvictionMap
               key={`eviction-map`}
               smallScreen={smallScreen}

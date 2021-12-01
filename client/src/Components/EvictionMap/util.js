@@ -6,59 +6,60 @@ export default {
     const dataArray =
       propObj.tractData && propObj.geojson
         ? propObj.geojson.features
-            .filter((feature) =>
-              propObj.countyFilter !== 999 && propObj.countyFilter !== "999"
-                ? feature.properties["GEOID"].slice(2, 5) ===
-                  propObj.countyFilter.toString().padStart(3, "0")
-                : propObj.counties.includes(
-                    feature.properties["GEOID"].slice(2, 5)
-                  )
-            )
-            .filter(
-              (feature) =>
-                propObj.rawTractData[feature.properties["GEOID"]] &&
-                propObj.tractData[feature.properties["GEOID"]]
-            )
-            .map((feature) => ({
-              TractID: feature.properties["GEOID"],
-              Month: `${propObj.selectedMonth}`,
-              "Total Eviction Filings":
-                propObj.rawTractData[feature.properties["GEOID"]],
-              "Eviction Filing Rate": Number.parseFloat(
-                propObj.tractData[feature.properties["GEOID"]] / 100
-              ).toPrecision(3),
-            }))
+          .filter((feature) =>
+            propObj.countyFilter !== 999 && propObj.countyFilter !== "999"
+              ? feature.properties["GEOID"].slice(2, 5) ===
+              propObj.countyFilter.toString().padStart(3, "0")
+              : propObj.counties.includes(
+                feature.properties["GEOID"].slice(2, 5)
+              )
+          )
+          .filter(
+            (feature) =>
+              propObj.rawTractData[feature.properties["GEOID"]] &&
+              propObj.tractData[feature.properties["GEOID"]]
+          )
+          .map((feature) => ({
+            TractID: feature.properties["GEOID"],
+            Month: `${propObj.selectedMonth}`,
+            "Total Eviction Filings":
+              propObj.rawTractData[feature.properties["GEOID"]],
+            "Eviction Filing Rate": Number.parseFloat(
+              propObj.tractData[feature.properties["GEOID"]] / 100
+            ).toPrecision(3),
+          }))
         : null;
 
     return dataArray;
   },
-  handleData(propObj) {
+  handleData({ normalizeData, data, countyFilter, selectedMonth, selectedMeasure }) {
     const dataObject = {};
     const rawDataObject = {};
-    const normalizeData = propObj.normalizeData ? propObj.normalizeData : {};
 
-    [...propObj.data]
+    console.log(data);
+
+    [...data]
+      // .filter((item) =>
+      //   countyFilter !== 999 && countyFilter !== "999"
+      //     ? countyFilter.toString().padStart(3, "0") ===
+      //     item["CountyID"].toString().padStart(3, "0")
+      //     : true
+      // )
       .filter((item) =>
-        propObj.countyFilter !== 999 && propObj.countyFilter !== "999"
-          ? propObj.countyFilter.toString().padStart(3, "0") ===
-            item["CountyID"].toString().padStart(3, "0")
-          : true
-      )
-      .filter((item) =>
-        propObj.selectedMonth !== "During the Pandemic"
+        selectedMonth !== "During the Pandemic"
           ? moment(item["FilingMonth"]).format("MMMM YYYY") ===
-            propObj.selectedMonth
+          selectedMonth
           : item["FilingMonth"] === 'During the Pandemic'
       )
-      .map(item => 
-        rawDataObject[item["TractID"]] = parseFloat(item[propObj.selectedMeasure]
-      ));
+      .map(item =>
+        rawDataObject[item["TractID"]] = parseFloat(item[selectedMeasure]
+        ));
 
     normalizeData.forEach((item) => {
-      if (rawDataObject[item["GEOID"]] > 0 && item["RentHHs"]) {
+      if (rawDataObject[item["GEOID"]] > 0 && item["RentHHs"] > 0) {
         dataObject[item["GEOID"]] = (rawDataObject[item["GEOID"]] * 100) / item["RentHHs"]
       }
-      normalizeData[item["GEOID"]] = item["RentHHs"]
+      // normalizeData[item["GEOID"]] = item["RentHHs"]
     });
 
     return { dataObject: dataObject, rawDataObject: rawDataObject };
@@ -77,9 +78,9 @@ export default {
     const monthOptionsArray = monthArray
       .filter((month, i) =>
         new Date(propObj.dateRange.end).getTime() >=
-        new Date(
-          moment(propObj.dateRange.end).endOf("month").subtract({ days: 3 })
-        ).getTime()
+          new Date(
+            moment(propObj.dateRange.end).endOf("month").subtract({ days: 3 })
+          ).getTime()
           ? true
           : i < monthArray.length - 1
       )
@@ -123,8 +124,8 @@ export default {
 
         building.monthlyfilings.forEach(
           (month) =>
-            (obj[`Filings in ${moment(month.date).format("MMM YYYY")}`] =
-              month.count)
+          (obj[`Filings in ${moment(month.date).format("MMM YYYY")}`] =
+            month.count)
         );
 
         array.push(obj);
@@ -152,29 +153,29 @@ export default {
     const bins = [];
     propObj.binningType === "quantile"
       ? propObj.colorArray.map((color, j) =>
-          bins.push({
-            top: propObj.valueArray[
-              Math.floor(
-                (j * propObj.valueArray.length) / propObj.colorArray.length
-              )
+        bins.push({
+          top: propObj.valueArray[
+            Math.floor(
+              (j * propObj.valueArray.length) / propObj.colorArray.length
+            )
+          ],
+          bottom:
+            propObj.valueArray[
+            Math.floor(
+              ((j + 1) * propObj.valueArray.length) /
+              propObj.colorArray.length
+            ) - 1
             ],
-            bottom:
-              propObj.valueArray[
-                Math.floor(
-                  ((j + 1) * propObj.valueArray.length) /
-                    propObj.colorArray.length
-                ) - 1
-              ],
-          })
-        )
+        })
+      )
       : propObj.binningType === "defined"
-      ? propObj.binsArray.map((bin, i) =>
+        ? propObj.binsArray.map((bin, i) =>
           bins.push({
             bottom: i !== 0 ? propObj.binsArray[i - 1] : 0,
             top: bin,
           })
         )
-      : bins.push(null);
+        : bins.push(null);
     return bins;
   },
   calcStats(propObj) {
