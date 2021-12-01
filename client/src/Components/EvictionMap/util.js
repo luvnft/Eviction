@@ -45,7 +45,7 @@ export default {
           : true
       )
       .filter((item) =>
-        propObj.selectedMonth !== "During the Pandemic**"
+        propObj.selectedMonth !== "During the Pandemic"
           ? moment(item["FilingMonth"]).format("MMMM YYYY") ===
             propObj.selectedMonth
           : item["FilingMonth"] === 'During the Pandemic'
@@ -90,8 +90,8 @@ export default {
       }));
     monthOptionsArray.push({
       text: "During the Pandemic**",
-      value: "During the Pandemic**",
-      key: "During the Pandemic**",
+      value: "During the Pandemic",
+      key: "During the Pandemic",
     });
 
     return {
