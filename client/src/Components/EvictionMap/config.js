@@ -53,9 +53,10 @@ export default {
     "#fb6a5f",
   ],
   buildingScaler: 2,
-  tractNumerator: "TotalFilings",
+  // tractNumerator: "TotalFilings",
+  tractNumerator: "FilingsByMonth",
   tractDenominator: "RentHHs",
-  dateField: "FilingMonth",
+  // dateField: "FilingMonth",
   loaderStyle: {
     zIndex: "99999",
     color: "#609580",

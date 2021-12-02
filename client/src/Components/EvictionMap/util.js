@@ -1,120 +1,87 @@
 import moment from "moment";
-import SortByDate from "../../utils/SortByDate";
 
 export default {
-  handleCSVData(propObj) {
+  handleCSVData({
+    geojson,
+    counties,
+    countyFilter,
+    tractData,
+    rawTractData,
+    selectedMonth
+  }) {
     const dataArray =
-      propObj.tractData && propObj.geojson
-        ? propObj.geojson.features
+      tractData && geojson
+        ? geojson.features
           .filter((feature) =>
-            propObj.countyFilter !== 999 && propObj.countyFilter !== "999"
+            countyFilter !== 999 && countyFilter !== "999"
               ? feature.properties["GEOID"].slice(2, 5) ===
-              propObj.countyFilter.toString().padStart(3, "0")
-              : propObj.counties.includes(
+              countyFilter.toString().padStart(3, "0")
+              : counties.includes(
                 feature.properties["GEOID"].slice(2, 5)
               )
           )
           .filter(
             (feature) =>
-              propObj.rawTractData[feature.properties["GEOID"]] &&
-              propObj.tractData[feature.properties["GEOID"]]
+              rawTractData[feature.properties["GEOID"]] &&
+              tractData[feature.properties["GEOID"]]
           )
           .map((feature) => ({
             TractID: feature.properties["GEOID"],
-            Month: `${propObj.selectedMonth}`,
+            Month: `${selectedMonth}`,
             "Total Eviction Filings":
-              propObj.rawTractData[feature.properties["GEOID"]],
+              rawTractData[feature.properties["GEOID"]],
             "Eviction Filing Rate": Number.parseFloat(
-              propObj.tractData[feature.properties["GEOID"]] / 100
+              tractData[feature.properties["GEOID"]] / 100
             ).toPrecision(3),
           }))
         : null;
 
     return dataArray;
   },
-  handleData({ normalizeData, data, countyFilter, selectedMonth, selectedMeasure }) {
+  handleData({
+    normalizeData,
+    data,
+    selectedMonth,
+    selectedMeasure,
+    tractDenominator
+  }) {
     const dataObject = {};
     const rawDataObject = {};
-
-    console.log(data);
-
-    [...data]
-      // .filter((item) =>
-      //   countyFilter !== 999 && countyFilter !== "999"
-      //     ? countyFilter.toString().padStart(3, "0") ===
-      //     item["CountyID"].toString().padStart(3, "0")
-      //     : true
-      // )
-      .filter((item) =>
-        selectedMonth !== "During the Pandemic"
-          ? moment(item["FilingMonth"]).format("MMMM YYYY") ===
-          selectedMonth
-          : item["FilingMonth"] === 'During the Pandemic'
-      )
-      .map(item =>
-        rawDataObject[item["TractID"]] = parseFloat(item[selectedMeasure]
-        ));
-
-    normalizeData.forEach((item) => {
-      if (rawDataObject[item["GEOID"]] > 0 && item["RentHHs"] > 0) {
-        dataObject[item["GEOID"]] = (rawDataObject[item["GEOID"]] * 100) / item["RentHHs"]
+  
+    [...data].forEach(item =>
+      Object.entries(item[selectedMeasure])
+        .filter(([key, val]) =>
+          selectedMonth !== 'During the Pandemic'
+            ? key === selectedMonth
+            : key === 'During the Pandemic'
+        )
+        .forEach(([key, val]) => (rawDataObject[item.TractID] = parseFloat(val)))
+    );
+  
+    normalizeData.forEach(item => {
+      if (rawDataObject[item['GEOID']] > 0 && item[tractDenominator] > 0) {
+        dataObject[item['GEOID']] =
+          (rawDataObject[item['GEOID']] * 100) / item[tractDenominator];
       }
-      // normalizeData[item["GEOID"]] = item["RentHHs"]
     });
-
+  
     return { dataObject: dataObject, rawDataObject: rawDataObject };
   },
-  getMonthList(propObj) {
-    const monthArray = [];
-    propObj.data
-      .sort((a, b) => SortByDate(a, b, propObj.dateField))
-      .forEach((item) =>
-        !monthArray.includes(
-          moment(item[propObj.dateField]).format("MMMM YYYY")
-        )
-          ? monthArray.push(moment(item[propObj.dateField]).format("MMMM YYYY"))
-          : null
-      );
-    const monthOptionsArray = monthArray
-      .filter((month, i) =>
-        new Date(propObj.dateRange.end).getTime() >=
-          new Date(
-            moment(propObj.dateRange.end).endOf("month").subtract({ days: 3 })
-          ).getTime()
-          ? true
-          : i < monthArray.length - 1
-      )
-      .map((month, i) => ({
-        text: `${month}`,
-        value: month,
-        key: month,
-      }));
-    monthOptionsArray.push({
-      text: "During the Pandemic**",
-      value: "During the Pandemic",
-      key: "During the Pandemic",
-    });
-
-    return {
-      monthOptionsArray: monthOptionsArray,
-      selectedMonth: monthOptionsArray[monthOptionsArray.length - 1].value,
-    };
-  },
-  buildingList(propObj) {
+  buildingList({ buildings, evictionThreshold, TextFormatter}) {
     const array = [];
-    propObj.buildings
+    buildings
       .filter(
         (building) =>
           building.filings.filter(
             (filing) =>
               moment(filing["filingdate"]).valueOf() >=
               moment("04/01/2020").valueOf()
-          ).length >= propObj.evictionThreshold
+          ).length >= evictionThreshold
       )
       .forEach((building) => {
         const obj = {
-          Street: propObj.TextFormatter.firstCharToUpper(building.street),
-          City: propObj.TextFormatter.firstCharToUpper(building.city),
+          Street: TextFormatter.firstCharToUpper(building.street),
+          City: TextFormatter.firstCharToUpper(building.city),
           Zip: building.zip,
           countyFIPS: building.county,
           tractID: building.tractid,
@@ -132,13 +99,13 @@ export default {
       });
     return array;
   },
-  featureStyler(propObj) {
-    const geoid = propObj.feature.properties["GEOID"];
-    const value = propObj.tractData[geoid];
+  featureStyler({ feature, tractData, bins, colors, hoverID }) {
+    const geoid = feature.properties["GEOID"];
+    const value = tractData[geoid];
     let color = null;
-    propObj.bins.forEach((bin, i) =>
+    bins.forEach((bin, i) =>
       value < bin.top && value >= bin.bottom
-        ? (color = propObj.colors[i])
+        ? (color = colors[i])
         : null
     );
 
@@ -146,40 +113,40 @@ export default {
       color: color ? color : "lightgrey",
       weight: 1,
       fillColor: color ? color : "lightgrey",
-      fillOpacity: propObj.hoverID === geoid ? .1 : .8,
+      fillOpacity: hoverID === geoid ? .1 : .8,
     };
   },
-  createBins(propObj) {
+  createBins({ binningType, binsArray, valueArray, colorArray }) {
     const bins = [];
-    propObj.binningType === "quantile"
-      ? propObj.colorArray.map((color, j) =>
+    binningType === "quantile"
+      ? colorArray.map((color, j) =>
         bins.push({
-          top: propObj.valueArray[
+          top: valueArray[
             Math.floor(
-              (j * propObj.valueArray.length) / propObj.colorArray.length
+              (j * valueArray.length) / colorArray.length
             )
           ],
           bottom:
-            propObj.valueArray[
+            valueArray[
             Math.floor(
-              ((j + 1) * propObj.valueArray.length) /
-              propObj.colorArray.length
+              ((j + 1) * valueArray.length) /
+              colorArray.length
             ) - 1
             ],
         })
       )
-      : propObj.binningType === "defined"
-        ? propObj.binsArray.map((bin, i) =>
+      : binningType === "defined"
+        ? binsArray.map((bin, i) =>
           bins.push({
-            bottom: i !== 0 ? propObj.binsArray[i - 1] : 0,
+            bottom: i !== 0 ? binsArray[i - 1] : 0,
             top: bin,
           })
         )
         : bins.push(null);
     return bins;
   },
-  calcStats(propObj) {
-    const valueArray = Object.values(propObj.dataObject)
+  calcStats({ dataObject, selectedMonth, colors }) {
+    const valueArray = Object.values(dataObject)
       .filter((a) => a > 0)
       .sort((a, b) => (a > b ? -1 : 1));
     const max = Math.max(...valueArray);
@@ -187,11 +154,11 @@ export default {
     const bins = this.createBins({
       binningType: "defined",
       binsArray:
-        propObj.selectedMonth === "During the Pandemic**"
+        selectedMonth === "During the Pandemic"
           ? [5, 20, 30, max + 1]
           : [1, 5, 10, 20],
       valueArray: valueArray,
-      colors: propObj.colors,
+      colorArray: colors,
     });
     return {
       statsObj: {

@@ -19,18 +19,6 @@ import util from "./util";
 import "./style.css";
 
 const EvictionMap = (props) => {
-  const [legendVisble, setLegendVisible] = useState(true);
-  const [tractData, setTractData] = useState();
-  const [rawTractData, setRawTractData] = useState();
-  const [stats, setStats] = useState();
-  const [bins, setBins] = useState();
-  const [clickID, setClickID] = useState();
-  const [hoverID, setHoverID] = useState();
-  const [monthOptions, setMonthOptions] = useState();
-  const [selectedMonth, setSelectedMonth] = useState();
-  const [showBuildings, setShowBuildings] = useState(true);
-  const [evictionThreshold, setEvictionThreshold] = useState(100);
-
   const {
     smallScreen,
     mapData,
@@ -39,14 +27,28 @@ const EvictionMap = (props) => {
     geojson,
     counties,
     dateRange,
+    monthOptions,
     name,
     boundaryGeoJSON,
     buildings,
   } = props;
+
+  const [legendVisible, setLegendVisible] = useState(true);
+  const [tractData, setTractData] = useState();
+  const [rawTractData, setRawTractData] = useState();
+  const [stats, setStats] = useState();
+  const [bins, setBins] = useState();
+  const [clickID, setClickID] = useState();
+  const [hoverID, setHoverID] = useState();
+  // const [monthOptions, setMonthOptions] = useState();
+  const [selectedMonth, setSelectedMonth] = useState(monthOptions[monthOptions.length - 1].value);
+  const [showBuildings, setShowBuildings] = useState(true);
+  const [evictionThreshold, setEvictionThreshold] = useState(100);
   
   const {
     tractNumerator : selectedMeasure,
-    dateField,
+    tractDenominator,
+    // dateField,
     buildingScaler,
     monthlyColorMap,
     pandemicColorMap,
@@ -54,24 +56,27 @@ const EvictionMap = (props) => {
     countyBounds
   } = config;
 
-  const colors = selectedMonth === "During the Pandemic**"
+  const colors = selectedMonth !== "During the Pandemic"
       ? monthlyColorMap
       : pandemicColorMap;
 
   const sortedData = util.handleData({
     // refactor this function to take in mapData and produce the same output
     data: mapData,
-    countyFilter: countyFilter,
     normalizeData: normalizeData || {},
-    selectedMonth: selectedMonth,
-    selectedMeasure: selectedMeasure,
+    selectedMonth,
+    selectedMeasure,
+    tractDenominator
   });
 
-  const monthList = util.getMonthList({
-    data: mapData,
-    dateRange: dateRange,
-    dateField: dateField,
-  });
+  // const selectedMonth = monthOptions[monthOptionsArray.length - 1].value;
+  // console.log(selectedMonth);
+
+  // const monthList = util.getMonthList({
+  //   data: mapData,
+  //   dateRange: dateRange,
+  //   dateField: dateField,
+  // });
 
   const currentStats = util.calcStats({
     dataObject: sortedData.dataObject,
@@ -87,10 +92,11 @@ const EvictionMap = (props) => {
     setRawTractData(sortedData.rawDataObject);
   }, [countyFilter, selectedMonth]);
 
-  useEffect(() => {
-    setSelectedMonth(monthList.selectedMonth);
-    setMonthOptions(monthList.monthOptionsArray);
-  }, []);
+  // useEffect(() => {
+  //   // console.log(monthList)
+  //   setSelectedMonth(monthList.selectedMonth);
+  //   // setMonthOptions(monthList.monthOptionsArray);
+  // }, []);
 
   return (
     <>
@@ -304,7 +310,7 @@ const EvictionMap = (props) => {
           }
       </LeafletMap>
 
-      {legendVisble && props.smallScreen ? (
+      {legendVisible && props.smallScreen ? (
         <div id="legend-close-icon" onClick={() => setLegendVisible(false)}>
           <Icon inverted name="close" />
         </div>
@@ -356,7 +362,7 @@ const EvictionMap = (props) => {
         }
         </div>
       { 
-        legendVisble 
+        legendVisible 
           ? <div className="legend">
               <div id="legend-header">
                 <h3>Eviction Filing Rate*</h3>
@@ -435,7 +441,7 @@ const EvictionMap = (props) => {
           : null
       }
       {
-        !legendVisble && 
+        !legendVisible && 
         props.smallScreen 
           ? <div id="legend-icon">
               <Icon

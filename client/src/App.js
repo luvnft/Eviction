@@ -27,6 +27,7 @@ const App = () => {
   const [dateRange, setDateRange] = useState();
   const [buildings, setBuildings] = useState();
   const [mapData, setMapData] = useState();
+  const [monthOptions, setMonthOptions] = useState();
   const [chartDataWeekly, setChartDataWeekly] = useState();
   const [chartDataMonthly, setChartDataMonthly] = useState();
   const countyOptions = config.countyOptions;
@@ -36,7 +37,9 @@ const App = () => {
     API.getData("./tractbymonth")
       .then(res => {
         setMapData(res);
-        setDateRange(util.handleDateRange(res));
+        const {start, end, monthsArr} = util.handleDates(res);
+        setMonthOptions(monthsArr);
+        setDateRange({start, end});
       })
       .catch(err => 
         console.log('error on gettting tract by month', err));
@@ -109,6 +112,7 @@ const App = () => {
               )}
               normalizeData={normalizeData}
               dateRange={dateRange}
+              monthOptions={monthOptions}
               name={"evictionMap"}
               geojson={geoJSON}
               boundaryGeoJSON={countyBoundary}
