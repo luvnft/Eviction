@@ -3,6 +3,7 @@ import {
   Bar,
   ComposedChart,
   Line,
+  Area,
   ReferenceArea,
   Brush,
   XAxis,
@@ -38,19 +39,8 @@ export default (props) => {
 
   useEffect(() => {
     const dataArray = timeScale === 'weekly' 
-    ? props.chartDataWeekly.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
- 
-    : props.chartDataMonthly.sort((a, b) => SortByDate(a, b, 'FilingMonth'))
-    // utils.dataFormattedForChart({
-    //   data: props.data,
-    //   dateField: dateField,
-    //   endDate: props.dateRange.end,
-    //   countyFilter: props.countyFilter,
-    //   timeScale: timeScale,
-    //   indicator1: indicator1,
-    //   indicator2: indicator2,
-    //   comparisonData: props.data2019,
-    // });
+        ? props.chartDataWeekly.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
+        : props.chartDataMonthly.sort((a, b) => SortByDate(a, b, 'FilingMonth'));
     // console.log(dataArray);
     const dataForCSV = dataArray.map((item) =>
       utils.dataObjectForCSV({
@@ -133,7 +123,9 @@ export default (props) => {
                   : moment(tick).format("M/D/YY")
               }
             />
-            <YAxis tickFormatter={(tick) => numeral(tick).format("0,0")} />
+            <YAxis 
+            
+            tickFormatter={(tick) => numeral(tick).format("0,0")} />
             <Tooltip
               content={(obj) =>
                 ChartTooltip(obj, {
@@ -146,7 +138,7 @@ export default (props) => {
               }
             />
             <Bar dataKey={'TotalFilings'} stackId="a" fill="#a9a9a9" />
-            {/* <Bar dataKey={indicator1} stackId="a" fill="#DC1C13" /> */}
+            <Bar dataKey={'AnsweredFilings'} stackId="a" fill="#DC1C13" />
             {/* <Line dataKey="Baseline (Total Filings, 2019)" strokeWidth={2} /> */}
             <Legend
               formatter={(value, entry) => (

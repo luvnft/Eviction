@@ -156,6 +156,11 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 		)
 	];
 
+  const baselineDataArr = 	dataArr
+  .filter(({filedate}) => new Date(filedate).getTime() >= new Date('1/1/2019').getTime() &&
+    new Date(filedate).getTime() < new Date('1/1/2020').getTime()
+  );
+
 	const obj = {};
 
 	dataArr
@@ -164,8 +169,11 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 		const date = moment(item.filedate)
 			.startOf(type.toLowerCase())
 			.format('MM/DD/YYYY');
+    
 
 		const key = `${item.countyfp10}-${date}`;
+
+    //Add baseline value by evaluating the 
 
 		obj[key]
 			? (obj[key] = {
@@ -183,7 +191,41 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 						? item.totalansweredfilings
 						: 0
 			  });
+
+    const totalKey = `999-${date}`
+
+    obj[totalKey]
+			? (obj[totalKey] = {
+					...obj[totalKey],
+					TotalFilings: (obj[totalKey].TotalFilings += item.totalfilings),
+					AnsweredFilings: item.totalansweredfilings
+						? (obj[totalKey].AnsweredFilings += item.totalansweredfilings)
+						: obj[totalKey].AnsweredFilings
+			  })
+			: (obj[totalKey] = {
+					[`Filing${type}`]: date,
+					CountyID: '999',
+					TotalFilings: item.totalfilings,
+					AnsweredFilings: item.totalansweredfilings
+						? item.totalansweredfilings
+						: 0
+			  });
 	});
+
+
+  // Object.values(obj).forEach(item =>
+  //   obj['BaselineFilings'] = [0, ...baselineDataArr.filter(baselineItem =>
+  //     baselineItem.countyfp10 === item.CountyID  
+  //       ? type === 'Monthly' 
+  //           ? moment(baselineItem.filedate).format('MM') === moment(item[`Filing${type}`]).format('MM')
+  //           : moment(baselineItem.filedate).week() === moment(item[`Filing${type}`]).week()
+  //     : false
+
+  //     )].reduce(item => parseInt(item.totalfilings) || 0)
+    
+  //   )
+
+
 
 	return Object.values(obj);
 };
@@ -192,37 +234,37 @@ fetchData()
 	.then(data => {
     // console.log(aggregateTractMonth(data))
 		Promise.allSettled([
-			db.tractMonth
-				.deleteMany({})
-				.then(() =>
-					db.tractMonth
-						.insertMany(aggregateTractMonth(data))
-						.then(() => console.log('Tract Month Updated'))
-						.catch(err => {
-							console.log(err);
-						})
-				)
-				.catch(err => console.log(err)),
-
-		// 	db.countyMonth
+		// 	db.tractMonth
 		// 		.deleteMany({})
 		// 		.then(() =>
-		// 			db.countyMonth
-		// 				.insertMany(aggregateCounty(data, 'Month'))
-		// 				.then(() => console.log('County Month Updated'))
-		// 				.catch(err => console.log(err))
+		// 			db.tractMonth
+		// 				.insertMany(aggregateTractMonth(data))
+		// 				.then(() => console.log('Tract Month Updated'))
+		// 				.catch(err => {
+		// 					console.log(err);
+		// 				})
 		// 		)
 		// 		.catch(err => console.log(err)),
 
-		// 	db.countyWeek
-		// 		.deleteMany({})
-		// 		.then(() =>
-		// 			db.countyWeek
-		// 				.insertMany(aggregateCounty(data, 'Week'))
-		// 				.then(() => console.log('County Week Updated'))
-		// 				.catch(err => console.log(err))
-		// 		)
-		// 		.catch(err => console.log(err))
+			db.countyMonth
+				.deleteMany({})
+				.then(() =>
+					db.countyMonth
+						.insertMany(aggregateCounty(data, 'Month'))
+						.then(() => console.log('County Month Updated'))
+						.catch(err => console.log(err))
+				)
+				.catch(err => console.log(err)),
+
+			db.countyWeek
+				.deleteMany({})
+				.then(() =>
+					db.countyWeek
+						.insertMany(aggregateCounty(data, 'Week'))
+						.then(() => console.log('County Week Updated'))
+						.catch(err => console.log(err))
+				)
+				.catch(err => console.log(err))
 		])
 			.then(() => console.log('Collection successfully updated'))
 			.catch(err => console.log('Error Settling Promise: ', err));

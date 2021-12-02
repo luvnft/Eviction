@@ -86,10 +86,10 @@ const EvictionMap = (props) => {
 
 
   useEffect(() => {
-    setStats(currentStats.statsObj);
-    setBins(currentStats.bins);
     setTractData(sortedData.dataObject);
     setRawTractData(sortedData.rawDataObject);
+    setStats(currentStats.statsObj);
+    setBins(currentStats.bins);
   }, [countyFilter, selectedMonth]);
 
   // useEffect(() => {

@@ -130,16 +130,12 @@ const App = () => {
               data2019={data2019}
               countyFilter={countyFilter}
               chartDataMonthly={chartDataMonthly.filter((item) =>
-                countyFilter !== 999 && countyFilter !== "999"
-                  ? countyFilter.toString().padStart(3, "0") ===
+                countyFilter.toString().padStart(3, "0") ===
                     item["CountyID"].toString().padStart(3, "0")
-                  : true
               )}
               chartDataWeekly={chartDataWeekly.filter((item) =>
-                countyFilter !== 999 && countyFilter !== "999"
-                  ? countyFilter.toString().padStart(3, "0") ===
+                countyFilter.toString().padStart(3, "0") ===
                     item["CountyID"].toString().padStart(3, "0")
-                  : true
               )}
               county={countyOptions.find(
                 (county) =>

@@ -103,6 +103,7 @@ export default {
     const geoid = feature.properties["GEOID"];
     const value = tractData[geoid];
     let color = null;
+
     bins.forEach((bin, i) =>
       value < bin.top && value >= bin.bottom
         ? (color = colors[i])
@@ -110,9 +111,9 @@ export default {
     );
 
     return {
-      color: color ? color : "lightgrey",
+      color: color || "lightgrey",
       weight: 1,
-      fillColor: color ? color : "lightgrey",
+      fillColor: color || "lightgrey",
       fillOpacity: hoverID === geoid ? .1 : .8,
     };
   },
