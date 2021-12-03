@@ -18,21 +18,21 @@ import MapTooltip from "../MapTooltip";
 import util from "./util";
 import "./style.css";
 
-const EvictionMap = (props) => {
-  const {
-    smallScreen,
-    mapData,
-    countyFilter,
-    normalizeData,
-    geojson,
-    counties,
-    dateRange,
-    monthOptions,
-    name,
-    boundaryGeoJSON,
-    buildings,
-  } = props;
-
+const EvictionMap = ({
+  smallScreen,
+  mapData,
+  countyFilter,
+  normalizeData,
+  geojson,
+  counties,
+  countyInfo,
+  dateRange,
+  monthOptions,
+  name,
+  boundaryGeoJSON,
+  buildings
+}) => {
+  
   const [legendVisible, setLegendVisible] = useState(true);
   const [tractData, setTractData] = useState();
   const [rawTractData, setRawTractData] = useState();
@@ -229,7 +229,58 @@ const EvictionMap = (props) => {
                           {TextFormatter.firstCharToUpper(building.city)}, GA{" "}
                           {building.zip}
                         </div>
-                        {monthlyFilings[0] ? (
+                        { 
+                    monthlyFilings[0]
+                      ? <div className='building-popup-chart'>
+                        <BarChart
+                          width={220} 
+                          height={100} 
+                          margin={{
+                            top: 25,
+                            right: 0,
+                            left: 0,
+                            bottom: 0
+                          }}
+                          data={monthlyFilings.map(item => ({
+                              date: moment(item.date).valueOf(),
+                              count: item.count
+                            }))
+                          }
+                        >
+
+                          <ReferenceArea 
+                            x1={moment('04/01/2020').valueOf()}
+                            x2={moment('7/01/2020').valueOf()}
+                          >
+                            <Label  position='top'>CARES</Label>   
+                          </ReferenceArea>
+                          <ReferenceArea 
+                            x1={moment('08/01/2020').valueOf()}
+                            x2={moment('9/01/2021').valueOf()}
+
+                          >
+                            <Label  position='top'>CDC</Label>   
+                          </ReferenceArea>
+                          <Bar dataKey='count' fill={'red'} />
+                          <YAxis width={25}/>
+                          <XAxis 
+                            dataKey='date' 
+                            type='category'
+                            // scale='time'
+                            domain={[
+                              moment('1/1/2020').valueOf(),
+                              moment(dateRange.end).startOf('month').valueOf()
+                            ]}
+                            tickFormatter={tick => moment(tick).format('M/YY')}
+                          />
+
+                        </BarChart>
+
+                      </div>
+                      : null
+                  
+                  }
+                        {/* {monthlyFilings[0] ? (
                           <div className="building-popup-chart">
                             <BarChart
                               width={220}
@@ -272,7 +323,7 @@ const EvictionMap = (props) => {
                               />
                             </BarChart>
                           </div>
-                        ) : null}
+                        ) : null} */}
                         <div className="building-popup-summary">
                           <span className="building-popup-value">
                             {building.totalfilings}
@@ -457,7 +508,7 @@ const EvictionMap = (props) => {
           smallScreen={smallScreen}
           csvTitle={
             `Title: ${selectedMonth} Eviction Filings by Census Tracts in ${
-              props.countyInfo.find(
+              countyInfo.find(
                 (item) =>
                   item.key === countyFilter
               ).text
@@ -469,7 +520,7 @@ const EvictionMap = (props) => {
             "\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker"
           }
           csvFilename={`Eviction-Filings-by-Census-Tract-${selectedMonth}-2020-${
-            props.countyInfo.find(
+            countyInfo.find(
               (item) =>
                 item.key === countyFilter
             ).text
@@ -491,7 +542,7 @@ const EvictionMap = (props) => {
             <CSVExportButton
               csvTitle={
                 `Title: List of Buildings in ${
-                  props.countyInfo.find(
+                  countyInfo.find(
                     (item) =>
                       item.key === countyFilter
                   ).text
@@ -503,7 +554,7 @@ const EvictionMap = (props) => {
                 "\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker"
               }
               csvFilename={`ATL-Eviction-Tracker-Builings-List-${evictionThreshold}-plus-filings-${
-                props.countyInfo.find(
+                countyInfo.find(
                   (item) =>
                     item.key === countyFilter
                 ).text
