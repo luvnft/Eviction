@@ -1,7 +1,8 @@
 export default {
-  dateField: "Filing Date",
-  indicator1: "Total Filings",
-  indicator2: "Answered Filings",
+  // dateField: "FilingDate",
+  totalFilingsKey: "TotalFilings",
+  answeredFilingsKey: "AnsweredFilings",
+  baselineKey: "BaselineFilings",
   dimensions: {
     width: "95%",
     height: "90%",

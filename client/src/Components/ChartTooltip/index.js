@@ -2,40 +2,54 @@ import React from "react";
 import numeral from "numeral";
 import util from "./util";
 
-export default ({ active, payload, label }, propObj) => {
+export default (
+	{ active, payload, label },
+	{
+		timeScale,
+		totalFilingsIndicator,
+		answeredFilingsIndicator,
+		baselineIndicator,
+		countyFilter,
+		county
+	}
+) => {
   const info = payload[0] ? payload[0].payload : {};
   const dateInfo = util.dateInfo({
-    timeScale: propObj.timeScale,
+    timeScale: timeScale,
     label: label,
   });
+  
   const totalFilings =
-    info[propObj.indicator1] && info[propObj.indicator2]
-      ? numeral(info[propObj.indicator1] + info[propObj.indicator2]).format(
+    info[totalFilingsIndicator]
+      ? numeral(info[totalFilingsIndicator]).format(
           "0,0"
         )
       : "?";
-  const totalAnswers = info[propObj.indicator2]
-    ? numeral(info[propObj.indicator2]).format("0,0")
+
+  const totalAnswers = info[answeredFilingsIndicator]
+    ? numeral(info[answeredFilingsIndicator]).format("0,0")
     : "?";
+
   const answerRate =
-    info[propObj.indicator1] && info[propObj.indicator2]
+    info[totalFilingsIndicator] && info[answeredFilingsIndicator]
       ? numeral(
-          info[propObj.indicator2] /
-            (info[propObj.indicator1] + info[propObj.indicator2])
+          info[answeredFilingsIndicator] /
+            (info[totalFilingsIndicator] + info[answeredFilingsIndicator])
         ).format("0.0%")
       : "?";
-  const total2019 = info["Baseline (Total Filings, 2019)"]
-    ? numeral(info["Baseline (Total Filings, 2019)"]).format("0,0")
+
+  const total2019 = info[baselineIndicator]
+    ? numeral(info[baselineIndicator]).format("0,0")
     : "?";
 
   return active ? (
     <div className="tooltip-content chart-tooltip-content">
       <div>
         In{" "}
-        {propObj.countyFilter === 999 || propObj.countyFilter === "999"
+        {countyFilter === 999 || countyFilter === "999"
           ? "the "
           : ""}{" "}
-        <span className="tooltip-data">{propObj.county.text}</span> {dateInfo},
+        <span className="tooltip-data">{county.text}</span> {dateInfo},
         there were <span className="tooltip-data">{totalFilings}</span> reported
         eviction filings of which{" "}
         <span className="tooltip-data">

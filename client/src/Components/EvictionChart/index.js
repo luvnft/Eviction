@@ -3,7 +3,7 @@ import {
   Bar,
   ComposedChart,
   Line,
-  Area,
+  // Area,
   ReferenceArea,
   Brush,
   XAxis,
@@ -29,26 +29,35 @@ import "./style.css";
 
 export default (props) => {
   const county = props.county;
-  const dateField = config.dateField;
-  const indicator1 = config.indicator1;
-  const indicator2 = config.indicator2;
+ 
+
   const [chartData, setChartData] = useState();
   const [csvData, setCSVData] = useState();
   const [timeScale, setTimeScale] = useState(config.initTimescale);
   const [brushDomain, setBrushDomain] = useState({});
 
+  const dateField = timeScale === 'weekly' ? 'FilingWeek' : 'FilingMonth';
+
+  const addBarDifferenceField = (arr) =>
+    arr.map(item => ({
+      ...item,
+      BarDifference: item.TotalFilings - item.AnsweredFilings
+    }));
+
+
   useEffect(() => {
     const dataArray = timeScale === 'weekly' 
         ? props.chartDataWeekly.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
         : props.chartDataMonthly.sort((a, b) => SortByDate(a, b, 'FilingMonth'));
-    // console.log(dataArray);
+
     const dataForCSV = dataArray.map((item) =>
       utils.dataObjectForCSV({
         item: item,
         timeScale: timeScale,
         dateField: dateField,
-        indicator1: indicator1,
-        indicator2: indicator2,
+        totalFilingsIndicator: config.totalFilingsKey,
+        answeredFilingsIndicator: config.answeredFilingsKey,
+        baselineIndicator: config.baselineKey
       })
     );
     const brushConfig = {
@@ -58,7 +67,8 @@ export default (props) => {
         ][dateField],
       end: dataArray[dataArray.length - 1][dateField],
     };
-    setChartData(dataArray);
+
+    setChartData(addBarDifferenceField(dataArray));
     setCSVData(dataForCSV);
     setBrushDomain(brushConfig);
   }, [props.countyFilter, timeScale, props.chartDataMonthly, props.chartDataWeekly]);
@@ -130,16 +140,21 @@ export default (props) => {
               content={(obj) =>
                 ChartTooltip(obj, {
                   timeScale: timeScale,
-                  indicator1: indicator1,
-                  indicator2: indicator2,
+                  totalFilingsIndicator: config.totalFilingsKey,
+                  answeredFilingsIndicator: config.answeredFilingsKey,
+                  baselineIndicator: config.baselineKey,
                   countyFilter: props.countyFilter,
                   county: county,
                 })
               }
             />
-            <Bar dataKey={'TotalFilings'} stackId="a" fill="#a9a9a9" />
-            <Bar dataKey={'AnsweredFilings'} stackId="a" fill="#DC1C13" />
-            {/* <Line dataKey="Baseline (Total Filings, 2019)" strokeWidth={2} /> */}
+
+            <Bar dataKey={'AnsweredFilings'} name="Answered Filings" stackId="a" fill="#DC1C13" />
+
+            <Bar dataKey={'BarDifference'} name="Total Filings" stackId="a" fill="#a9a9a9" />
+
+            <Line dataKey="BaselineFilings" name="Baseline (Total Filings, 2019)" strokeWidth={2} />
+
             <Legend
               formatter={(value, entry) => (
                 <span style={{ fontSize: props.smallScreen ? "10px" : "14px" }}>

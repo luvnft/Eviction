@@ -1,26 +1,33 @@
 import moment from "moment";
-import SortByDate from "../../utils/SortByDate";
+// import SortByDate from "../../utils/SortByDate";
 
 export default {
-  dataObjectForCSV: (propObj) => {
+  dataObjectForCSV: ({
+    item,
+    timeScale,
+    dateField,
+    totalFilingsIndicator,
+    answeredFilingsIndicator,
+    baselineIndicator
+  }) => {
     const timeLabel =
-      propObj.timeScale === "weekly"
+      timeScale === "weekly"
         ? "Week of"
-        : propObj.timeScale === "monthly"
+        : timeScale === "monthly"
         ? "Month"
         : "Filing Date";
+
     return {
-      [timeLabel]: moment(propObj.item[propObj.dateField]).format(
-        propObj.timeScale === "monthly" ? "MMMM YYYY" : "M/D/YYYY"
+      [timeLabel]: moment(item[dateField]).format(
+        timeScale === "monthly" ? "MMMM YYYY" : "M/D/YYYY"
       ),
-      [propObj.indicator1]:
-        propObj.item[propObj.indicator1] + propObj.item[propObj.indicator2],
-      [propObj.indicator2]: propObj.item[propObj.indicator2],
+      "Total Filings": item[totalFilingsIndicator],
+      "Answered Filings": item[answeredFilingsIndicator],
       "Answer Rate":
-        propObj.item[propObj.indicator2] /
-        (propObj.item[propObj.indicator1] + propObj.item[propObj.indicator2]),
+        item[answeredFilingsIndicator] /
+        (item[totalFilingsIndicator] + item[answeredFilingsIndicator]),
       "Baseline (Total Filings, 2019)":
-        propObj.item["Baseline (Total Filings, 2019)"],
+        item[baselineIndicator],
     };
   },
   filterDataToEndOfLastWeek: (key, endDate) =>
