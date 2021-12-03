@@ -27,16 +27,16 @@ export default {
     },
   }),
   monthlyColorMap: [
-    "#6867da",
-    "#618ee9",
-    "#a2cdee",
-    "#d8e8f0",
-  ].reverse(),
-  pandemicColorMap: [
     "#DC1C13",
     "#EA4C46",
     "#F1959B",
     "#F6BDC0",
+  ].reverse(),
+  pandemicColorMap: [
+    "#6867da",
+    "#618ee9",
+    "#a2cdee",
+    "#d8e8f0",
   ].reverse(),
   buildingColorMap: [
     "#59fd00",

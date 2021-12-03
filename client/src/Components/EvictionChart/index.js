@@ -27,9 +27,7 @@ import SortByDate from "../../utils/SortByDate";
 
 import "./style.css";
 
-export default (props) => {
-  const county = props.county;
- 
+export default ({county, chartDataWeekly, chartDataMonthly, dateRange, countyFilter, smallScreen, referenceAreas }) => {
 
   const [chartData, setChartData] = useState();
   const [csvData, setCSVData] = useState();
@@ -47,8 +45,13 @@ export default (props) => {
 
   useEffect(() => {
     const dataArray = timeScale === 'weekly' 
-        ? props.chartDataWeekly.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
-        : props.chartDataMonthly.sort((a, b) => SortByDate(a, b, 'FilingMonth'));
+        ? chartDataWeekly.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
+        : chartDataMonthly.sort((a, b) => SortByDate(a, b, 'FilingMonth'))
+            .filter((month, i) => 
+              new Date(dateRange.end).getTime() > new Date(moment(dateRange.end).endOf('month').subtract({days: 3})).getTime()
+                ? true
+                : i < chartDataMonthly.length - 1
+            );
 
     const dataForCSV = dataArray.map((item) =>
       utils.dataObjectForCSV({
@@ -71,7 +74,7 @@ export default (props) => {
     setChartData(addBarDifferenceField(dataArray));
     setCSVData(dataForCSV);
     setBrushDomain(brushConfig);
-  }, [props.countyFilter, timeScale, props.chartDataMonthly, props.chartDataWeekly]);
+  }, [countyFilter, timeScale, chartDataMonthly, chartDataWeekly]);
 
   return (
     <div id="chart-responsive-container">
@@ -84,27 +87,29 @@ export default (props) => {
             className="barChart"
             data={chartData}
             margin={
-              !props.smallScreen ? config.margins : config.smallScreenMargins
+              !smallScreen ? config.margins : config.smallScreenMargins
             }
           >
             <CartesianGrid strokeDasharray="3 3" />
-            {config.referenceAreas.map((referenceArea) => (
-              <ReferenceArea
-                x1={utils.referenceAreaStart(
-                  timeScale,
-                  brushDomain.start,
-                  referenceArea
-                )}
-                x2={utils.referenceAreaEnd(
-                  timeScale,
-                  brushDomain.end,
-                  referenceArea
-                )}
-                y1={0}
-              >
-                <Label position="insideTop">{referenceArea.label}</Label>
-              </ReferenceArea>
-            ))}
+          {
+            referenceAreas
+            ? referenceAreas.map(referenceArea =>
+              (timeScale === 'weekly' && referenceArea.weekly) ||
+              (timeScale === 'monthly' && referenceArea.monthly)
+                ? <ReferenceArea
+                    x1={utils.referenceAreaStart(timeScale, brushDomain.start, referenceArea)} 
+                    x2={utils.referenceAreaEnd(timeScale, brushDomain.end, referenceArea)} 
+                    y1={0}
+                    fill={referenceArea.color}
+                  >
+                    <Label  position='insideTop' fontSize={referenceArea.size}>
+                      {referenceArea.label}
+                    </Label>
+                  </ReferenceArea>
+                : null            
+            )
+            : null
+          }
             <XAxis
               // scale='time'
               height={50}
@@ -112,23 +117,23 @@ export default (props) => {
               angle={
                 timeScale === "weekly" ||
                 timeScale === "daily" ||
-                props.smallScreen
+                smallScreen
                   ? -45
                   : null
               }
               textAnchor={
                 timeScale === "weekly" ||
                 timeScale === "daily" ||
-                props.smallScreen
+                smallScreen
                   ? "end"
                   : "middle"
               }
-              minTickGap={!props.smallScreen ? -5 : null}
-              tick={{ fontSize: props.smallScreen ? 8 : 12 }}
+              minTickGap={!smallScreen ? -5 : null}
+              tick={{ fontSize: smallScreen ? 8 : 12 }}
               tickFormatter={(tick) =>
                 timeScale === "monthly"
                   ? moment(tick).format(
-                      props.smallScreen ? "MMM YYYY" : "MMMM YYYY"
+                      smallScreen ? "MMM YYYY" : "MMMM YYYY"
                     )
                   : moment(tick).format("M/D/YY")
               }
@@ -143,21 +148,21 @@ export default (props) => {
                   totalFilingsIndicator: config.totalFilingsKey,
                   answeredFilingsIndicator: config.answeredFilingsKey,
                   baselineIndicator: config.baselineKey,
-                  countyFilter: props.countyFilter,
+                  countyFilter: countyFilter,
                   county: county,
                 })
               }
             />
 
-            <Bar dataKey={'AnsweredFilings'} name="Answered Filings" stackId="a" fill="#DC1C13" />
+            <Bar dataKey={'AnsweredFilings'} name="Answered Filings" stackId="a"  fill="#a9a9a9" />
 
-            <Bar dataKey={'BarDifference'} name="Total Filings" stackId="a" fill="#a9a9a9" />
+            <Bar dataKey={'BarDifference'} name="Total Filings" stackId="a" fill="#DC1C13" />
 
             <Line dataKey="BaselineFilings" name="Baseline (Total Filings, 2019)" strokeWidth={2} />
 
             <Legend
               formatter={(value, entry) => (
-                <span style={{ fontSize: props.smallScreen ? "10px" : "14px" }}>
+                <span style={{ fontSize: smallScreen ? "10px" : "14px" }}>
                   {value}
                 </span>
               )}
@@ -211,19 +216,19 @@ export default (props) => {
       {csvData ? (
         <div
           id={
-            props.smallScreen
+            smallScreen
               ? "chart-data-export-button-mobile"
               : "chart-data-export-button"
           }
         >
           <CSVExportButton
-            smallScreen={props.smallScreen}
+            smallScreen={smallScreen}
             csvTitle={
               `Title: ${timeScale.charAt(0).toUpperCase()}${timeScale.slice(
                 1
               )} Eviction Filings for ${county.text} as of ${
-                props.dateRange
-                  ? moment(props.dateRange.end).format("M/D/YYYY")
+                dateRange
+                  ? moment(dateRange.end).format("M/D/YYYY")
                   : null
               }` +
               "\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker"

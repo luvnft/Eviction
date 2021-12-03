@@ -1,5 +1,4 @@
 import moment from "moment";
-// import SortByDate from "../../utils/SortByDate";
 
 export default {
   dataObjectForCSV: ({
@@ -24,8 +23,7 @@ export default {
       "Total Filings": item[totalFilingsIndicator],
       "Answered Filings": item[answeredFilingsIndicator],
       "Answer Rate":
-        item[answeredFilingsIndicator] /
-        (item[totalFilingsIndicator] + item[answeredFilingsIndicator]),
+        item[answeredFilingsIndicator] / item[totalFilingsIndicator],
       "Baseline (Total Filings, 2019)":
         item[baselineIndicator],
     };
@@ -39,19 +37,6 @@ export default {
       ? new Date(key).getTime() !==
         new Date(moment(endDate).startOf("month")).getTime()
       : true,
-
-  // dataFormattedForChart: ({data, comparisonData}) => {
-  //   const dataArray = [];
-
-  //   const getBaselinValue = (fileDate, type)
-
-  //   data.forEach(obj =>{
-  //     const baselineValue = })
-
-    
-  //   return dataArray;
-  // },
-
   referenceAreaStart: (timeScale, brushDomainStart, config) =>
     timeScale === "weekly"
       ? new Date(brushDomainStart).getTime() <

@@ -33,8 +33,7 @@ export default (
   const answerRate =
     info[totalFilingsIndicator] && info[answeredFilingsIndicator]
       ? numeral(
-          info[answeredFilingsIndicator] /
-            (info[totalFilingsIndicator] + info[answeredFilingsIndicator])
+          info[answeredFilingsIndicator] / info[totalFilingsIndicator]
         ).format("0.0%")
       : "?";
 

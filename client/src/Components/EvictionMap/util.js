@@ -112,7 +112,7 @@ export default {
 
     return {
       color: color || "lightgrey",
-      weight: 1,
+      weight: hoverID === geoid ? 0 : 1,
       fillColor: color || "lightgrey",
       fillOpacity: hoverID === geoid ? .1 : .8,
     };

@@ -1,7 +1,7 @@
 import API from "./utils/API.js";
 import moment from "moment";
 
-const dateField = 'FilingsByMonth';
+const dateField = 'FilingWeek';
 
 export default {
   getEvictionData() {
@@ -35,37 +35,52 @@ export default {
   },
   handleDates(data) {
     const sortByDate = (a, b) => {
+      // console.log(a);
       var dateA = new Date(a).getTime();
       var dateB = new Date(b).getTime();
       return dateA > dateB ? 1 : -1;
     };
   
-    const pandemicKey = 'During the Pandemic';
     const dateArray = [];
   
-    data.forEach(tract => {
-      Object.keys(tract[dateField]).forEach(date => {
-        if (!dateArray.includes(date) && date !== pandemicKey)
-          dateArray.push(date);
-      });
+    data.forEach(item => {
+      dateArray.push(item[dateField])
+      // Object.value(item[dateField]).forEach(date => {
+      //   if (!dateArray.includes(date) && date !== pandemicKey)
+      //     dateArray.push(date);
+      // });
     });
   
     const sortedDates = [...dateArray].sort((a, b) => sortByDate(a, b));
+    const sortedMonths = [...new Set(sortedDates.map(date => moment(date).startOf('month').format('MM/DD/YYYY')))]
     const start = sortedDates[0];
-    const end = sortedDates[sortedDates.length - 1];
+    const end = moment(sortedDates[sortedDates.length - 1]).endOf('week');
   
-    sortedDates.push(pandemicKey);
   
-    const monthsArr = sortedDates.map(date => {
-      const dateText =
-        date !== pandemicKey ? moment(date).format('MMMM YYYY') : `${date}**`;
+    const monthsArr = [];
+    
+    sortedMonths
+      .filter((month, i) => 
+        new Date(end).getTime() > new Date(moment(end).endOf('month').subtract({days: 3})).getTime()
+          ? true
+          : i < sortedMonths.length - 1
+      )
+      .forEach(date => {
+      const dateText = moment(date).format('MMMM YYYY');
   
-      return {
+      monthsArr.push({
         text: dateText,
         value: date,
-        key: date
-      };
+        key: `month-option-${date}`
+      });
     });
+
+    monthsArr.push({
+      text: 'During the Pandemic**',
+      value: 'During the Pandemic',
+      key: `month-option-During the Pandemic`
+    });
+
   
     return { start, end, monthsArr };
   }  

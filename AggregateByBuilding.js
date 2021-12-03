@@ -12,7 +12,6 @@ mongoose.connect(MONGODB_URI, {
 });
 
 const getBuildingInfo = async () => {
-	// const filings = require('./data/metrocase.json');
 	const url =
 		'http://evictions.design.gatech.edu/rest/atlanta_metro_area_cases';
 
@@ -27,11 +26,9 @@ const getBuildingInfo = async () => {
 		const buildingInfo = {};
 
 		await filings
-    
     .filter(record => new Date(record.filingdate).getTime() >= new Date('01/01/2020').getTime() )
     .forEach(record => {
 			const keyString = `${record.street.trim()}-${record.city.trim()}-${record.zip.trim()}`;
-			// const key = `${parseFloat(record.latitude).toFixed(5)}${parseFloat(record.longitude).toFixed(5)}`;
 			const key = keyString.replace(/ /g, '-');
 
 			buildingInfo[key]
@@ -53,11 +50,8 @@ const getBuildingInfo = async () => {
     var getMonthArray = function(s,e) {for(var a=[],d=new Date(s);d<=e;d.setDate(d.getDate()+1)){ a.push(moment(new Date(d)).startOf('month').format('MM/DD/YYYY'));}return a;};
 
     const monthArray = [...new Set(getMonthArray(new Date('01/1/2020'), new Date()))];
-    // console.log(monthArray);
 
-
-
-		const aggregateBy = (filings, dateField, type) => {
+    const aggregateBy = (filings, dateField, type) => {
 			const obj = {};
 			if (type === 'countByMonth') {
 				filings.forEach(filing => {
@@ -67,15 +61,6 @@ const getBuildingInfo = async () => {
 						: (obj[monthOfFiling] = 1);
 				});
 			};
-
-
-
-      // const array = Object.entries(obj)
-      //   .map(([key,value]) => ({
-      //     date: key,
-      //     count: value
-      //   }))
-      //   .sort((a,b) => new Date(b.date).getTime() > new Date(a.date).getTime() )
 
       const array = monthArray.map(month => ({
           date: month,
@@ -112,6 +97,7 @@ const getBuildingInfo = async () => {
 const init = () => {
 	getBuildingInfo()
 		.then(array => {
+      // console.log(array);
 			if (array) {
 				const buildings = array
 					.filter(

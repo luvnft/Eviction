@@ -6,6 +6,7 @@ const moment = require('moment');
 const axios = require('axios');
 const SOCRATA_API_SECRET = process.env.SOCRATA_API_SECRET;
 const SOCRATA_API_KEY = process.env.SOCRATA_API_KEY;
+const AggregateByBuilding = require('./AggregateByBuilding')
 // const TOKEN = process.env.TOKEN;
 
 const includedCounties = [
@@ -108,35 +109,6 @@ const aggregateTractMonth = ([fromGaTech, fromFulton]) => {
     if (duringPandemic) {
       obj[key].FilingsByMonth['During the Pandemic'] += totalfilings
     }
-
-		// obj[key]
-		// 	? (obj[key] = {
-		// 			...obj[key],
-    //       montlyFilings: {
-    //         ...obj[key],
-    //       }
-		// 			TotalFilings: (obj[key].TotalFilings += item.totalfilings)
-		// 	  })
-		// 	: (obj[key] = {
-		// 			FilingMonth: filingMonth,
-		// 			TractID: item.tractid,
-		// 			CountyID: item.countyfp10,
-		// 			TotalFilings: item.totalfilings
-		// 	  });
-
-		// duringPandemic
-		// 	? obj[pandemicKey]
-		// 		? (obj[pandemicKey] = {
-		// 				...obj[pandemicKey],
-		// 				TotalFilings: (obj[pandemicKey].TotalFilings += item.totalfilings)
-		// 		  })
-		// 		: (obj[pandemicKey] = {
-		// 				FilingMonth: 'During the Pandemic',
-		// 				TractID: item.tractid,
-		// 				CountyID: item.countyfp10,
-		// 				TotalFilings: item.totalfilings
-		// 		  })
-		// 	: null;
 	});
 
 
@@ -242,9 +214,10 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 	return Object.values(obj);
 };
 
+
+
 fetchData()
 	.then(data => {
-    // console.log(aggregateTractMonth(data))
 		Promise.allSettled([
 			db.tractMonth
 				.deleteMany({})
@@ -278,7 +251,10 @@ fetchData()
 				)
 				.catch(err => console.log(err))
 		])
-			.then(() => console.log('Collection successfully updated'))
-			.catch(err => console.log('Error Settling Promise: ', err));
+    .then(() => {
+      AggregateByBuilding();
+      console.log('Data successfully updated')
+    })
+    .catch(err => console.log('Error Settling Promise: ', err));
 	})
 	.catch(err => console.log('Error Fetching Data: ', err));

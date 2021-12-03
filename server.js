@@ -61,7 +61,7 @@ mongoose
 	});
 
 // Aggregate filings by building and insert into DB 
-cron.schedule('0 59 23 * * Sunday', () => aggregateByBuilding());
+// cron.schedule('0 59 23 * * Sunday', () => aggregateByBuilding());
 // aggregateByBuilding()
 
 // Start the API server

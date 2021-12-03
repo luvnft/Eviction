@@ -310,7 +310,7 @@ const EvictionMap = (props) => {
           }
       </LeafletMap>
 
-      {legendVisible && props.smallScreen ? (
+      {legendVisible && smallScreen ? (
         <div id="legend-close-icon" onClick={() => setLegendVisible(false)}>
           <Icon inverted name="close" />
         </div>
@@ -368,13 +368,13 @@ const EvictionMap = (props) => {
                 <h3>Eviction Filing Rate*</h3>
               </div>
               <div id="month-selector">
-                {props.smallScreen ? (
+                {smallScreen ? (
                   <select
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(e.target.value)}
                   >
                     {monthOptions
-                      ? monthOptions.map((month) => (
+                      ? monthOptions.map(month => (
                           <option
                             key={month.text}
                             value={month.value}
@@ -442,7 +442,7 @@ const EvictionMap = (props) => {
       }
       {
         !legendVisible && 
-        props.smallScreen 
+        smallScreen 
           ? <div id="legend-icon">
               <Icon
                 name="list alternate outline"
@@ -454,7 +454,7 @@ const EvictionMap = (props) => {
       }
       <div id="map-data-export-button">
         <CSVExportButton
-          smallScreen={props.smallScreen}
+          smallScreen={smallScreen}
           csvTitle={
             `Title: ${selectedMonth} Eviction Filings by Census Tracts in ${
               props.countyInfo.find(
@@ -486,7 +486,7 @@ const EvictionMap = (props) => {
         />
       </div>
       { 
-        !props.smallScreen 
+        !smallScreen 
           ? <div id="map-building-list-export-button">
             <CSVExportButton
               csvTitle={

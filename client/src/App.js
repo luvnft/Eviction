@@ -12,7 +12,6 @@ import config from "./config";
 import "./App.css";
 
 const App = () => {
-  const data2019 = require("./Data/EvictionFilingsByCounty2019.json");
   const normalizeData = require("./Data/RentHHsByTract.json");
   const countyBoundary = require("./Data/countyboundaries.json");
   const vh = window.innerHeight * 0.01;
@@ -37,9 +36,9 @@ const App = () => {
     API.getData("./tractbymonth")
       .then(res => {
         setMapData(res);
-        const {start, end, monthsArr} = util.handleDates(res);
-        setMonthOptions(monthsArr);
-        setDateRange({start, end});
+        // const {start, end, monthsArr} = util.handleDates(res);
+        // setMonthOptions(monthsArr);
+        // setDateRange({start, end});
       })
       .catch(err => 
         console.log('error on gettting tract by month', err));
@@ -59,8 +58,14 @@ const App = () => {
       .catch(err => 
         console.log('error getting geojsons',err));
     API.getData("./countyweekly")
-      .then(res => 
-        setChartDataWeekly(res))
+      .then(res => {
+        setChartDataWeekly(res);
+        // console.log(res);
+        const {start, end, monthsArr} = util.handleDates(res);
+        setMonthOptions(monthsArr);
+        setDateRange({start, end});
+
+      })
       .catch(err => 
         console.log('error getting county weekly',err));
     API.getData("./countymonthly")
@@ -123,11 +128,12 @@ const App = () => {
           : vizView === "chart" && 
           dateRange &&
           chartDataMonthly &&
-          chartDataWeekly
+          chartDataWeekly &&
+          content
           ? <EvictionChart
+              referenceAreas={content.config.referenceAreas}
               smallScreen={smallScreen}
               dateRange={dateRange}
-              data2019={data2019}
               countyFilter={countyFilter}
               chartDataMonthly={chartDataMonthly.filter((item) =>
                 countyFilter.toString().padStart(3, "0") ===
