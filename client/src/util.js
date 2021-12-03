@@ -51,7 +51,9 @@ export default {
       // });
     });
   
-    const sortedDates = [...dateArray].sort((a, b) => sortByDate(a, b));
+    const sortedDates = [...dateArray].filter(date => 
+        new Date(date).getTime() >= new Date('01/01/2020').getTime()
+      ).sort((a, b) => sortByDate(a, b));
     const sortedMonths = [...new Set(sortedDates.map(date => moment(date).startOf('month').format('MM/DD/YYYY')))]
     const start = sortedDates[0];
     const end = moment(sortedDates[sortedDates.length - 1]).endOf('week');
