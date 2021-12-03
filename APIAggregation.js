@@ -156,76 +156,88 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 		)
 	];
 
-  const baselineDataArr = 	dataArr
-  .filter(({filedate}) => new Date(filedate).getTime() >= new Date('1/1/2019').getTime() &&
-    new Date(filedate).getTime() < new Date('1/1/2020').getTime()
-  );
+	// Aggregate Baseline Data
+	const baselineObj = {};
+
+	dataArr
+		.filter(
+			({ filedate }) =>
+				new Date(filedate).getTime() >= new Date('1/1/2019').getTime() &&
+				new Date(filedate).getTime() < new Date('1/1/2020').getTime()
+		)
+		.forEach(({ filedate, countyfp10, totalfilings }) => {
+			const date =
+				type === 'Month'
+					? moment(filedate).startOf(type.toLowerCase()).format('MM/DD')
+					: moment(filedate).week();
+
+			const key = `${countyfp10}-${date}`;
+
+			baselineObj[key]
+				? (baselineObj[key] = baselineObj[key] += totalfilings)
+				: (baselineObj[key] = totalfilings ? totalfilings : 0);
+
+			const totalKey = `999-${date}`;
+
+			baselineObj[totalKey]
+				? (baselineObj[totalKey] = baselineObj[totalKey] += totalfilings)
+				: (baselineObj[totalKey] = totalfilings ? totalfilings : 0);
+		});
 
 	const obj = {};
 
 	dataArr
-  .filter(item => new Date(item.filedate).getTime() >= new Date('1/1/2020'))
-  .forEach(item => {
-		const date = moment(item.filedate)
-			.startOf(type.toLowerCase())
-			.format('MM/DD/YYYY');
-    
+		.filter(
+			({ filedate }) =>
+				new Date(filedate).getTime() >= new Date('1/1/2020').getTime()
+		)
+		.forEach(({ filedate, countyfp10, totalfilings, totalansweredfilings }) => {
+			const date = moment(filedate)
+				.startOf(type.toLowerCase())
+				.format('MM/DD/YYYY');
 
-		const key = `${item.countyfp10}-${date}`;
+			const key = `${countyfp10}-${date}`;
+			const baselineKey = `${countyfp10}-${
+				type === 'Month'
+					? moment(date).startOf(type.toLowerCase()).format('MM/DD')
+					: moment(date).week()
+			}`;
 
-    //Add baseline value by evaluating the 
+			obj[key]
+				? (obj[key] = {
+						...obj[key],
+						TotalFilings: (obj[key].TotalFilings += totalfilings),
+						AnsweredFilings: totalansweredfilings
+							? (obj[key].AnsweredFilings += totalansweredfilings)
+							: obj[key].AnsweredFilings
+				})
+				: (obj[key] = {
+						[`Filing${type}`]: date,
+						CountyID: countyfp10,
+						TotalFilings: totalfilings,
+						AnsweredFilings: totalansweredfilings ? totalansweredfilings : 0,
+						BaselineFilings: baselineObj[baselineKey]
+				});
 
-		obj[key]
-			? (obj[key] = {
-					...obj[key],
-					TotalFilings: (obj[key].TotalFilings += item.totalfilings),
-					AnsweredFilings: item.totalansweredfilings
-						? (obj[key].AnsweredFilings += item.totalansweredfilings)
-						: obj[key].AnsweredFilings
-			  })
-			: (obj[key] = {
-					[`Filing${type}`]: date,
-					CountyID: item.countyfp10,
-					TotalFilings: item.totalfilings,
-					AnsweredFilings: item.totalansweredfilings
-						? item.totalansweredfilings
-						: 0
-			  });
+			const totalKey = `999-${date}`;
+			const totalBaselineKey = `999-${baselineKey.split('-')[1]}`;
 
-    const totalKey = `999-${date}`
-
-    obj[totalKey]
-			? (obj[totalKey] = {
-					...obj[totalKey],
-					TotalFilings: (obj[totalKey].TotalFilings += item.totalfilings),
-					AnsweredFilings: item.totalansweredfilings
-						? (obj[totalKey].AnsweredFilings += item.totalansweredfilings)
-						: obj[totalKey].AnsweredFilings
-			  })
-			: (obj[totalKey] = {
-					[`Filing${type}`]: date,
-					CountyID: '999',
-					TotalFilings: item.totalfilings,
-					AnsweredFilings: item.totalansweredfilings
-						? item.totalansweredfilings
-						: 0
-			  });
-	});
-
-
-  // Object.values(obj).forEach(item =>
-  //   obj['BaselineFilings'] = [0, ...baselineDataArr.filter(baselineItem =>
-  //     baselineItem.countyfp10 === item.CountyID  
-  //       ? type === 'Monthly' 
-  //           ? moment(baselineItem.filedate).format('MM') === moment(item[`Filing${type}`]).format('MM')
-  //           : moment(baselineItem.filedate).week() === moment(item[`Filing${type}`]).week()
-  //     : false
-
-  //     )].reduce(item => parseInt(item.totalfilings) || 0)
-    
-  //   )
-
-
+			obj[totalKey]
+				? (obj[totalKey] = {
+						...obj[totalKey],
+						TotalFilings: (obj[totalKey].TotalFilings += totalfilings),
+						AnsweredFilings: totalansweredfilings
+							? (obj[totalKey].AnsweredFilings += totalansweredfilings)
+							: obj[totalKey].AnsweredFilings
+				})
+				: (obj[totalKey] = {
+						[`Filing${type}`]: date,
+						CountyID: '999',
+						TotalFilings: totalfilings,
+						AnsweredFilings: totalansweredfilings ? totalansweredfilings : 0,
+						BaselineFilings: baselineObj[totalBaselineKey]
+				});
+		});
 
 	return Object.values(obj);
 };
@@ -234,17 +246,17 @@ fetchData()
 	.then(data => {
     // console.log(aggregateTractMonth(data))
 		Promise.allSettled([
-		// 	db.tractMonth
-		// 		.deleteMany({})
-		// 		.then(() =>
-		// 			db.tractMonth
-		// 				.insertMany(aggregateTractMonth(data))
-		// 				.then(() => console.log('Tract Month Updated'))
-		// 				.catch(err => {
-		// 					console.log(err);
-		// 				})
-		// 		)
-		// 		.catch(err => console.log(err)),
+			db.tractMonth
+				.deleteMany({})
+				.then(() =>
+					db.tractMonth
+						.insertMany(aggregateTractMonth(data))
+						.then(() => console.log('Tract Month Updated'))
+						.catch(err => {
+							console.log(err);
+						})
+				)
+				.catch(err => console.log(err)),
 
 			db.countyMonth
 				.deleteMany({})
@@ -269,5 +281,4 @@ fetchData()
 			.then(() => console.log('Collection successfully updated'))
 			.catch(err => console.log('Error Settling Promise: ', err));
 	})
-
 	.catch(err => console.log('Error Fetching Data: ', err));

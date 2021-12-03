@@ -6,8 +6,7 @@ const filingsByCountyWeekSchema = new Schema({
   CountyID: { type: String, required: true },
   TotalFilings: { type: Number, required: true },
   AnsweredFilings: { type: Number, required: true },
-  // BaslineFilings: { type: Number, required: true },
-
+  BaselineFilings: { type: Number, required: true }
 });
 
 const filingsByCountyWeek = mongoose.model(
