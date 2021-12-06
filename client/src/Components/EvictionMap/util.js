@@ -156,8 +156,8 @@ export default {
       binningType: "defined",
       binsArray:
         selectedMonth === "During the Pandemic"
-          ? [5, 20, 30, max + 1]
-          : [1, 5, 10, 20],
+          ? [10, 25, 50, max + 1]
+          : [1, 5, 10, max > 15 ? max : 15],
       valueArray: valueArray,
       colorArray: colors,
     });

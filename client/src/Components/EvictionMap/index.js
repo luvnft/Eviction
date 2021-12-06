@@ -40,7 +40,6 @@ const EvictionMap = ({
   const [bins, setBins] = useState();
   const [clickID, setClickID] = useState();
   const [hoverID, setHoverID] = useState();
-  // const [monthOptions, setMonthOptions] = useState();
   const [selectedMonth, setSelectedMonth] = useState(monthOptions[monthOptions.length - 1].value);
   const [showBuildings, setShowBuildings] = useState(true);
   const [evictionThreshold, setEvictionThreshold] = useState(100);
@@ -48,7 +47,6 @@ const EvictionMap = ({
   const {
     tractNumerator : selectedMeasure,
     tractDenominator,
-    // dateField,
     buildingScaler,
     monthlyColorMap,
     pandemicColorMap,
@@ -61,22 +59,12 @@ const EvictionMap = ({
       : pandemicColorMap;
 
   const sortedData = util.handleData({
-    // refactor this function to take in mapData and produce the same output
     data: mapData,
     normalizeData: normalizeData || {},
     selectedMonth,
     selectedMeasure,
     tractDenominator
   });
-
-  // const selectedMonth = monthOptions[monthOptionsArray.length - 1].value;
-  // console.log(selectedMonth);
-
-  // const monthList = util.getMonthList({
-  //   data: mapData,
-  //   dateRange: dateRange,
-  //   dateField: dateField,
-  // });
 
   const currentStats = util.calcStats({
     dataObject: sortedData.dataObject,
@@ -91,12 +79,6 @@ const EvictionMap = ({
     setStats(currentStats.statsObj);
     setBins(currentStats.bins);
   }, [countyFilter, selectedMonth]);
-
-  // useEffect(() => {
-  //   // console.log(monthList)
-  //   setSelectedMonth(monthList.selectedMonth);
-  //   // setMonthOptions(monthList.monthOptionsArray);
-  // }, []);
 
   return (
     <>
@@ -230,100 +212,55 @@ const EvictionMap = ({
                           {building.zip}
                         </div>
                         { 
-                    monthlyFilings[0]
-                      ? <div className='building-popup-chart'>
-                        <BarChart
-                          width={220} 
-                          height={100} 
-                          margin={{
-                            top: 25,
-                            right: 0,
-                            left: 0,
-                            bottom: 0
-                          }}
-                          data={monthlyFilings.map(item => ({
-                              date: moment(item.date).valueOf(),
-                              count: item.count
-                            }))
-                          }
-                        >
-
-                          <ReferenceArea 
-                            x1={moment('04/01/2020').valueOf()}
-                            x2={moment('7/01/2020').valueOf()}
-                          >
-                            <Label  position='top'>CARES</Label>   
-                          </ReferenceArea>
-                          <ReferenceArea 
-                            x1={moment('08/01/2020').valueOf()}
-                            x2={moment('9/01/2021').valueOf()}
-
-                          >
-                            <Label  position='top'>CDC</Label>   
-                          </ReferenceArea>
-                          <Bar dataKey='count' fill={'red'} />
-                          <YAxis width={25}/>
-                          <XAxis 
-                            dataKey='date' 
-                            type='category'
-                            // scale='time'
-                            domain={[
-                              moment('1/1/2020').valueOf(),
-                              moment(dateRange.end).startOf('month').valueOf()
-                            ]}
-                            tickFormatter={tick => moment(tick).format('M/YY')}
-                          />
-
-                        </BarChart>
-
-                      </div>
-                      : null
-                  
-                  }
-                        {/* {monthlyFilings[0] ? (
-                          <div className="building-popup-chart">
-                            <BarChart
-                              width={220}
-                              height={100}
-                              margin={{
-                                top: 25,
-                                right: 0,
-                                left: 0,
-                                bottom: 0,
-                              }}
-                              data={monthlyFilings.map((item) => ({
-                                date: moment(item.date).valueOf(),
-                                count: item.count,
-                              }))}
-                            >
-                              <ReferenceArea
-                                x1={moment("04/01/2020").valueOf()}
-                                x2={moment("7/01/2020").valueOf()}
-                              >
-                                <Label position="top">CARES</Label>
-                              </ReferenceArea>
-                              <ReferenceArea x1={moment("08/01/2020").valueOf()}>
-                                <Label position="top">CDC</Label>
-                              </ReferenceArea>
-                              <Bar dataKey="count" fill={"red"} />
-                              <YAxis width={25} />
-                              <XAxis
-                                dataKey="date"
-                                type="category"
-                                scale="time"
-                                domain={[
-                                  moment("1/1/2020").valueOf(),
-                                  moment(dateRange.end)
-                                    .startOf("month")
-                                    .valueOf(),
-                                ]}
-                                tickFormatter={(tick) =>
-                                  moment(tick).format("M/YY")
+                          monthlyFilings[0]
+                            ? <div className='building-popup-chart'>
+                              <BarChart
+                                width={220} 
+                                height={100} 
+                                margin={{
+                                  top: 25,
+                                  right: 0,
+                                  left: 0,
+                                  bottom: 0
+                                }}
+                                data={monthlyFilings.map(item => ({
+                                    date: moment(item.date).valueOf(),
+                                    count: item.count
+                                  }))
                                 }
-                              />
-                            </BarChart>
-                          </div>
-                        ) : null} */}
+                              >
+
+                                <ReferenceArea 
+                                  x1={moment('04/01/2020').valueOf()}
+                                  x2={moment('7/01/2020').valueOf()}
+                                >
+                                  <Label  position='top'>CARES</Label>   
+                                </ReferenceArea>
+                                <ReferenceArea 
+                                  x1={moment('08/01/2020').valueOf()}
+                                  x2={moment('9/01/2021').valueOf()}
+
+                                >
+                                  <Label  position='top'>CDC</Label>   
+                                </ReferenceArea>
+                                <Bar dataKey='count' fill={'red'} />
+                                <YAxis width={25}/>
+                                <XAxis 
+                                  dataKey='date' 
+                                  type='category'
+                                  // scale='time'
+                                  domain={[
+                                    moment('1/1/2020').valueOf(),
+                                    moment(dateRange.end).startOf('month').valueOf()
+                                  ]}
+                                  tickFormatter={tick => moment(tick).format('M/YY')}
+                                />
+
+                              </BarChart>
+
+                            </div>
+                            : null
+                        }
                         <div className="building-popup-summary">
                           <span className="building-popup-value">
                             {building.totalfilings}

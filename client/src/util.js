@@ -62,11 +62,11 @@ export default {
     const monthsArr = [];
     
     sortedMonths
-      .filter((month, i) => 
-        new Date(end).getTime() > new Date(moment(end).endOf('month').subtract({days: 3})).getTime()
-          ? true
-          : i < sortedMonths.length - 1
-      )
+      // .filter((month, i) => 
+      //   new Date(end).getTime() > new Date(moment(end).endOf('month').subtract({days: 3})).getTime()
+      //     ? true
+      //     : i < sortedMonths.length - 1
+      // )
       .forEach(date => {
       const dateText = moment(date).format('MMMM YYYY');
   
