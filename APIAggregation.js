@@ -1,4 +1,5 @@
 require('dotenv').config();
+const fs = require('fs');
 const mongoose = require('mongoose');
 const db = require('./models');
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -6,7 +7,8 @@ const moment = require('moment');
 const axios = require('axios');
 const SOCRATA_API_SECRET = process.env.SOCRATA_API_SECRET;
 const SOCRATA_API_KEY = process.env.SOCRATA_API_KEY;
-const AggregateByBuilding = require('./AggregateByBuilding')
+const AggregateByBuilding = require('./AggregateByBuilding');
+// const { get } = require('mongoose');
 // const TOKEN = process.env.TOKEN;
 
 const includedCounties = [
@@ -16,6 +18,8 @@ const includedCounties = [
 	'121', //Fulton
 	'135' //Gwinnett
 ];
+
+const endDate = '01/01/2022';
 
 mongoose
 	.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -80,7 +84,10 @@ const aggregateTractMonth = ([fromGaTech, fromFulton]) => {
 	const obj = {};
 
 	dataArr
-  .filter(({filedate}) => new Date(filedate).getTime() >= new Date('1/1/2020'))
+  .filter(({filedate}) => 
+      new Date(filedate).getTime() >= new Date('1/1/2020').getTime() &&
+      new Date(filedate).getTime() <= new Date(endDate).getTime()
+  )
   .forEach(({filedate, totalfilings, tractid, countyfp10}) => {
 		const filingMonth = moment(filedate)
 			.startOf('month')
@@ -111,20 +118,21 @@ const aggregateTractMonth = ([fromGaTech, fromFulton]) => {
     }
 	});
 
-
-
 	return Object.values(obj);
 };
 
 const aggregateCounty = ([fromGaTech, fromFulton], type) => {
-	const endDateFromGaTech = fromGaTech.sort(sortByDate('filedate'))[0].filedate;
+	const endDateOfFultonFromGaTech = fromGaTech
+    .filter(obj => obj.countyfp10 === '121')
+    .sort(sortByDate('filedate'))[0].filedate;
+
 
 	const dataArr = [
 		...fromGaTech,
 		...fromFulton.filter(
 			item =>
 				new Date(item.filedate).getTime() >
-				new Date(endDateFromGaTech).getTime()
+				new Date(endDateOfFultonFromGaTech).getTime()
 		)
 	];
 
@@ -161,7 +169,9 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 	dataArr
 		.filter(
 			({ filedate }) =>
-				new Date(filedate).getTime() >= new Date('1/1/2020').getTime()
+				// new Date(filedate).getTime() >= new Date('1/1/2020').getTime()
+        new Date(filedate).getTime() >= new Date('1/1/2020').getTime() &&
+        new Date(filedate).getTime() <= new Date(endDate).getTime()
 		)
 		.forEach(({ filedate, countyfp10, totalfilings, totalansweredfilings }) => {
 			const date = moment(filedate)
@@ -214,47 +224,81 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 	return Object.values(obj);
 };
 
+const getBackUpData = async () => {
+  // const backup = {
+  //   tractmonth: null,
+  //   countymonth: null,
+  //   countyweek: null
+  // };
 
+  await db.tractMonth
+    .find({})
+    .then(data =>  fs.writeFile(`./data/backupTractMonth.json`, JSON.stringify(data), err => console.log(err || 'Backup File Saved for Tract Month')))
+      // backup.tractmonth = data)
+    .catch(err => console.log(err));
 
-fetchData()
-	.then(data => {
-		Promise.allSettled([
-			db.tractMonth
-				.deleteMany({})
-				.then(() =>
-					db.tractMonth
-						.insertMany(aggregateTractMonth(data))
-						.then(() => console.log('Tract Month Updated'))
-						.catch(err => {
-							console.log(err);
-						})
-				)
-				.catch(err => console.log(err)),
+  await db.countyMonth
+    .find({})
+    .then(data =>  fs.writeFile(`./data/backupCountyMonth.json`, JSON.stringify(data), err => console.log(err || 'Backup File Saved for County Month')))
+      // backup.countymonth = data)
+    .catch(err => console.log(err));
 
-			db.countyMonth
-				.deleteMany({})
-				.then(() =>
-					db.countyMonth
-						.insertMany(aggregateCounty(data, 'Month'))
-						.then(() => console.log('County Month Updated'))
-						.catch(err => console.log(err))
-				)
-				.catch(err => console.log(err)),
+  await db.countyWeek
+    .find({})
+    .then(data =>  fs.writeFile(`./data/backupCountyWeek.json`, JSON.stringify(data), err => console.log(err || 'Backup File Saved for County Week')))
+      // backup.countyweek = data)
+    .catch(err => console.log(err));
 
-			db.countyWeek
-				.deleteMany({})
-				.then(() =>
-					db.countyWeek
-						.insertMany(aggregateCounty(data, 'Week'))
-						.then(() => console.log('County Week Updated'))
-						.catch(err => console.log(err))
-				)
-				.catch(err => console.log(err))
-		])
-    .then(() => {
-      AggregateByBuilding();
-      console.log('Data successfully updated')
+  // return backup;
+}
+
+getBackUpData()
+  .then(() =>
+    fetchData()
+    .then(data => {
+
+      //Add Archiver and Validator
+      
+      Promise.allSettled([
+        db.tractMonth
+          .deleteMany({})
+          .then(() =>
+            db.tractMonth
+              .insertMany(aggregateTractMonth(data))
+              .then(() => console.log('Tract Month Updated on DB'))
+              .catch(err => {
+                console.log(err);
+              })
+          )
+          .catch(err => console.log(err)),
+  
+        db.countyMonth
+          .deleteMany({})
+          .then(() =>
+            db.countyMonth
+              .insertMany(aggregateCounty(data, 'Month'))
+              .then(() => console.log('County Month Updated on DB'))
+              .catch(err => console.log(err))
+          )
+          .catch(err => console.log(err)),
+  
+        db.countyWeek
+          .deleteMany({})
+          .then(() =>
+            db.countyWeek
+              .insertMany(aggregateCounty(data, 'Week'))
+              .then(() => console.log('County Week Updated on DB'))
+              .catch(err => console.log(err))
+          )
+          .catch(err => console.log(err))
+      ])
+      .then(() => {
+        AggregateByBuilding();
+        console.log('Data successfully updated')
+      })
+      .catch(err => console.log('Error Settling Promise: ', err));
     })
-    .catch(err => console.log('Error Settling Promise: ', err));
-	})
-	.catch(err => console.log('Error Fetching Data: ', err));
+    .catch(err => console.log('Error Fetching Data: ', err))
+  )
+  .catch(err => console.log('Error Getting Backup Data: ', err))
+

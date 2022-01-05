@@ -47,11 +47,11 @@ export default ({county, chartDataWeekly, chartDataMonthly, dateRange, countyFil
     const dataArray = timeScale === 'weekly' 
         ? chartDataWeekly.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
         : chartDataMonthly.sort((a, b) => SortByDate(a, b, 'FilingMonth'))
-            .filter((month, i) => 
-              new Date(dateRange.end).getTime() > new Date(moment(dateRange.end).endOf('month').subtract({days: 3})).getTime()
-                ? true
-                : i < chartDataMonthly.length - 1
-            );
+            // .filter((month, i) => 
+            //   new Date(dateRange.end).getTime() > new Date(moment(dateRange.end).endOf('month').subtract({days: 3})).getTime()
+            //     ? true
+            //     : i < chartDataMonthly.length - 1
+            // );
 
     const dataForCSV = dataArray.map((item) =>
       utils.dataObjectForCSV({
