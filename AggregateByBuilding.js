@@ -11,6 +11,14 @@ mongoose.connect(MONGODB_URI, {
 	useUnifiedTopology: true
 });
 
+const includedCounties = [
+	'063', //Clayton
+	'067', //Cobb
+	'089', //DeKalb
+	'121', //Fulton
+	'135' //Gwinnett
+];
+
 const getBuildingInfo = async () => {
 	const url =
 		'http://evictions.design.gatech.edu/rest/atlanta_metro_area_cases';
@@ -26,6 +34,7 @@ const getBuildingInfo = async () => {
 		const buildingInfo = {};
 
 		await filings
+    .filter(record => includedCounties.includes(record.county))
     .filter(record => new Date(record.filingdate).getTime() >= new Date('01/01/2020').getTime() )
     .forEach(record => {
 			const keyString = `${record.street.trim()}-${record.city.trim()}-${record.zip.trim()}`;
@@ -41,6 +50,10 @@ const getBuildingInfo = async () => {
 						county: record.county,
 						latitude: record.latitude,
 						longitude: record.longitude,
+            geometry: {
+              type: "Point",
+              coordinates: [parseFloat(record.longitude), parseFloat(record.latitude)]
+            },
 						tractid: record.tractid,
 						blockgroupid: record.blockgroupid,
 						filings: [record]
@@ -133,4 +146,6 @@ const init = () => {
 		});
 };
 
-module.exports = init;
+init();
+
+// module.exports = init;

@@ -19,7 +19,7 @@ const includedCounties = [
 	'135' //Gwinnett
 ];
 
-const endDate = '01/01/2022';
+const endDate = '02/06/2022';
 
 mongoose
 	.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })

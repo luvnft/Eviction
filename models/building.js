@@ -9,6 +9,7 @@ const buildingSchema = new Schema({
   county: {type: String, required: true},
   latitude: {type: String, required: true},
   longitude: {type: String, required: true},
+  geometry: {type: Object, required: true},
   tractid: {type: String, required: true},
   blockgroupid: {type: String, required: true},
   totalfilings: {type: Number, required: true},
