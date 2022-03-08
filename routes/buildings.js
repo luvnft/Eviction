@@ -1,13 +1,13 @@
 const router = require("express").Router();
-const dataController = require("../controllers/buildingController");
+const buildingController = require("../controllers/buildingController");
 
 
 router
-.route("/")
-.get(dataController.findAll)
-// .put(dataController.update)
-// .post(dataController.create);
+    .route("/")
+    .get(buildingController.find);
+// .put(buildingController.update)
+// .post(buildingController.create);
 
 
 
-module.exports = router
+module.exports = router;

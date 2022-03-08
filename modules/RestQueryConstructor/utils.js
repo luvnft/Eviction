@@ -7,7 +7,7 @@ const createDateRangeRegExStr = ({ start, end, rangeLimitMS }) => {
 	const startDateMS = new Date(start).getTime();
 	const endDateMS = new Date(end).getTime();
 
-	// checks if date range is not more than range limit
+	// checks if there is a range limit or date range is not more than range limit
 	if (!rangeLimitMS || endDateMS - startDateMS <= rangeLimitMS) {
 		const finalIterationMonthNum =
 			startDateArr[2] === endDateArr[2]
@@ -56,54 +56,52 @@ const verifyQuery = (queryConfig, queryObj) => {
 
 	const returnObj = { verified: true, verifyMessage: '' };
 
-	if (forcedFields[0] || singleQueryFields[0]) {
-		const verifyObj = {
-			numForcedQueries: forcedFields.length || 0,
-			numForcedQueriesMet: 0,
-			overrideQueryRules: false,
-			singleQueriesMet: true
-		};
+	const verifyObj = {
+		numForcedQueries: forcedFields.length || 0,
+		numForcedQueriesMet: 0,
+		overrideQueryRules: false,
+		singleQueriesMet: true
+	};
 
-		for (const [key, val] of Object.entries(queryObj)) {
-			if (val) {
-				// Ensures that queries on single query fields are singular (i.e., county=cobb instead of county=cobb&county=fulton)
-				if (typeof val === 'object' && singleQueryFields.indexOf(key) !== -1)
-					verifyObj.singleQueriesMet = false;
+	for (const [key, val] of Object.entries(queryObj)) {
+		if (val) {
+			// Ensures that queries on single query fields are singular (i.e., county=cobb instead of county=cobb&county=fulton)
+			if (typeof val === 'object' && singleQueryFields.indexOf(key) !== -1)
+				verifyObj.singleQueriesMet = false;
 
-				// Override fields are verify specific to a record and will override any forced query rules (i.e., _id)
-				const containsOverrideQueryRulesField = overrideQueryRulesFields.some(
-					field => key === field
-				);
+			// Override fields are verify specific to a record and will override any forced query rules (i.e., _id)
+			const containsOverrideQueryRulesField = overrideQueryRulesFields.some(
+				field => key === field
+			);
 
-				if (containsOverrideQueryRulesField && !verifyObj.overrideQueryRules)
-					verifyObj.overrideQueryRules = true;
+			if (containsOverrideQueryRulesField && !verifyObj.overrideQueryRules)
+				verifyObj.overrideQueryRules = true;
 
-				// Forced Fields are required in a query (i.e., Filing date and county)
-				const containsForcedFieldOrAltField = forcedFields.some(
-					field => field.key === key || field.altFields.indexOf(key) !== -1
-				);
+			// Forced Fields are required in a query (i.e., Filing date and county)
+			const containsForcedFieldOrAltField = forcedFields.some(
+				field => field.key === key || field.altFields.indexOf(key) !== -1
+			);
 
-				if (containsForcedFieldOrAltField) verifyObj.numForcedQueriesMet += 1;
-			}
+			if (containsForcedFieldOrAltField) verifyObj.numForcedQueriesMet += 1;
 		}
+	}
 
-		if (!verifyObj.singleQueriesMet) {
-			returnObj.verified = false;
-			returnObj.verifyMessage = verify.singleQueriesNotMet(singleQueryFields);
-		}
+	if (!verifyObj.singleQueriesMet) {
+		returnObj.verified = false;
+		returnObj.verifyMessage = verify.singleQueriesNotMet(singleQueryFields);
+	}
 
-		if (
-			verifyObj.numForcedQueriesMet < verifyObj.numForcedQueries &&
-			!verifyObj.overrideQueryRules
-		) {
-			const forcedQueriesErrStr = verify.forcedQueriesNotMet(forcedFields);
-			const concatErrStr = returnObj.verifyMessage
-				? `${returnObj.verifyMessage} / ${forcedQueriesErrStr}`
-				: forcedQueriesErrStr;
+	if (
+		verifyObj.numForcedQueriesMet < verifyObj.numForcedQueries &&
+		!verifyObj.overrideQueryRules
+	) {
+		const forcedQueriesErrStr = verify.forcedQueriesNotMet(forcedFields);
+		const concatErrStr = returnObj.verifyMessage
+			? `${returnObj.verifyMessage} / ${forcedQueriesErrStr}`
+			: forcedQueriesErrStr;
 
-			returnObj.verified = false;
-			returnObj.verifyMessage = concatErrStr;
-		}
+		returnObj.verified = false;
+		returnObj.verifyMessage = concatErrStr;
 	}
 	return returnObj;
 };
@@ -147,7 +145,7 @@ const handleDateQuery = (queryObj, queryConfig) => {
 				const regExStr = createDateRangeRegExStr({
 					start: datesArr[0],
 					end: datesArr[1],
-					rangeLimitMS: dateRangeQueryLimit.ms
+					rangeLimitMS: dateRangeQueryLimit ? dateRangeQueryLimit.ms : null
 				});
 
 				if (regExStr) {
@@ -218,7 +216,7 @@ const constructQuery = (queryObj, queryConfig) => {
 
 	if (!Object.keys(constructedQueryObj)[0] && !allowFindAll) {
 		returnObj.queryMessage = verify.noQuery(queryableFields[0]);
-	} else if (forcedFields[0] || singleQueryFields[0]) {
+	} else if (forcedFields || singleQueryFields) {
 		const { verified, verifyMessage } = verifyQuery(
 			queryConfig,
 			constructedQueryObj

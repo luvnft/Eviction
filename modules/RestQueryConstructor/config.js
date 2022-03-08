@@ -46,6 +46,41 @@ module.exports = {
 			dateRangeQueryLimit: { ms: 15778476000, text: '6 months' }, // 6 months: 15778476000, 1 year: 31556952000
 			filingDateField: 'filingDate',
 			yearQueryField: 'year'
+		},
+		buildings: {
+			authenticate: false,
+			allowFindAll: true,
+			queryableFields: [
+				'_id',
+				'street',
+				'latitude',
+				'longitude',
+				'county',
+				'geometry',
+				'tractid',
+				'blockgroupid',
+				'city',
+				'zip'
+			]
+		},
+		filingsByCountyMonth: {
+			authenticate: false,
+			allowFindAll: true,
+			queryableFields: ['_id', 'FilingMonth', 'CountyID'],
+			filingDateField: 'FilingMonth',
+			yearQueryField: 'Year'
+		},
+		filingsByCountyWeek: {
+			authenticate: false,
+			allowFindAll: true,
+			queryableFields: ['_id', 'FilingWeek', 'CountyID'],
+			filingDateField: 'FilingWeek',
+			yearQueryField: 'Year'
+		},
+		filingsByTractMonth: {
+			authenticate: false,
+			allowFindAll: true,
+			queryableFields: ['_id', 'TractID', 'CountyID']
 		}
 	},
 	errStrings: {

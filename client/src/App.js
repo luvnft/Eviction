@@ -33,7 +33,7 @@ const App = () => {
 
 
   const handleData =  () => {
-    API.getData("./tractbymonth")
+    API.getData("/rest/tractbymonth")
       .then(res => {
         setMapData(res);
         // const {start, end, monthsArr} = util.handleDates(res);
@@ -42,12 +42,12 @@ const App = () => {
       })
       .catch(err => 
         console.log('error on gettting tract by month', err));
-    API.getData("./content")
+    API.getData("/content")
       .then(res => 
         setContent(res[0]))
       .catch(err => 
         console.log('error getting content',err));
-    API.getData("./buildings")
+    API.getData("/rest/buildings")
       .then(res => 
         setBuildings(res))
       .catch(err => 
@@ -57,7 +57,7 @@ const App = () => {
         setGeoJSON(res))
       .catch(err => 
         console.log('error getting geojsons',err));
-    API.getData("./countyweekly")
+    API.getData("/rest/countyweekly")
       .then(res => {
         setChartDataWeekly(res);
         // console.log(res);
@@ -68,7 +68,7 @@ const App = () => {
       })
       .catch(err => 
         console.log('error getting county weekly',err));
-    API.getData("./countymonthly")
+    API.getData("/rest/countymonthly")
       .then(res => 
         setChartDataMonthly(res))
       .catch(err => 

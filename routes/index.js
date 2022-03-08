@@ -11,10 +11,10 @@ const casesRoutes = require("./cases");
 
 router.use("/content", contentRoutes);
 
-router.use("/buildings", buildingRoutes);
-router.use("/countymonthly", countyMonthlyRoutes);
-router.use("/countyweekly", countyWeeklyRoutes);
-router.use("/tractbymonth", tractByMonthRoutes);
+router.use("/rest/buildings", buildingRoutes);
+router.use("/rest/countymonthly", countyMonthlyRoutes);
+router.use("/rest/countyweekly", countyWeeklyRoutes);
+router.use("/rest/tractbymonth", tractByMonthRoutes);
 router.use("/rest/tractdaily", tractDailyRoutes);
 router.use("/rest/cases", casesRoutes);
 
