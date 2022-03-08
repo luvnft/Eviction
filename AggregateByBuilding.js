@@ -146,6 +146,6 @@ const init = () => {
 		});
 };
 
-init();
+// init();
 
-// module.exports = init;
+module.exports = init;

@@ -1,18 +1,22 @@
 const path = require("path");
 const router = require("express").Router();
-const evictionDataRoutes = require("./evictionsbytract");
+
 const contentRoutes = require("./content");
 const buildingRoutes = require("./buildings");
 const countyWeeklyRoutes = require("./countyWeekly");
 const countyMonthlyRoutes = require("./countyMonthly");
 const tractByMonthRoutes = require("./tractByMonth");
+const tractDailyRoutes = require("./tractDaily");
+const casesRoutes = require("./cases");
 
-router.use("/evictionsbytract", evictionDataRoutes);
 router.use("/content", contentRoutes);
+
 router.use("/buildings", buildingRoutes);
 router.use("/countymonthly", countyMonthlyRoutes);
 router.use("/countyweekly", countyWeeklyRoutes);
 router.use("/tractbymonth", tractByMonthRoutes);
+router.use("/rest/tractdaily", tractDailyRoutes);
+router.use("/rest/cases", casesRoutes);
 
 // If no API routes are hit, send the React app
 router.use((req, res) =>
