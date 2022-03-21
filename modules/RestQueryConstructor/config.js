@@ -23,7 +23,7 @@ module.exports = {
 			allowFindAll: false,
 			queryableFields: [
 				'_id',
-				'filingDate',
+				'fileDate',
 				'latitude',
 				'longitude',
 				'county',
@@ -31,20 +31,40 @@ module.exports = {
 				'id',
 				'city',
 				'zip',
-				'geometry'
+				'geometry',
+				'judgment',
+				'defaultJudgment',
+				'answer',
+				'services',
+				'dismiss',
+				'caseStatus',
+				'blockGroupID',
+				'caseID',
+				'defendantName1',
+				'streetAddress',
+				'address'
 			],
 			singleQueryFields: ['county', 'year', 'city', 'zip'],
 			forcedFields: [
 				{
 					key: 'county',
-					text: 'county, tractID, city or zip',
-					altFields: ['tractID', 'city', 'zip']
+					text: 'county, tractID, blockGroupID, city, or zip',
+					altFields: ['tractID', 'city', 'zip', 'blockGroupID']
 				},
-				{ key: 'filingDate', text: 'filingDate or year', altFields: ['year'] }
+				{ key: 'fileDate', text: 'fileDate or year', altFields: ['year'] }
 			],
-			overrideQueryRulesFields: ['_id', 'id', 'geometry'],
-			dateRangeQueryLimit: { ms: 15778476000, text: '6 months' }, // 6 months: 15778476000, 1 year: 31556952000
-			filingDateField: 'filingDate',
+			overrideQueryRulesFields: [
+				'_id',
+				'id',
+				'geometry',
+				'blockGroupID',
+				'caseID',
+				'defendantName1',
+				'streetAddress',
+				'address'
+			],
+			dateRangeQueryLimit: { ms: 31556952000, text: '1 year' }, // 6 months: 15778476000, 1 year: 31556952000
+			filingDateField: 'fileDate',
 			yearQueryField: 'year'
 		},
 		buildings: {
