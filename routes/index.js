@@ -8,6 +8,7 @@ const countyMonthlyRoutes = require("./countyMonthly");
 const tractByMonthRoutes = require("./tractByMonth");
 const tractDailyRoutes = require("./tractDaily");
 const casesRoutes = require("./cases");
+const apiKeyRoutes = require("./apiKeys");
 
 router.use("/content", contentRoutes);
 
@@ -16,7 +17,10 @@ router.use("/rest/countymonthly", countyMonthlyRoutes);
 router.use("/rest/countyweekly", countyWeeklyRoutes);
 router.use("/rest/tractbymonth", tractByMonthRoutes);
 router.use("/rest/tractdaily", tractDailyRoutes);
+
+// Protected Routes
 router.use("/rest/cases", casesRoutes);
+router.use("/rest/apikeys", apiKeyRoutes);
 
 // If no API routes are hit, send the React app
 router.use((req, res) =>

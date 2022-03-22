@@ -39,6 +39,7 @@
     "express": "^4.15.4",
     "express-flash": "0.0.2",
     "express-session": "^1.15.6",
+    "hex-generator": "^1.0.1",
     "if-env": "^1.0.4",
     "json2csv": "^5.0.6",
     "moment": "^2.29.1",

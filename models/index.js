@@ -5,5 +5,6 @@ module.exports = {
 	building: require('./building'),
 	countyMonth: require('./filingsByCountyMonth'),
 	countyWeek: require('./filingsByCountyWeek'),
-	tractMonth: require('./filingsByTractMonth')
+	tractMonth: require('./filingsByTractMonth'),
+	apiKey: require('./apiKeys')
 };
