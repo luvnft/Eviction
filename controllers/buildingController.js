@@ -7,13 +7,13 @@ module.exports = {
 	find: async (req, res) => {
 		try {
 			const { query, authorized, authenticated, errMessage } =
-				RestQueryConstructor({
+				await RestQueryConstructor({
 					model: 'buildings',
 					req
 				});
 
 			if (authorized && authenticated) {
-				const data = await db.building.find(query);
+				const data = await db.building.find(query).lean();
 
 				handleResLog({
 					status: 200,

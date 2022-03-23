@@ -1,14 +1,15 @@
 const authArr = JSON.parse(process.env.API_KEY_ARR);
+const db = require('../../models');
 const { auth, verify, dates } = require('./config').errStrings;
 
-const createDateRangeRegExStr = ({ start, end, rangeLimitMS }) => {
+const createDateRangeRegExStr = ({ start, end, rangeLimitMS, global }) => {
 	const startDateArr = start.split('/');
 	const endDateArr = end.split('/');
 	const startDateMS = new Date(start).getTime();
 	const endDateMS = new Date(end).getTime();
 
 	// checks if there is a range limit or date range is not more than range limit
-	if (!rangeLimitMS || endDateMS - startDateMS <= rangeLimitMS) {
+	if (global || !rangeLimitMS || endDateMS - startDateMS <= rangeLimitMS) {
 		const finalIterationMonthNum =
 			startDateArr[2] === endDateArr[2]
 				? Number(endDateArr[0])
@@ -51,16 +52,25 @@ const createDateRangeRegExStr = ({ start, end, rangeLimitMS }) => {
 };
 
 const verifyQuery = (queryConfig, queryObj) => {
-	const { singleQueryFields, forcedFields, overrideQueryRulesFields } =
-		queryConfig;
+	const {
+		singleQueryFields,
+		forcedFields,
+		overrideQueryRulesFields,
+		permissions,
+		countyField
+	} = queryConfig;
 
-	const returnObj = { verified: true, verifyMessage: '' };
+	const returnObj = {
+		verified: true,
+		verifyMessage: ''
+	};
 
 	const verifyObj = {
 		numForcedQueries: forcedFields.length || 0,
 		numForcedQueriesMet: 0,
-		overrideQueryRules: false,
-		singleQueriesMet: true
+		overrideQueryRules: permissions.global || false,
+		singleQueriesMet: true,
+		countyQueryMet: permissions.allCounties || false
 	};
 
 	for (const [key, val] of Object.entries(queryObj)) {
@@ -103,11 +113,36 @@ const verifyQuery = (queryConfig, queryObj) => {
 		returnObj.verified = false;
 		returnObj.verifyMessage = concatErrStr;
 	}
+
+	if (!verifyObj.countyQueryMet) {
+		// String means the query is only on one county. Object is an array of counties to query
+		if (
+			typeof queryObj[countyField] === 'string' &&
+			permissions.counties.indexOf(queryObj[countyField]) === -1
+		) {
+			returnObj.verified = false;
+			returnObj.verifyMessage = 'unauthorized county request';
+		} else if (typeof queryObj[countyField] === 'object') {
+			const containsUnauthorizedCounty =
+				queryObj[countyField]
+					.map(county =>
+						permissions.counties.indexOf(county) !== -1 ? true : false
+					)
+					.indexOf(false) !== -1;
+
+			if (containsUnauthorizedCounty) {
+				returnObj.verified = false;
+				returnObj.verifyMessage = 'unauthorized county request';
+			}
+		}
+	}
+
 	return returnObj;
 };
 
 const handleDateQuery = (queryObj, queryConfig) => {
-	const { filingDateField, yearQueryField, dateRangeQueryLimit } = queryConfig;
+	const { filingDateField, yearQueryField, dateRangeQueryLimit, permissions } =
+		queryConfig;
 
 	const dateQueryConfigObj =
 		queryObj[filingDateField] && !queryObj[yearQueryField]
@@ -145,7 +180,8 @@ const handleDateQuery = (queryObj, queryConfig) => {
 				const regExStr = createDateRangeRegExStr({
 					start: datesArr[0],
 					end: datesArr[1],
-					rangeLimitMS: dateRangeQueryLimit ? dateRangeQueryLimit.ms : null
+					rangeLimitMS: dateRangeQueryLimit ? dateRangeQueryLimit.ms : null,
+					global: permissions.global
 				});
 
 				if (regExStr) {
@@ -196,10 +232,11 @@ const constructQuery = (queryObj, queryConfig) => {
 	const {
 		queryableFields,
 		forcedFields,
-		allowFindAll,
 		singleQueryFields,
 		filingDateField,
-		yearQueryField
+		yearQueryField,
+		countyField,
+		permissions
 	} = queryConfig;
 
 	const returnObj = { isConstructed: false, query: {}, queryMessage: '' };
@@ -214,9 +251,15 @@ const constructQuery = (queryObj, queryConfig) => {
 		? { ...returnObj.query, [yearQueryField]: queryObj[yearQueryField] }
 		: returnObj.query;
 
-	if (!Object.keys(constructedQueryObj)[0] && !allowFindAll) {
+	if (!Object.keys(constructedQueryObj)[0] && !permissions.global) {
 		returnObj.queryMessage = verify.noQuery(queryableFields[0]);
-	} else if (forcedFields || singleQueryFields) {
+	} else if (
+		!permissions.global &&
+		!permissions.allCounties &&
+		!constructedQueryObj[countyField]
+	) {
+		returnObj.queryMessage = 'county field must be present';
+	} else if (forcedFields || singleQueryFields || !permissions.global) {
 		const { verified, verifyMessage } = verifyQuery(
 			queryConfig,
 			constructedQueryObj
@@ -246,17 +289,25 @@ const constructQuery = (queryObj, queryConfig) => {
 	return returnObj;
 };
 
-const authenticateRequest = req => {
+const authenticateRequest = async req => {
 	const obj = { isAuthenticated: false, authMessage: '' };
 
 	if (req.headers.authorization) {
 		obj.authMessage = auth.tokenAttempt;
-	} else if (!req.query.apiKey) {
-		obj.authMessage = auth.noApiKey;
-	} else if (!authArr.includes(req.query.apiKey)) {
-		obj.authMessage = auth.invalidApiKey;
+	} else if (req.query.apiKey) {
+		const apiKeyDoc = await db.apiKey
+			.findOne({ apiKey: req.query.apiKey })
+			.select('global permissions')
+			.lean();
+
+		if (apiKeyDoc) {
+			obj.isAuthenticated = true;
+			obj.permissions = { ...apiKeyDoc.permissions, global: apiKeyDoc.global };
+		} else {
+			obj.authMessage = auth.invalidApiKey;
+		}
 	} else {
-		obj.isAuthenticated = true;
+		obj.authMessage = auth.noApiKey;
 	}
 
 	return obj;

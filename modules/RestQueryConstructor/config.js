@@ -1,26 +1,13 @@
 module.exports = {
 	modelQueryConfig: {
 		filingsByTractDaily: {
-			authenticate: true,
-			allowFindAll: false,
+			authenticate: false,
 			queryableFields: ['_id', 'FilingDate', 'TractID', 'CountyID'],
-			singleQueryFields: ['CountyID', 'Year'],
-			forcedFields: [
-				{
-					key: 'CountyID',
-					text: 'CountyID or TractID',
-					altFields: ['TractID']
-				},
-				{ key: 'FilingDate', text: 'FilingDate or Year', altFields: ['Year'] }
-			],
-			overrideQueryRulesFields: ['_id'],
-			dateRangeQueryLimit: { ms: 15778476000, text: '6 months' }, // 6 months: 15778476000, 1 year: 31556952000
 			filingDateField: 'FilingDate',
 			yearQueryField: 'Year'
 		},
 		cases: {
 			authenticate: true,
-			allowFindAll: false,
 			queryableFields: [
 				'_id',
 				'fileDate',
@@ -40,11 +27,11 @@ module.exports = {
 				'caseStatus',
 				'blockGroupID',
 				'caseID',
-				'defendantName1',
 				'streetAddress',
 				'address'
 			],
-			singleQueryFields: ['county', 'year', 'city', 'zip'],
+			deselectFields: ['defendantName1', 'defendantName2'],
+			singleQueryFields: ['year', 'city', 'zip'],
 			forcedFields: [
 				{
 					key: 'county',
@@ -65,11 +52,11 @@ module.exports = {
 			],
 			dateRangeQueryLimit: { ms: 31556952000, text: '1 year' }, // 6 months: 15778476000, 1 year: 31556952000
 			filingDateField: 'fileDate',
-			yearQueryField: 'year'
+			yearQueryField: 'year',
+			countyField: 'county'
 		},
 		buildings: {
 			authenticate: false,
-			allowFindAll: true,
 			queryableFields: [
 				'_id',
 				'street',
@@ -85,21 +72,18 @@ module.exports = {
 		},
 		filingsByCountyMonth: {
 			authenticate: false,
-			allowFindAll: true,
 			queryableFields: ['_id', 'FilingMonth', 'CountyID'],
 			filingDateField: 'FilingMonth',
 			yearQueryField: 'Year'
 		},
 		filingsByCountyWeek: {
 			authenticate: false,
-			allowFindAll: true,
 			queryableFields: ['_id', 'FilingWeek', 'CountyID'],
 			filingDateField: 'FilingWeek',
 			yearQueryField: 'Year'
 		},
 		filingsByTractMonth: {
 			authenticate: false,
-			allowFindAll: true,
 			queryableFields: ['_id', 'TractID', 'CountyID']
 		}
 	},

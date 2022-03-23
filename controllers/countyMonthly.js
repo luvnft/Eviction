@@ -6,13 +6,13 @@ module.exports = {
 	findAll: async (req, res) => {
 		try {
 			const { query, authorized, authenticated, errMessage } =
-				RestQueryConstructor({
+				await RestQueryConstructor({
 					model: 'filingsByCountyMonth',
 					req
 				});
 
 			if (authorized && authenticated) {
-				const data = await countyMonthly.find(query);
+				const data = await countyMonthly.find(query).lean();
 				const sortedData = data.sort((a, b) => sortByDate(a, b, 'FilingMonth'));
 
 				handleResLog({

@@ -7,13 +7,13 @@ module.exports = {
 	find: async (req, res) => {
 		try {
 			const { query, authorized, authenticated, errMessage } =
-				RestQueryConstructor({
+				await RestQueryConstructor({
 					model: 'filingsByTractDaily',
 					req
 				});
 
 			if (authorized && authenticated) {
-				const data = await db.tractDaily.find(query);
+				const data = await db.tractDaily.find(query).lean();
 				const sortedData = data.sort((a, b) => sortByDate(a, b, 'FilingDate'));
 
 				handleResLog({

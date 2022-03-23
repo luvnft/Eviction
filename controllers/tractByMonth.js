@@ -6,13 +6,13 @@ module.exports = {
 	findAll: async (req, res) => {
 		try {
 			const { query, authorized, authenticated, errMessage } =
-				RestQueryConstructor({
+				await RestQueryConstructor({
 					model: 'filingsByTractMonth',
 					req
 				});
 
 			if (authorized && authenticated) {
-				const data = await tractsByMonth.find(query);
+				const data = await tractsByMonth.find(query).lean();
 
 				handleResLog({
 					status: 200,
