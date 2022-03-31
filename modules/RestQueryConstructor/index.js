@@ -6,25 +6,54 @@ const RestQueryConstructor = async ({ req, model }) => {
 
 	const returnObj = {
 		authorized: false,
-		authenticated: false,
+		authenticated: !queryConfig.authenticate,
 		permissions: {},
 		query: {},
-		limit: 0,
+		limit: Number(req.query.limit) || 0,
 		errMessage: '',
-		deselectString: queryConfig.deselectFields
-			? queryConfig.deselectFields.map(field => `-${field}`).join(' ')
-			: ''
+		// Fields that will be left off of the return
+		deselectString: queryConfig.globalDeselectFields
+			? queryConfig.globalDeselectFields.map(field => `-${field}`).join(' ')
+			: '',
+		sortString:
+			req.query.sort && queryConfig.filingDate
+				? req.query.sort === 'asc'
+					? queryConfig.filingDate.iso
+					: req.query.sort === 'desc'
+					? `-${queryConfig.filingDate.iso}`
+					: ''
+				: ''
 	};
 
-	if (queryConfig.authenticate) {
+	if (!returnObj.authenticated) {
 		const { isAuthenticated, authMessage, permissions } =
 			await authenticateRequest(req);
+
+		queryConfig.permissions = permissions;
+
+		if (!permissions.global) {
+			// no global permissions so protected fields will be added to deselect string
+			const protectedFieldsDeselectString = queryConfig.queryableFields
+				? queryConfig.queryableFields
+						.filter(item => item.protected)
+						.map(({ field }) => `-${field}`)
+						.join(' ')
+				: '';
+
+			returnObj.deselectString = returnObj.deselectString
+				? `${returnObj.deselectString} ${protectedFieldsDeselectString}`
+				: protectedFieldsDeselectString;
+		}
 
 		returnObj.authenticated = isAuthenticated;
 		returnObj.errMessage = authMessage;
 
-		queryConfig.permissions = permissions;
-		returnObj.limit = permissions.limit;
+		if (
+			(permissions.limit && returnObj.limit > permissions.limit) ||
+			(permissions.limit && returnObj.limit === 0)
+		) {
+			returnObj.limit = permissions.limit;
+		}
 	} else {
 		returnObj.authenticated = true;
 		queryConfig.permissions = { global: true };

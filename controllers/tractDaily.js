@@ -1,43 +1,43 @@
 const db = require('../models');
 const RestQueryConstructor = require('../modules/RestQueryConstructor');
-const { handleResLog, sortByDate } = require('./utils');
 
 // Defining methods
 module.exports = {
 	find: async (req, res) => {
 		try {
-			const { query, authorized, authenticated, errMessage } =
-				await RestQueryConstructor({
-					model: 'filingsByTractDaily',
-					req
-				});
+			const {
+				query,
+				authorized,
+				authenticated,
+				errMessage,
+				deselectString,
+				sortString,
+				limit
+			} = await RestQueryConstructor({
+				model: 'filingsByTractDaily',
+				req
+			});
 
 			if (authorized && authenticated) {
-				const data = await db.tractDaily.find(query).lean();
-				const sortedData = data.sort((a, b) => sortByDate(a, b, 'FilingDate'));
+				const data = sortString
+					? await db.tractDaily
+							.find(query)
+							.limit(limit)
+							.sort(sortString)
+							.select(deselectString)
+							.lean()
+					: await db.tractDaily
+							.find(query)
+							.limit(limit)
+							.select(deselectString)
+							.lean();
 
-				handleResLog({
-					status: 200,
-					numDocs: sortedData.length,
-					url: req.originalUrl
-				});
-				return res.status(200).json(sortedData);
+				return res.status(200).json(data);
 			} else {
-				handleResLog({
-					status: 422,
-					numDocs: 0,
-					url: req.originalUrl,
-					errMessage
-				});
 				return res.status(422).json(errMessage);
 			}
 		} catch (err) {
-			handleResLog({
-				status: 422,
-				numDocs: 0,
-				url: req.originalUrl,
-				errMessage: err
-			});
+			// console.log(err);
 			return res.status(422).json(err);
 		}
 	}

@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const filingsByTractDailySchema = new Schema(
 	{
 		FilingDate: { type: String, required: true },
+		FilingDateISO: { type: Date, required: true },
 		TractID: { type: String, required: true },
 		CountyID: { type: String, required: true },
 		TotalFilings: { type: Number, required: true },

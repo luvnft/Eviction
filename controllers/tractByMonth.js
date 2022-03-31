@@ -1,41 +1,24 @@
 const tractsByMonth = require('../models/filingsByTractMonth');
 const RestQueryConstructor = require('../modules/RestQueryConstructor');
-const { sortByDate, handleResLog } = require('./utils');
 
 module.exports = {
 	findAll: async (req, res) => {
 		try {
-			const { query, authorized, authenticated, errMessage } =
+			const { query, authorized, authenticated, errMessage, limit } =
 				await RestQueryConstructor({
 					model: 'filingsByTractMonth',
 					req
 				});
 
 			if (authorized && authenticated) {
-				const data = await tractsByMonth.find(query).lean();
+				const data = await tractsByMonth.find(query).limit(limit).lean();
 
-				handleResLog({
-					status: 200,
-					numDocs: data.length,
-					url: req.originalUrl
-				});
 				return res.status(200).json(data);
 			} else {
-				handleResLog({
-					status: 422,
-					numDocs: 0,
-					url: req.originalUrl,
-					errMessage
-				});
 				return res.status(422).json(errMessage);
 			}
 		} catch (err) {
-			handleResLog({
-				status: 422,
-				numDocs: 0,
-				url: req.originalUrl,
-				errMessage: err
-			});
+			// console.log(err);
 			res.status(422).json(err);
 		}
 	},
@@ -43,7 +26,7 @@ module.exports = {
 		tractsByMonth
 			.insertMany(req.body)
 			.then(() => {
-				console.log('database succesfully updated');
+				console.log('database successfully updated');
 				process.exit(0);
 			})
 			.catch(err => {

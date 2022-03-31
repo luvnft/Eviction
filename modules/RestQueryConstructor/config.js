@@ -1,37 +1,50 @@
 module.exports = {
 	modelQueryConfig: {
-		filingsByTractDaily: {
-			authenticate: false,
-			queryableFields: ['_id', 'FilingDate', 'TractID', 'CountyID'],
-			filingDateField: 'FilingDate',
-			yearQueryField: 'Year'
-		},
 		cases: {
 			authenticate: true,
 			queryableFields: [
-				'_id',
-				'fileDate',
-				'latitude',
-				'longitude',
-				'county',
-				'tractID',
-				'id',
-				'city',
-				'zip',
-				'geometry',
-				'judgment',
-				'defaultJudgment',
-				'answer',
-				'services',
-				'dismiss',
-				'caseStatus',
-				'blockGroupID',
-				'caseID',
-				'streetAddress',
-				'address'
+				{ field: '_id', protected: true },
+				{ field: 'fileDate', protected: false },
+				{ field: 'answer', protected: false },
+				{ field: 'latitude', protected: false },
+				{ field: 'longitude', protected: false },
+				{ field: 'services', protected: false },
+				{ field: 'dismiss', protected: false },
+				{ field: 'defaultJudgment', protected: false },
+				{ field: 'judgment', protected: false },
+				{ field: 'answerDate', protected: false },
+				{ field: 'servicesDate', protected: false },
+				{ field: 'dismissDate', protected: false },
+				{ field: 'defaultJudgmentDate', protected: false },
+				{ field: 'judgmentDate', protected: false },
+				{ field: 'tractID', protected: false },
+				{ field: 'blockGroupID', protected: false },
+				{ field: 'id', protected: true },
+				{ field: 'streetAddress', protected: false },
+				{ field: 'city', protected: false },
+				{ field: 'zip', protected: false },
+				{ field: 'county', protected: false },
+				{ field: 'geometry', protected: false },
+				{ field: 'caseID', protected: true },
+				{ field: 'plaintiff', protected: true },
+				{ field: 'defendantName1', protected: true },
+				{ field: 'defendantName2', protected: true },
+				{ field: 'attorney', protected: true },
+				{ field: 'judgmentType', protected: false },
+				{ field: 'judgmentFor', protected: false },
+				{ field: 'caseStatus', protected: false },
+				{ field: 'address', protected: false },
+				{ field: 'year', protected: false }
 			],
-			deselectFields: ['defendantName1', 'defendantName2'],
-			singleQueryFields: ['year', 'city', 'zip'],
+			globalDeselectFields: [
+				'answerDateISO',
+				'defaultJudgmentDateISO',
+				'dismissDateISO',
+				'fileDateISO',
+				'judgmentDateISO',
+				'servicesDateISO'
+			],
+			singleQueryFields: ['year'],
 			forcedFields: [
 				{
 					key: 'county',
@@ -46,45 +59,73 @@ module.exports = {
 				'geometry',
 				'blockGroupID',
 				'caseID',
-				'defendantName1',
 				'streetAddress',
 				'address'
 			],
 			dateRangeQueryLimit: { ms: 31556952000, text: '1 year' }, // 6 months: 15778476000, 1 year: 31556952000
-			filingDateField: 'fileDate',
+			filingDate: { field: 'fileDate', iso: 'fileDateISO' },
 			yearQueryField: 'year',
 			countyField: 'county'
 		},
-		buildings: {
+		filingsByTractDaily: {
 			authenticate: false,
 			queryableFields: [
-				'_id',
-				'street',
-				'latitude',
-				'longitude',
-				'county',
-				'geometry',
-				'tractid',
-				'blockgroupid',
-				'city',
-				'zip'
-			]
+				{ field: '_id', protected: false },
+				{ field: 'FilingDate', protected: false },
+				{ field: 'TractID', protected: false },
+				{ field: 'CountyID', protected: false },
+				{ field: 'Year', protected: false }
+			],
+			filingDate: { field: 'FilingDate', iso: 'FilingDateISO' },
+			yearQueryField: 'Year',
+			globalDeselectFields: ['FilingDateISO']
 		},
 		filingsByCountyMonth: {
 			authenticate: false,
-			queryableFields: ['_id', 'FilingMonth', 'CountyID'],
-			filingDateField: 'FilingMonth',
+			queryableFields: [
+				{ field: '_id', protected: false },
+				{ field: 'FilingMonth', protected: false },
+				{ field: 'CountyID', protected: false },
+				{ field: 'Year', protected: false }
+			],
+			filingDate: { field: 'FilingMonth', iso: 'FilingMonthISO' },
+			globalDeselectFields: ['FilingMonthISO'],
 			yearQueryField: 'Year'
 		},
 		filingsByCountyWeek: {
 			authenticate: false,
-			queryableFields: ['_id', 'FilingWeek', 'CountyID'],
-			filingDateField: 'FilingWeek',
+			queryableFields: [
+				{ field: '_id', protected: false },
+				{ field: 'FilingWeek', protected: false },
+				{ field: 'CountyID', protected: false },
+				{ field: 'Year', protected: false }
+			],
+			filingDate: { field: 'FilingWeek', iso: 'FilingWeekISO' },
+			globalDeselectFields: ['FilingWeekISO'],
 			yearQueryField: 'Year'
 		},
 		filingsByTractMonth: {
 			authenticate: false,
-			queryableFields: ['_id', 'TractID', 'CountyID']
+			queryableFields: [
+				{ field: '_id', protected: false },
+				{ field: 'TractID', protected: false },
+				{ field: 'CountyID', protected: false }
+			]
+		},
+		buildings: {
+			authenticate: false,
+			queryableFields: [
+				{ field: '_id', protected: false },
+				{ field: 'street', protected: false },
+				{ field: 'latitude', protected: false },
+				{ field: 'longitude', protected: false },
+				{ field: 'county', protected: false },
+				{ field: 'geometry', protected: false },
+				{ field: 'tractid', protected: false },
+				{ field: 'blockgroupid', protected: false },
+				{ field: 'city', protected: false },
+				{ field: 'zip', protected: false }
+			]
 		}
 	},
 	errStrings: {
@@ -108,7 +149,15 @@ module.exports = {
 					.join('&');
 
 				return `Error: [${forcedFieldsStr}] must be present in a query to get a response. (e.g., ${exampleStr})`;
-			}
+			},
+			noCounty: countyArr =>
+				`Error: No county query present. Please query by a county you have permissions for. Counties you can make requests for: ${countyArr.join(
+					', '
+				)}`,
+			unauthorizedCounty: countyArr =>
+				`Error: Unauthorized county request. Counties you can make requests for: ${countyArr.join(
+					', '
+				)}`
 		},
 		dates: {
 			dateAndYear:
@@ -116,6 +165,7 @@ module.exports = {
 			multipleDateRanges: 'Error: Cannot query multiple date ranges.',
 			singleDateAndRange:
 				'Error: Cannot query a date range and a single date. Please choose one or the other.',
+			noDateQueryType: 'Error: Query type case not met.',
 			invalidRange: limit =>
 				`Error: Date range queries for this API are limited to ${limit}`,
 			multipleYears: field =>

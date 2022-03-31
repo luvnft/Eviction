@@ -1,42 +1,42 @@
 const countyWeekly = require('../models/filingsByCountyWeek');
 const RestQueryConstructor = require('../modules/RestQueryConstructor');
-const { sortByDate, handleResLog } = require('./utils');
 
 module.exports = {
 	findAll: async (req, res) => {
 		try {
-			const { query, authorized, authenticated, errMessage } =
-				await RestQueryConstructor({
-					model: 'filingsByCountyWeek',
-					req
-				});
+			const {
+				query,
+				authorized,
+				authenticated,
+				errMessage,
+				deselectString,
+				sortString,
+				limit
+			} = await RestQueryConstructor({
+				model: 'filingsByCountyWeek',
+				req
+			});
 
 			if (authorized && authenticated) {
-				const data = await countyWeekly.find(query).lean();
-				const sortedData = data.sort((a, b) => sortByDate(a, b, 'FilingWeek'));
+				const data = sortString
+					? await countyWeekly
+							.find(query)
+							.limit(limit)
+							.sort(sortString)
+							.select(deselectString)
+							.lean()
+					: await countyWeekly
+							.find(query)
+							.limit(limit)
+							.select(deselectString)
+							.lean();
 
-				handleResLog({
-					status: 200,
-					numDocs: sortedData.length,
-					url: req.originalUrl
-				});
-				return res.status(200).json(sortedData);
+				return res.status(200).json(data);
 			} else {
-				handleResLog({
-					status: 422,
-					numDocs: 0,
-					url: req.originalUrl,
-					errMessage
-				});
 				return res.status(422).json(errMessage);
 			}
 		} catch (err) {
-			handleResLog({
-				status: 422,
-				numDocs: 0,
-				url: req.originalUrl,
-				errMessage: err
-			});
+			// console.log(err);
 			res.status(422).json(err);
 		}
 	},

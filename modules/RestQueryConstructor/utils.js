@@ -2,56 +2,7 @@ const authArr = JSON.parse(process.env.API_KEY_ARR);
 const db = require('../../models');
 const { auth, verify, dates } = require('./config').errStrings;
 
-const createDateRangeRegExStr = ({ start, end, rangeLimitMS, global }) => {
-	const startDateArr = start.split('/');
-	const endDateArr = end.split('/');
-	const startDateMS = new Date(start).getTime();
-	const endDateMS = new Date(end).getTime();
-
-	// checks if there is a range limit or date range is not more than range limit
-	if (global || !rangeLimitMS || endDateMS - startDateMS <= rangeLimitMS) {
-		const finalIterationMonthNum =
-			startDateArr[2] === endDateArr[2]
-				? Number(endDateArr[0])
-				: Number(endDateArr[0]) + 12;
-
-		const allPossibleDatesArr = [];
-
-		for (
-			let monthNum = Number(startDateArr[0]);
-			monthNum <= finalIterationMonthNum;
-			monthNum++
-		) {
-			const dateObj = {
-				month: monthNum <= 12 ? monthNum : monthNum - 12,
-				year: monthNum <= 12 ? startDateArr[2] : endDateArr[2]
-			};
-
-			const monthStr =
-				dateObj.month.toString().length === 1
-					? `0${dateObj.month}`
-					: `${dateObj.month}`;
-
-			const lastDayOfMonth = new Date(dateObj.year, monthStr, 0).getDate();
-
-			for (let dateNum = 1; dateNum <= lastDayOfMonth; dateNum++) {
-				const dateStr =
-					dateNum.toString().length === 1 ? `0${dateNum}` : `${dateNum}`;
-
-				allPossibleDatesArr.push(`${monthStr}/${dateStr}/${dateObj.year}`);
-			}
-		}
-
-		return allPossibleDatesArr
-			.filter(
-				date =>
-					startDateMS <= new Date(date).getTime() && endDateMS >= new Date(date)
-			)
-			.join('|');
-	} else return '';
-};
-
-const verifyQuery = (queryConfig, queryObj) => {
+const verifyQuery = (queryObj, queryConfig) => {
 	const {
 		singleQueryFields,
 		forcedFields,
@@ -68,31 +19,56 @@ const verifyQuery = (queryConfig, queryObj) => {
 	const verifyObj = {
 		numForcedQueries: forcedFields.length || 0,
 		numForcedQueriesMet: 0,
-		overrideQueryRules: permissions.global || false,
-		singleQueriesMet: true,
-		countyQueryMet: permissions.allCounties || false
+		overrideQueryRules: false,
+		countyQueryMet: false,
+		singleQueriesMet: false
 	};
 
 	for (const [key, val] of Object.entries(queryObj)) {
 		if (val) {
+			if (key === countyField) {
+				if (typeof val !== 'object') {
+					verifyObj.countyQueryMet = permissions.counties.includes(val);
+				} else {
+					for (const countyId of val) {
+						const countyPermitted = permissions.counties.includes(countyId);
+
+						if (countyPermitted) {
+							verifyObj.countyQueryMet = true;
+						} else {
+							verifyObj.countyQueryMet = false;
+							break;
+						}
+					}
+				}
+			}
+
 			// Ensures that queries on single query fields are singular (i.e., county=cobb instead of county=cobb&county=fulton)
-			if (typeof val === 'object' && singleQueryFields.indexOf(key) !== -1)
-				verifyObj.singleQueriesMet = false;
+			if (singleQueryFields && singleQueryFields.includes(key)) {
+				verifyObj.singleQueriesMet = typeof val !== 'object';
+			} else {
+				verifyObj.singleQueriesMet = true;
+			}
 
 			// Override fields are verify specific to a record and will override any forced query rules (i.e., _id)
-			const containsOverrideQueryRulesField = overrideQueryRulesFields.some(
-				field => key === field
-			);
+			if (overrideQueryRulesFields) {
+				const containsOverrideQueryRulesField = overrideQueryRulesFields.some(
+					field => key === field
+				);
 
-			if (containsOverrideQueryRulesField && !verifyObj.overrideQueryRules)
-				verifyObj.overrideQueryRules = true;
+				if (containsOverrideQueryRulesField) {
+					verifyObj.overrideQueryRules = true;
+				}
+			}
 
 			// Forced Fields are required in a query (i.e., Filing date and county)
-			const containsForcedFieldOrAltField = forcedFields.some(
-				field => field.key === key || field.altFields.indexOf(key) !== -1
-			);
+			if (forcedFields) {
+				const containsForcedFieldOrAltField = forcedFields.some(
+					field => field.key === key || field.altFields.includes(key)
+				);
 
-			if (containsForcedFieldOrAltField) verifyObj.numForcedQueriesMet += 1;
+				if (containsForcedFieldOrAltField) verifyObj.numForcedQueriesMet += 1;
+			}
 		}
 	}
 
@@ -115,49 +91,18 @@ const verifyQuery = (queryConfig, queryObj) => {
 	}
 
 	if (!verifyObj.countyQueryMet) {
-		// String means the query is only on one county. Object is an array of counties to query
-		if (
-			typeof queryObj[countyField] === 'string' &&
-			permissions.counties.indexOf(queryObj[countyField]) === -1
-		) {
-			returnObj.verified = false;
-			returnObj.verifyMessage = 'unauthorized county request';
-		} else if (typeof queryObj[countyField] === 'object') {
-			const containsUnauthorizedCounty =
-				queryObj[countyField]
-					.map(county =>
-						permissions.counties.indexOf(county) !== -1 ? true : false
-					)
-					.indexOf(false) !== -1;
-
-			if (containsUnauthorizedCounty) {
-				returnObj.verified = false;
-				returnObj.verifyMessage = 'unauthorized county request';
-			}
-		}
+		returnObj.verified = false;
+		returnObj.verifyMessage = verify.unauthorizedCounty(
+			permissions.counties || []
+		);
 	}
 
 	return returnObj;
 };
 
 const handleDateQuery = (queryObj, queryConfig) => {
-	const { filingDateField, yearQueryField, dateRangeQueryLimit, permissions } =
+	const { filingDate, yearQueryField, dateRangeQueryLimit, permissions } =
 		queryConfig;
-
-	// const dateQuery =
-	// 	queryObj[filingDateField] && !queryObj[yearQueryField]
-	// 		? queryObj[filingDateField]
-	// 		: queryObj[yearQueryField] && !queryObj[filingDateField]
-	// 		? queryObj[yearQueryField]
-	// 		: null;
-
-	// const typeOfQuery = dateQuery ? typeof
-
-	// const dateConfig = {
-	// 	type: typeof dateQuery == || 'error',
-	// 	value: dateQuery || dates.dateAndYear,
-	// 	range: dateQuery.split('-')
-	// };
 
 	const returnObj = {
 		filingDateQuery: {},
@@ -165,89 +110,76 @@ const handleDateQuery = (queryObj, queryConfig) => {
 		dateConstructed: false
 	};
 
+	// First checks if date query is for a single date before building
 	if (
-		queryObj[filingDateField] &&
+		queryObj[filingDate.field] &&
 		!queryObj[yearQueryField] &&
-		typeof queryObj[filingDateField] === 'string' &&
-		!queryObj[filingDateField].split('-')[1]
+		typeof queryObj[filingDate.field] === 'string' &&
+		!queryObj[filingDate.field].split('-')[1]
 	) {
-		returnObj.filingDateQuery = queryObj[filingDateField];
+		returnObj['filingDateQuery'][filingDate.field] = queryObj[filingDate.field];
 		returnObj.dateConstructed = true;
 	} else {
-		const dateQueryConfigObj =
-			queryObj[filingDateField] && !queryObj[yearQueryField]
-				? {
-						// ensuring value is an array for type filingDate to assist with range queries
-						value:
-							typeof queryObj[filingDateField] === 'object'
-								? queryObj[filingDateField]
-								: [queryObj[filingDateField]],
-						type: 'filingDate'
-				  }
-				: queryObj[yearQueryField] && !queryObj[filingDateField]
-				? { value: queryObj[yearQueryField], type: 'year' }
-				: {
-						value: dates.dateAndYear,
-						type: 'error'
-				  };
+		const dateQueryConfigObj = {};
 
-		if (dateQueryConfigObj.type === 'filingDate') {
-			const filingDateArr = dateQueryConfigObj.value;
-			const rangeQuery = [];
-			const filingDateQuery = [];
+		if (queryObj[filingDate.field] && queryObj[yearQueryField]) {
+			dateQueryConfigObj.value = dates.dateAndYear;
+			dateQueryConfigObj.type = 'error';
+		} else if (queryObj[filingDate.field]) {
+			dateQueryConfigObj.value = queryObj[filingDate.field];
+			dateQueryConfigObj.type =
+				typeof queryObj[filingDate.field] === 'object' ? 'filingDate' : 'range';
+		} else {
+			const attemptedYearRange = queryObj[yearQueryField].split('-')[1];
 
-			for (const item of filingDateArr) {
-				const datesArr = item.split('-');
+			dateQueryConfigObj.value = !attemptedYearRange
+				? queryObj[yearQueryField]
+				: dates.multipleYears(yearQueryField);
+			dateQueryConfigObj.type = !attemptedYearRange ? 'year' : 'error';
+		}
 
-				// if the query is for a date range, use regEx to query db
-				if (datesArr[1]) {
-					const regExStr = createDateRangeRegExStr({
-						start: datesArr[0],
-						end: datesArr[1],
-						rangeLimitMS: dateRangeQueryLimit ? dateRangeQueryLimit.ms : null,
-						global: permissions.global
-					});
-
-					if (regExStr) {
-						rangeQuery.push({
-							$regex: regExStr,
-							$options: 'i'
-						});
-					}
-				} else {
-					filingDateQuery.push(item);
-				}
-			}
-
-			if ((rangeQuery[0] && filingDateQuery[0]) || rangeQuery[1]) {
-				returnObj.dateMessage = rangeQuery[1]
-					? dates.multipleDateRanges
-					: dates.singleDateAndRange;
-			} else if (rangeQuery[0] || filingDateQuery[0]) {
-				returnObj.filingDateQuery = rangeQuery[0]
-					? rangeQuery[0]
-					: filingDateQuery[1]
-					? filingDateQuery
-					: filingDateQuery[0];
-
+		switch (dateQueryConfigObj.type) {
+			case 'filingDate':
+				returnObj['filingDateQuery'][filingDate.field] =
+					dateQueryConfigObj.value;
 				returnObj.dateConstructed = true;
-			} else {
-				returnObj.dateMessage = dates.invalidRange(dateRangeQueryLimit.text);
-			}
-		} else if (dateQueryConfigObj.type === 'year') {
-			const attemptedYearRange = dateQueryConfigObj.value.split('-')[1];
+				break;
 
-			if (!attemptedYearRange) {
-				returnObj.filingDateQuery = {
+			case 'range':
+				const [startDate, endDate] = dateQueryConfigObj.value.split('-');
+
+				const isWithinRangeLimit = dateRangeQueryLimit
+					? new Date(endDate).getTime() - new Date(startDate).getTime() <=
+					  dateRangeQueryLimit.ms
+					: true;
+
+				if (permissions.global || isWithinRangeLimit) {
+					returnObj['filingDateQuery'][filingDate.iso] = {
+						$gte: startDate,
+						$lte: endDate
+					};
+					returnObj.dateConstructed = true;
+				} else {
+					returnObj.dateMessage = dates.invalidRange(dateRangeQueryLimit.text);
+				}
+
+				break;
+
+			case 'year':
+				returnObj['filingDateQuery'][filingDate.field] = {
 					$regex: dateQueryConfigObj.value,
 					$options: 'i'
 				};
 				returnObj.dateConstructed = true;
-			} else {
-				returnObj.dateMessage = dates.multipleYears(yearQueryField);
-			}
-		} else {
-			returnObj.dateMessage = dateQueryConfigObj.value;
+				break;
+
+			case 'error':
+				returnObj.dateMessage = dateQueryConfigObj.value;
+				break;
+
+			default:
+				returnObj.dateMessage = dates.noDateQueryType;
+				break;
 		}
 	}
 
@@ -257,9 +189,7 @@ const handleDateQuery = (queryObj, queryConfig) => {
 const constructQuery = (queryObj, queryConfig) => {
 	const {
 		queryableFields,
-		forcedFields,
-		singleQueryFields,
-		filingDateField,
+		filingDate,
 		yearQueryField,
 		countyField,
 		permissions
@@ -272,51 +202,55 @@ const constructQuery = (queryObj, queryConfig) => {
 		constructedQueryObj: {}
 	};
 
+	const filingDateField = filingDate ? filingDate.field : '';
+
 	const constructedQueryObj = {};
 
 	if (!permissions.global) {
-		for (const field of queryableFields) {
-			if (queryObj[field]) {
-				returnObj['query'][field] = queryObj[field];
+		for (const { field, protected } of queryableFields) {
+			if (queryObj[field] && !protected) {
+				// non global so only allowing unprotected fields to be added to query
 				constructedQueryObj[field] = queryObj[field];
-			}
-		}
 
-		if (queryObj[yearQueryField]) {
-			constructedQueryObj[yearQueryField] = queryObj[yearQueryField];
+				if (
+					field !== yearQueryField &&
+					field !== filingDateField &&
+					!protected
+				) {
+					returnObj['query'][field] = queryObj[field];
+				}
+			}
 		}
 
 		if (!Object.keys(constructedQueryObj)) {
 			returnObj.queryMessage = verify.noQuery(queryableFields[0]);
-		} else if (!permissions.allCounties && !constructedQueryObj[countyField]) {
-			returnObj.queryMessage = 'Please query by the county you have access to';
-		} else if (forcedFields || singleQueryFields) {
+		} else if (!constructedQueryObj[countyField]) {
+			returnObj.queryMessage = verify.noCounty(
+				permissions.counties ? permissions.counties : []
+			);
+		} else {
 			const { verified, verifyMessage } = verifyQuery(
-				queryConfig,
-				constructedQueryObj
+				constructedQueryObj,
+				queryConfig
 			);
 
 			returnObj.isConstructed = verified;
 			returnObj.queryMessage = verifyMessage;
-		} else {
-			returnObj.isConstructed = true;
 		}
 	} else {
-		const queryKeys = Object.keys(queryObj).filter(key => key !== 'apiKey');
+		// const filingDateField = filingDate ? filingDateField : '';
+		for (const { field } of queryableFields) {
+			if (queryObj[field]) {
+				constructedQueryObj[field] = queryObj[field];
 
-		if (queryKeys[0]) {
-			for (const key of queryKeys) {
-				if (key !== yearQueryField && key !== 'apiKey') {
-					returnObj['query'][key] = queryObj[key];
+				if (field !== yearQueryField && field !== filingDateField) {
+					returnObj['query'][field] = queryObj[field];
 				}
-				constructedQueryObj[key] = queryObj[key];
 			}
-		} else {
-			returnObj.isConstructed = true;
 		}
-	}
 
-	returnObj.isConstructed = true;
+		returnObj.isConstructed = true;
+	}
 
 	if (
 		returnObj.isConstructed &&
@@ -328,7 +262,7 @@ const constructQuery = (queryObj, queryConfig) => {
 			queryConfig
 		);
 
-		returnObj.query[filingDateField] = filingDateQuery;
+		returnObj.query = { ...returnObj.query, ...filingDateQuery };
 		returnObj.queryMessage = dateMessage;
 		returnObj.isConstructed = dateConstructed;
 	}
@@ -349,14 +283,18 @@ const authenticateRequest = async req => {
 
 		if (apiKeyDoc) {
 			obj.isAuthenticated = true;
-			obj.permissions = { ...apiKeyDoc.permissions, global: apiKeyDoc.global };
+
+			if (apiKeyDoc.global || apiKeyDoc.admin) {
+				obj.permissions = { global: true };
+			} else {
+				obj.permissions = apiKeyDoc.permissions;
+			}
 		} else {
 			obj.authMessage = auth.invalidApiKey;
 		}
 	} else {
 		obj.authMessage = auth.noApiKey;
 	}
-
 	return obj;
 };
 

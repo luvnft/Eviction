@@ -14,6 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 // const aggregateByBuilding = require('./AggregateByBuilding');
 const cron = require('node-cron');
+const morgan = require('morgan');
 
 // require('./config/passport');
 
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(compression());
 app.use(cookieParser());
+app.use(morgan('dev'));
 
 // Serve up static assets (usually on heroku)
 if (process.env.NODE_ENV === 'production') {
