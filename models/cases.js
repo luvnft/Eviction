@@ -30,7 +30,7 @@ const CasesSchema = new Schema({
 	tractID: { type: String },
 	blockGroupID: { type: String },
 	caseID: { type: String },
-	events: [{ type: Array }],
+	events: [{ type: Object }],
 	caseStatus: { type: String },
 	plaintiff: { type: Object },
 	defendantName1: { type: String },
@@ -40,6 +40,7 @@ const CasesSchema = new Schema({
 	judgmentFor: { type: String },
 	judgmentComp: { type: String },
 	address: { type: String },
+	addedOn: { type: Date },
 	updatedOn: { type: Date, default: Date.now() }
 });
 
