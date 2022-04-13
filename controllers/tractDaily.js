@@ -1,5 +1,6 @@
 const db = require('../models');
 const RestQueryConstructor = require('../modules/RestQueryConstructor');
+const ArrayToCsvString = require('../modules/ArrayToCsvString');
 
 // Defining methods
 module.exports = {
@@ -12,7 +13,8 @@ module.exports = {
 				errMessage,
 				deselectString,
 				sortString,
-				limit
+				limit,
+				type
 			} = await RestQueryConstructor({
 				model: 'filingsByTractDaily',
 				req
@@ -32,12 +34,22 @@ module.exports = {
 							.select(deselectString)
 							.lean();
 
-				return res.status(200).json(data);
+				if (type === 'csv' && data[0]) {
+					const fileName = `atlanta_region_eviction_tracker_tract-daily_${Date.now()}.csv`;
+					const csvStr = await ArrayToCsvString({
+						array: data,
+						model: 'filingsByTractDaily'
+					});
+
+					return res.status(200).attachment(fileName).send(csvStr);
+				} else {
+					return res.status(200).json(data);
+				}
 			} else {
 				return res.status(422).json(errMessage);
 			}
 		} catch (err) {
-			// console.log(err);
+			console.log(err);
 			return res.status(422).json(err);
 		}
 	}

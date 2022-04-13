@@ -42,8 +42,10 @@ module.exports = {
 				'dismissDateISO',
 				'fileDateISO',
 				'judgmentDateISO',
-				'servicesDateISO'
+				'servicesDateISO',
+				'__v'
 			],
+			csvDeselectFields: ['geometry', 'events'],
 			singleQueryFields: ['year'],
 			forcedFields: [
 				{
@@ -78,7 +80,16 @@ module.exports = {
 			],
 			filingDate: { field: 'FilingDate', iso: 'FilingDateISO' },
 			yearQueryField: 'Year',
-			globalDeselectFields: ['FilingDateISO']
+			globalDeselectFields: ['FilingDateISO', '__v']
+		},
+		filingsByTractMonth: {
+			authenticate: false,
+			queryableFields: [
+				{ field: '_id', protected: false },
+				{ field: 'TractID', protected: false },
+				{ field: 'CountyID', protected: false }
+			],
+			globalDeselectFields: ['__v']
 		},
 		filingsByCountyMonth: {
 			authenticate: false,
@@ -89,7 +100,7 @@ module.exports = {
 				{ field: 'Year', protected: false }
 			],
 			filingDate: { field: 'FilingMonth', iso: 'FilingMonthISO' },
-			globalDeselectFields: ['FilingMonthISO'],
+			globalDeselectFields: ['FilingMonthISO', '__v'],
 			yearQueryField: 'Year'
 		},
 		filingsByCountyWeek: {
@@ -101,16 +112,8 @@ module.exports = {
 				{ field: 'Year', protected: false }
 			],
 			filingDate: { field: 'FilingWeek', iso: 'FilingWeekISO' },
-			globalDeselectFields: ['FilingWeekISO'],
+			globalDeselectFields: ['FilingWeekISO', '__v'],
 			yearQueryField: 'Year'
-		},
-		filingsByTractMonth: {
-			authenticate: false,
-			queryableFields: [
-				{ field: '_id', protected: false },
-				{ field: 'TractID', protected: false },
-				{ field: 'CountyID', protected: false }
-			]
 		},
 		buildings: {
 			authenticate: false,
@@ -125,7 +128,9 @@ module.exports = {
 				{ field: 'blockgroupid', protected: false },
 				{ field: 'city', protected: false },
 				{ field: 'zip', protected: false }
-			]
+			],
+			globalDeselectFields: ['__v'],
+			csvDeselectFields: ['geometry', 'filings', 'monthlyfilings']
 		}
 	},
 	errStrings: {

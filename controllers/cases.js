@@ -1,5 +1,6 @@
 const db = require('../models');
 const RestQueryConstructor = require('../modules/RestQueryConstructor');
+const ArrayToCsvString = require('../modules/ArrayToCsvString');
 
 module.exports = {
 	find: async (req, res) => {
@@ -11,7 +12,8 @@ module.exports = {
 				errMessage,
 				limit,
 				deselectString,
-				sortString
+				sortString,
+				type
 			} = await RestQueryConstructor({
 				model: 'cases',
 				req
@@ -31,15 +33,23 @@ module.exports = {
 							.select(deselectString)
 							.lean();
 
-				return res.status(200).json(data);
+				if (type === 'csv' && data[0]) {
+					const fileName = `atlanta_region_eviction_tracker_cases_${Date.now()}.csv`;
+					const csvStr = await ArrayToCsvString({
+						array: data,
+						model: 'cases'
+					});
+
+					return res.status(200).attachment(fileName).send(csvStr);
+				} else {
+					return res.status(200).json(data);
+				}
 			} else {
 				return res.status(422).json(errMessage);
 			}
 		} catch (err) {
-			// console.log(err);
-			return res
-				.status(422)
-				.json('Unprocessable Entity - Please check request and try again.');
+			console.log(err);
+			return res.status(422).json(err);
 		}
 	}
 };

@@ -1,8 +1,6 @@
 # Eviction Tracker API
 
-Based on simple REST principles, the Eviction Tracker API endpoints return JSON eviction data on cases, buildings, filings by tract daily, filings by tract monthly, filings by county weekly and filings by county monthly.
-
-The API provides a set of endpoints, each with it's own path. Some of these endpoints will require an API Key in order to receive a response.
+Based on the GET principle, the Eviction Tracker API endpoints return JSON eviction data on cases, buildings, filings by tract daily, filings by tract monthly, filings by county weekly and filings by county monthly. The API provides a set of endpoints, each with it's own path.
 
 ## Base URL
 
@@ -10,19 +8,36 @@ The API provides a set of endpoints, each with it's own path. Some of these endp
 
 ## Endpoints
 
----
-
 ### `/cases`
 
-#### Add your _API Key_ (If you do not have an API please see the [Request API Key section below.](#request-api-key))
+GET case level data for the metro Atlanta area.
+
+### API call
 
 ```
-/cases?apiKey=[Your API Key]
+https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}&county={county}&fileDate={fileDate}
 ```
 
-\*Replace [Your API Key] with your provided API key
+<strong>Parameters</strong>
 
-### Building a Query
+---
+
+<table>
+<tr>
+<td>apiKey</td>
+<td>Required</td>
+<td>Your unique API Key. If you do not have an API key please visit the <a href="#request-api-key">Request API Key section below.</a></td>
+</tr>
+<tr>
+<td>county</td>
+<td>Optional</td>
+<td>County code. Most API keys <strong>require</strong> a county code to be queried to receive a response. Though there are certain permissions that allow a county code to be left off.</td>
+</tr>
+</table>
+
+---
+
+<!-- ### Building a Query
 
 Depending on permissions given on your API key, you will be required to build out a query in order to get back a JSON response. To build out your query you will add fields with values onto the end of your URL.
 
@@ -367,7 +382,7 @@ Notes: When making a request [the base URL](#base-url) will go in front of your 
 
 https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey=[Your API Key]&year=2020&county=067&limit=1000
 
-```
+``` -->
 
 ## Request API Key
 

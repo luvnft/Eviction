@@ -1,5 +1,6 @@
 const countyMonthly = require('../models/filingsByCountyMonth');
 const RestQueryConstructor = require('../modules/RestQueryConstructor');
+const ArrayToCsvString = require('../modules/ArrayToCsvString');
 
 module.exports = {
 	findAll: async (req, res) => {
@@ -11,7 +12,8 @@ module.exports = {
 				errMessage,
 				deselectString,
 				sortString,
-				limit
+				limit,
+				type
 			} = await RestQueryConstructor({
 				model: 'filingsByCountyMonth',
 				req
@@ -31,7 +33,17 @@ module.exports = {
 							.select(deselectString)
 							.lean();
 
-				return res.status(200).json(data);
+				if (type === 'csv' && data[0]) {
+					const fileName = `atlanta_region_eviction_tracker_county-weekly_${Date.now()}.csv`;
+					const csvStr = await ArrayToCsvString({
+						array: data,
+						model: 'filingsByCountyWeek'
+					});
+
+					return res.status(200).attachment(fileName).send(csvStr);
+				} else {
+					return res.status(200).json(data);
+				}
 			} else {
 				return res.status(422).json(errMessage);
 			}
