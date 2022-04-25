@@ -18,29 +18,11 @@ module.exports = {
 			});
 
 			if (isAdminApiKey) {
-				const obj = { apiKey: await createHex() };
+				// Generate apiKey and add to request body
+				const bodyObj = { ...req.body, apiKey: await createHex() };
+				const newApiKeyDoc = await db.apiKey.create(bodyObj);
 
-				if (req.body.admin) {
-					obj.admin = true;
-					obj.global = true;
-				} else if (req.body.global) {
-					obj.admin = false;
-					obj.global = true;
-				} else {
-					const defaultPermissionsObj = {
-						counties: ['063', '067', '089', '121', '135']
-					};
-
-					obj.admin = false;
-					obj.global = false;
-					obj.permissions = req.body.permissions
-						? req.body.permissions
-						: defaultPermissionsObj;
-				}
-
-				const newApiKeyDoc = await db.apiKey.create(obj);
-
-				res.status(200).json(newApiKeyDoc);
+				return res.status(200).json(newApiKeyDoc);
 			} else {
 				return res
 					.status(401)
@@ -49,7 +31,7 @@ module.exports = {
 					);
 			}
 		} catch (err) {
-			// console.log(err);
+			console.log(err);
 			if (err.code === 11000 && err.keyPattern.apiKey) {
 				return res
 					.status(400)

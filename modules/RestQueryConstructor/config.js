@@ -3,38 +3,38 @@ module.exports = {
 		cases: {
 			authenticate: true,
 			queryableFields: [
-				{ field: '_id', protected: true },
-				{ field: 'fileDate', protected: false },
-				{ field: 'answer', protected: false },
-				{ field: 'latitude', protected: false },
-				{ field: 'longitude', protected: false },
-				{ field: 'services', protected: false },
-				{ field: 'dismiss', protected: false },
-				{ field: 'defaultJudgment', protected: false },
-				{ field: 'judgment', protected: false },
-				{ field: 'answerDate', protected: false },
-				{ field: 'servicesDate', protected: false },
-				{ field: 'dismissDate', protected: false },
-				{ field: 'defaultJudgmentDate', protected: false },
-				{ field: 'judgmentDate', protected: false },
-				{ field: 'tractID', protected: false },
-				{ field: 'blockGroupID', protected: false },
-				{ field: 'id', protected: true },
-				{ field: 'streetAddress', protected: false },
-				{ field: 'city', protected: false },
-				{ field: 'zip', protected: false },
-				{ field: 'county', protected: false },
-				{ field: 'geometry', protected: false },
-				{ field: 'caseID', protected: true },
-				{ field: 'plaintiff', protected: true },
-				{ field: 'defendantName1', protected: true },
-				{ field: 'defendantName2', protected: true },
-				{ field: 'attorney', protected: true },
-				{ field: 'judgmentType', protected: false },
-				{ field: 'judgmentFor', protected: false },
-				{ field: 'caseStatus', protected: false },
-				{ field: 'address', protected: false },
-				{ field: 'year', protected: false }
+				'_id',
+				'fileDate',
+				'answer',
+				'latitude',
+				'longitude',
+				'services',
+				'dismiss',
+				'defaultJudgment',
+				'judgment',
+				'answerDate',
+				'servicesDate',
+				'dismissDate',
+				'defaultJudgmentDate',
+				'judgmentDate',
+				'tractID',
+				'blockGroupID',
+				'id',
+				'streetAddress',
+				'city',
+				'zip',
+				'county',
+				'geometry',
+				'caseID',
+				'plaintiff',
+				'defendantName1',
+				'defendantName2',
+				'attorney',
+				'judgmentType',
+				'judgmentFor',
+				'caseStatus',
+				'address',
+				'year'
 			],
 			globalDeselectFields: [
 				'answerDateISO',
@@ -46,71 +46,32 @@ module.exports = {
 				'__v'
 			],
 			csvDeselectFields: ['geometry', 'events'],
-			singleQueryFields: ['year'],
-			forcedFields: [
-				{
-					key: 'county',
-					text: 'county, tractID, blockGroupID, city, or zip',
-					altFields: ['tractID', 'city', 'zip', 'blockGroupID']
-				},
-				{ key: 'fileDate', text: 'fileDate or year', altFields: ['year'] }
-			],
-			overrideQueryRulesFields: [
-				'_id',
-				'id',
-				'geometry',
-				'blockGroupID',
-				'caseID',
-				'streetAddress',
-				'address'
-			],
-			dateRangeQueryLimit: { ms: 31556952000, text: '1 year' }, // 6 months: 15778476000, 1 year: 31556952000
 			filingDate: { field: 'fileDate', iso: 'fileDateISO' },
 			yearQueryField: 'year',
 			countyField: 'county'
 		},
 		filingsByTractDaily: {
 			authenticate: false,
-			queryableFields: [
-				{ field: '_id', protected: false },
-				{ field: 'FilingDate', protected: false },
-				{ field: 'TractID', protected: false },
-				{ field: 'CountyID', protected: false },
-				{ field: 'Year', protected: false }
-			],
+			queryableFields: ['_id', 'FilingDate', 'TractID', 'CountyID', 'Year'],
 			filingDate: { field: 'FilingDate', iso: 'FilingDateISO' },
 			yearQueryField: 'Year',
 			globalDeselectFields: ['FilingDateISO', '__v']
 		},
 		filingsByTractMonth: {
 			authenticate: false,
-			queryableFields: [
-				{ field: '_id', protected: false },
-				{ field: 'TractID', protected: false },
-				{ field: 'CountyID', protected: false }
-			],
+			queryableFields: ['_id', 'TractID', 'CountyID'],
 			globalDeselectFields: ['__v']
 		},
 		filingsByCountyMonth: {
 			authenticate: false,
-			queryableFields: [
-				{ field: '_id', protected: false },
-				{ field: 'FilingMonth', protected: false },
-				{ field: 'CountyID', protected: false },
-				{ field: 'Year', protected: false }
-			],
+			queryableFields: ['_id', 'FilingMonth', 'CountyID', 'Year'],
 			filingDate: { field: 'FilingMonth', iso: 'FilingMonthISO' },
 			globalDeselectFields: ['FilingMonthISO', '__v'],
 			yearQueryField: 'Year'
 		},
 		filingsByCountyWeek: {
 			authenticate: false,
-			queryableFields: [
-				{ field: '_id', protected: false },
-				{ field: 'FilingWeek', protected: false },
-				{ field: 'CountyID', protected: false },
-				{ field: 'Year', protected: false }
-			],
+			queryableFields: ['_id', 'FilingWeek', 'CountyID', 'Year'],
 			filingDate: { field: 'FilingWeek', iso: 'FilingWeekISO' },
 			globalDeselectFields: ['FilingWeekISO', '__v'],
 			yearQueryField: 'Year'
@@ -118,16 +79,16 @@ module.exports = {
 		buildings: {
 			authenticate: false,
 			queryableFields: [
-				{ field: '_id', protected: false },
-				{ field: 'street', protected: false },
-				{ field: 'latitude', protected: false },
-				{ field: 'longitude', protected: false },
-				{ field: 'county', protected: false },
-				{ field: 'geometry', protected: false },
-				{ field: 'tractid', protected: false },
-				{ field: 'blockgroupid', protected: false },
-				{ field: 'city', protected: false },
-				{ field: 'zip', protected: false }
+				'_id',
+				'street',
+				'latitude',
+				'longitude',
+				'county',
+				'geometry',
+				'tractid',
+				'blockgroupid',
+				'city',
+				'zip'
 			],
 			globalDeselectFields: ['__v'],
 			csvDeselectFields: ['geometry', 'filings', 'monthlyfilings']
@@ -162,14 +123,15 @@ module.exports = {
 			unauthorizedCounty: countyArr =>
 				`Error: Unauthorized county request. Counties you can make requests for: ${countyArr.join(
 					', '
-				)}`
+				)}`,
+			unauthorizedQuery: (key, permittedVal) =>
+				`Error: Unauthorized ${key} query. Your API key only permits ${permittedVal} to be requested. Please edit your ${key} query to be within the permitted value. Optionally, you may leave a ${key} parameter off of your request and the return will only contain documents you have access to.`
 		},
 		dates: {
 			dateAndYear:
 				'Error: Cannot query both a single date/date range and a year. Please choose one or the other.',
 			multipleDateRanges: 'Error: Cannot query multiple date ranges.',
-			singleDateAndRange:
-				'Error: Cannot query a date range and a single date. Please choose one or the other.',
+			rangeOrMultipleDates: 'Error: Please query a range or multiple dates.',
 			noDateQueryType: 'Error: Query type case not met.',
 			invalidRange: limit =>
 				`Error: Date range queries for this API are limited to ${limit}`,

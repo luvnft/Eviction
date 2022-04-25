@@ -1,41 +1,68 @@
-# Eviction Tracker API
+<h1> Eviction Tracker API </h1>
 
-Based on the GET principle, the Eviction Tracker API endpoints return JSON eviction data on cases, buildings, filings by tract daily, filings by tract monthly, filings by county weekly and filings by county monthly. The API provides a set of endpoints, each with it's own path.
+<p>Based on the GET principle, the Eviction Tracker API endpoints return JSON eviction data on cases, buildings, filings by tract daily, filings by tract monthly, filings by county weekly and filings by county monthly. The API provides a set of endpoints, each with it's own path.</p>
 
-## Base URL
+<h2>Base URL</h2>
 
-`https://metroatlhousing.org/atlanta-region-eviction-tracker/rest`
+<p><code>https://metroatlhousing.org/atlanta-region-eviction-tracker/rest</code></p>
 
-## Endpoints
+<h2>Endpoints</h2>
 
-### `/cases`
+<h3><code>/cases</code></h3>
 
-GET case level data for the metro Atlanta area.
+<p>GET case level data for the metro Atlanta area</p>
 
-### API call
+<h3>API call</h3>
 
-```
-https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}&county={county}&fileDate={fileDate}
-```
+<p><code>
+https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}</code></p>
 
-<strong>Parameters</strong>
-
----
+<h4><strong>Parameters</strong></h4>
 
 <table>
+<tr></tr>
 <tr>
 <td>apiKey</td>
 <td>Required</td>
 <td>Your unique API Key. If you do not have an API key please visit the <a href="#request-api-key">Request API Key section below.</a></td>
 </tr>
 <tr>
+<td>fileDate</td>
+<td>Required*</td>
+<td>A specific date or range of dates in the MM/DD/YYYY format (e.g., fileDate=01/01/2022). <strong>Date ranges</strong> need to begin with a start date, followed by a "-", and end with the end date (e.g., fileDate=01/01/2022-01/31/2022). Most API keys <strong>require</strong> a fileDate parameter to receive a response unless your API key permits global access or a year parameter is being used.</td>
+</tr>
+<tr>
 <td>county</td>
+<td>Required*</td>
+<td>The last three digits of a county FIPS code (e.g., county=121 will query Fulton County). Most API keys <strong>require</strong> a county code parameter to receive a response unless your API key permits global access or a more specific parameter is added to the call (e.g.: city, zip, tractID or blockGroupID).</td>
+</tr>
+<tr>
+<td>year</td>
 <td>Optional</td>
-<td>County code. Most API keys <strong>require</strong> a county code to be queried to receive a response. Though there are certain permissions that allow a county code to be left off.</td>
+<td>A specific year in the YYYY format (e.g., year=2022). Cannot be combined with a dateRange parameter. A year parameter will be <strong>required</strong> if you do not have global access or you are not using a dateRange parameter in your query.</td>
+</tr>
+<tr>
+<td>city</td>
+<td>Optional</td>
+<td>A specific city in all lowercase characters (e.g., city=atlanta).</td>
+</tr>
+<tr>
+<td>zip</td>
+<td>Optional</td>
+<td>A specific zip code.</td>
+</tr>
+<tr>
+<td>tractID</td>
+<td>Optional</td>
+<td>A specific census tract ID.</td>
+</tr>
+<tr>
+<td>blockGroupID</td>
+<td>Optional</td>
+<td>A specific census block group ID.</td>
 </tr>
 </table>
-
----
+<p>* API keys with global access do not require this parameter</p>
 
 <!-- ### Building a Query
 

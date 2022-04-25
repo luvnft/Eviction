@@ -1,3 +1,4 @@
+const moment = require('moment');
 const db = require('../models');
 const RestQueryConstructor = require('../modules/RestQueryConstructor');
 const ArrayToCsvString = require('../modules/ArrayToCsvString');
@@ -13,7 +14,8 @@ module.exports = {
 				limit,
 				deselectString,
 				sortString,
-				type
+				type,
+				apiKeyObj
 			} = await RestQueryConstructor({
 				model: 'cases',
 				req
@@ -33,8 +35,23 @@ module.exports = {
 							.select(deselectString)
 							.lean();
 
+				const todaysDate = moment().format('MM/DD/YYYY');
+
+				// Update ApiKey's history object
+				if (apiKeyObj.history[todaysDate]) {
+					apiKeyObj.history[todaysDate] += 1;
+				} else {
+					apiKeyObj.history[todaysDate] = 1;
+				}
+
+				await db.apiKey.findOneAndUpdate(
+					{ _id: apiKeyObj.id },
+					{ history: apiKeyObj.history }
+				);
+
 				if (type === 'csv' && data[0]) {
-					const fileName = `atlanta_region_eviction_tracker_cases_${Date.now()}.csv`;
+					const fileName = `arc_eviction_tracker_cases_${todaysDate}-${apiKeyObj.history[todaysDate]}.csv`;
+					console.log(fileName);
 					const csvStr = await ArrayToCsvString({
 						array: data,
 						model: 'cases'

@@ -1,107 +1,217 @@
-const authArr = JSON.parse(process.env.API_KEY_ARR);
+const moment = require('moment');
+// const authArr = JSON.parse(process.env.API_KEY_ARR);
 const db = require('../../models');
 const { auth, verify, dates } = require('./config').errStrings;
 
+// All dates in objects are already a moment.js 'valueOf()' value
+const verifyDateQuery = ({ permissions, requested }) => {
+	const result = { isVerified: false, errMessage: '' };
+
+	const permissionDateValues = permissions.value
+		.split('-')
+		.map(item => moment(item, 'MM/DD/YYYY').valueOf());
+
+	if (typeof requested.value === 'string') {
+		const reqDateArr = requested.value.split('-');
+
+		switch (`${permissions.type}-${requested.type}`) {
+			case 'year-year':
+				if (permissions.value === requested.value) {
+					result.isVerified = true;
+				}
+				break;
+			case 'year-date':
+				if (
+					reqDateArr
+						.map(item => item.split('/')[2])
+						.every(item => item === permissions.value)
+				) {
+					result.isVerified = true;
+				}
+				break;
+			case 'date-date':
+				const reqDateValues = reqDateArr.map(item =>
+					moment(item, 'MM/DD/YYYY').valueOf()
+				);
+
+				if (
+					// both are ranges & request is within permission range
+					(permissionDateValues.length === 2 &&
+						reqDateValues.length === 2 &&
+						permissionDateValues[0] <= reqDateValues[0] &&
+						permissionDateValues[1] >= reqDateValues[1]) ||
+					// range permission / single date query & request is within permission
+					(permissionDateValues.length === 2 &&
+						reqDateValues.length === 1 &&
+						permissionDateValues[0] <= reqDateValues[0] &&
+						permissionDateValues[1] >= reqDateValues[0]) ||
+					// both are single date & they match
+					(permissionDateValues.length === 1 &&
+						reqDateValues.length === 1 &&
+						permissionDateValues[0] === reqDateValues[0])
+				) {
+					result.isVerified = true;
+				}
+			case 'date-year':
+				if (
+					permissions.value ===
+					`01/01/${requested.value}-12/31/${requested.value}`
+				) {
+					result.isVerified = true;
+				}
+			default:
+				break;
+		}
+	} else {
+		// request is an array of dates
+		if (
+			requested.value
+				.map(item => item.split('-'))
+				.every(item => item.length === 1)
+		) {
+			switch (`${`${permissions.type}-${requested.type}`}`) {
+				case 'year-date':
+					console.log(requested.value);
+					if (
+						requested.value.every(
+							item => item.split('/')[2] === permissions.value
+						)
+					) {
+						result.isVerified = true;
+					}
+
+					break;
+				case 'date-date':
+					if (
+						permissionDateValues.length === 2 &&
+						requested.value
+							.map(item => moment(item, 'MM/DD/YYYY').valueOf())
+							.every(
+								item =>
+									item >= permissionDateValues[0] &&
+									item <= permissionDateValues[1]
+							)
+					) {
+						result.isVerified = true;
+					}
+
+				default:
+					break;
+			}
+		} else {
+			result.errMessage = dates.rangeOrMultipleDates;
+			return result;
+		}
+	}
+
+	if (!result.isVerified) {
+		result.errMessage = verify.unauthorizedQuery(
+			requested.key,
+			permissions.value
+		);
+	}
+
+	return result;
+};
+
+const verifyNonDateQuery = ({ key, queryVal, permissionVal }) => {
+	const result = { isVerified: false, errMessage: '' };
+	if (
+		(typeof queryVal === 'string' &&
+			typeof permissionVal === 'string' &&
+			queryVal === permissionVal) || // string values match
+		(typeof queryVal === 'string' &&
+			typeof permissionVal === 'object' &&
+			permissionVal.includes(queryVal)) || // permission array includes queried value
+		(typeof queryVal === 'object' &&
+			typeof permissionVal === 'object' &&
+			queryVal.every(item => permissionVal.includes(item))) // permission array contains all items in query array
+	) {
+		result.isVerified = true;
+	} else {
+		result.errMessage = verify.unauthorizedQuery(key, permissionVal);
+	}
+
+	return result;
+};
+
 const verifyQuery = (queryObj, queryConfig) => {
-	const {
-		singleQueryFields,
-		forcedFields,
-		overrideQueryRulesFields,
-		permissions,
-		countyField
-	} = queryConfig;
+	const { yearQueryField, filingDate, apiKey, countyField } = queryConfig;
+	const permissionsQuery = apiKey.permissions.query;
 
 	const returnObj = {
 		verified: true,
 		verifyMessage: ''
 	};
 
-	const verifyObj = {
-		numForcedQueries: forcedFields.length || 0,
-		numForcedQueriesMet: 0,
-		overrideQueryRules: false,
-		countyQueryMet: false,
-		singleQueriesMet: false
-	};
-
 	for (const [key, val] of Object.entries(queryObj)) {
-		if (val) {
-			if (key === countyField) {
-				if (typeof val !== 'object') {
-					verifyObj.countyQueryMet = permissions.counties.includes(val);
-				} else {
-					for (const countyId of val) {
-						const countyPermitted = permissions.counties.includes(countyId);
+		if (key === yearQueryField || key === filingDate.field) {
+			if (queryObj[yearQueryField] && queryObj[filingDate.field]) {
+				returnObj.verified = false;
+				returnObj.verifyMessage = dates.dateAndYear;
+				return returnObj;
+			}
 
-						if (countyPermitted) {
-							verifyObj.countyQueryMet = true;
-						} else {
-							verifyObj.countyQueryMet = false;
-							break;
-						}
-					}
+			if (
+				permissionsQuery[yearQueryField] ||
+				permissionsQuery[filingDate.field]
+			) {
+				const verifyDatesConfig = {};
+
+				verifyDatesConfig.permissions = permissionsQuery[yearQueryField]
+					? {
+							type: 'year',
+							key: yearQueryField,
+							value: permissionsQuery[yearQueryField]
+					  }
+					: {
+							type: 'date',
+							key: filingDate.field,
+							value: permissionsQuery[filingDate.field]
+					  };
+
+				verifyDatesConfig.requested =
+					key === yearQueryField
+						? {
+								type: 'year',
+								key: yearQueryField
+						  }
+						: { type: 'date', key: filingDate.field };
+
+				verifyDatesConfig.requested.value = val;
+
+				const { isVerified, errMessage } = verifyDateQuery(verifyDatesConfig);
+
+				if (!isVerified) {
+					returnObj.verified = false;
+					returnObj.verifyMessage = errMessage;
+
+					return returnObj;
 				}
 			}
+		} else {
+			if (permissionsQuery[key]) {
+				const { isVerified, errMessage: nonDateErrMsg } = verifyNonDateQuery({
+					queryVal: val,
+					permissionVal: permissionsQuery[key],
+					key
+				});
 
-			// Ensures that queries on single query fields are singular (i.e., county=cobb instead of county=cobb&county=fulton)
-			if (singleQueryFields && singleQueryFields.includes(key)) {
-				verifyObj.singleQueriesMet = typeof val !== 'object';
-			} else {
-				verifyObj.singleQueriesMet = true;
-			}
+				if (!isVerified) {
+					returnObj.verified = false;
+					returnObj.verifyMessage = nonDateErrMsg;
 
-			// Override fields are verify specific to a record and will override any forced query rules (i.e., _id)
-			if (overrideQueryRulesFields) {
-				const containsOverrideQueryRulesField = overrideQueryRulesFields.some(
-					field => key === field
-				);
-
-				if (containsOverrideQueryRulesField) {
-					verifyObj.overrideQueryRules = true;
+					return returnObj;
 				}
-			}
-
-			// Forced Fields are required in a query (i.e., Filing date and county)
-			if (forcedFields) {
-				const containsForcedFieldOrAltField = forcedFields.some(
-					field => field.key === key || field.altFields.includes(key)
-				);
-
-				if (containsForcedFieldOrAltField) verifyObj.numForcedQueriesMet += 1;
 			}
 		}
-	}
-
-	if (!verifyObj.singleQueriesMet) {
-		returnObj.verified = false;
-		returnObj.verifyMessage = verify.singleQueriesNotMet(singleQueryFields);
-	}
-
-	if (
-		verifyObj.numForcedQueriesMet < verifyObj.numForcedQueries &&
-		!verifyObj.overrideQueryRules
-	) {
-		const forcedQueriesErrStr = verify.forcedQueriesNotMet(forcedFields);
-		const concatErrStr = returnObj.verifyMessage
-			? `${returnObj.verifyMessage} / ${forcedQueriesErrStr}`
-			: forcedQueriesErrStr;
-
-		returnObj.verified = false;
-		returnObj.verifyMessage = concatErrStr;
-	}
-
-	if (!verifyObj.countyQueryMet) {
-		returnObj.verified = false;
-		returnObj.verifyMessage = verify.unauthorizedCounty(
-			permissions.counties || []
-		);
 	}
 
 	return returnObj;
 };
 
-const handleDateQuery = (queryObj, queryConfig) => {
-	const { filingDate, yearQueryField, dateRangeQueryLimit, permissions } =
+const constructDateQuery = (queryObj, queryConfig) => {
+	const { filingDate, yearQueryField, dateRangeQueryLimit, apiKey } =
 		queryConfig;
 
 	const returnObj = {
@@ -148,20 +258,11 @@ const handleDateQuery = (queryObj, queryConfig) => {
 			case 'range':
 				const [startDate, endDate] = dateQueryConfigObj.value.split('-');
 
-				const isWithinRangeLimit = dateRangeQueryLimit
-					? new Date(endDate).getTime() - new Date(startDate).getTime() <=
-					  dateRangeQueryLimit.ms
-					: true;
-
-				if (permissions.global || isWithinRangeLimit) {
-					returnObj['filingDateQuery'][filingDate.iso] = {
-						$gte: startDate,
-						$lte: endDate
-					};
-					returnObj.dateConstructed = true;
-				} else {
-					returnObj.dateMessage = dates.invalidRange(dateRangeQueryLimit.text);
-				}
+				returnObj['filingDateQuery'][filingDate.iso] = {
+					$gte: startDate,
+					$lte: endDate
+				};
+				returnObj.dateConstructed = true;
 
 				break;
 
@@ -187,115 +288,126 @@ const handleDateQuery = (queryObj, queryConfig) => {
 };
 
 const constructQuery = (queryObj, queryConfig) => {
-	const {
-		queryableFields,
-		filingDate,
-		yearQueryField,
-		countyField,
-		permissions
-	} = queryConfig;
+	const { queryableFields, filingDate, yearQueryField, countyField, apiKey } =
+		queryConfig;
 
 	const returnObj = {
 		isConstructed: false,
 		query: {},
-		queryMessage: '',
-		constructedQueryObj: {}
+		queryMessage: ''
 	};
 
-	const filingDateField = filingDate ? filingDate.field : '';
-
+	// Temp query object that will be used to configure query correctly before sending out
 	const constructedQueryObj = {};
 
-	if (!permissions.global) {
-		for (const { field, protected } of queryableFields) {
-			if (queryObj[field] && !protected) {
-				// non global so only allowing unprotected fields to be added to query
-				constructedQueryObj[field] = queryObj[field];
-
-				if (
-					field !== yearQueryField &&
-					field !== filingDateField &&
-					!protected
-				) {
-					returnObj['query'][field] = queryObj[field];
-				}
+	for (const field of queryableFields) {
+		if (queryObj[field]) {
+			// Include everything except date queries in the returned query
+			if (field !== yearQueryField && field !== filingDate.field) {
+				returnObj['query'][field] = queryObj[field];
 			}
+
+			// constructed query obj will be used to further evaluate requests
+			constructedQueryObj[field] = queryObj[field];
 		}
-
-		if (!Object.keys(constructedQueryObj)) {
-			returnObj.queryMessage = verify.noQuery(queryableFields[0]);
-		} else if (!constructedQueryObj[countyField]) {
-			returnObj.queryMessage = verify.noCounty(
-				permissions.counties ? permissions.counties : []
-			);
-		} else {
-			const { verified, verifyMessage } = verifyQuery(
-				constructedQueryObj,
-				queryConfig
-			);
-
-			returnObj.isConstructed = verified;
-			returnObj.queryMessage = verifyMessage;
-		}
-	} else {
-		// const filingDateField = filingDate ? filingDateField : '';
-		for (const { field } of queryableFields) {
-			if (queryObj[field]) {
-				constructedQueryObj[field] = queryObj[field];
-
-				if (field !== yearQueryField && field !== filingDateField) {
-					returnObj['query'][field] = queryObj[field];
-				}
-			}
-		}
-
-		returnObj.isConstructed = true;
 	}
 
-	if (
-		returnObj.isConstructed &&
-		(constructedQueryObj[filingDateField] ||
-			constructedQueryObj[yearQueryField])
-	) {
-		const { filingDateQuery, dateMessage, dateConstructed } = handleDateQuery(
+	const permissionsQueryArr = Object.entries(apiKey.permissions.query);
+
+	if (!apiKey.global && permissionsQueryArr[0]) {
+		// verifies requested query by comparing to permissions query
+		const { verified, verifyMessage } = verifyQuery(
 			constructedQueryObj,
 			queryConfig
 		);
+
+		returnObj.isConstructed = verified;
+		returnObj.queryMessage = verifyMessage;
+
+		if (verified) {
+			for (const [key, val] of permissionsQueryArr) {
+				// add all permissions to final query except dates and geometry
+				if (
+					!returnObj.query[key] &&
+					key !== filingDate.field &&
+					key !== yearQueryField &&
+					key !== 'geometry'
+				) {
+					returnObj.query[key] = val;
+				}
+
+				// add all permissions to constructedQueryObj except dates
+				if (
+					!constructedQueryObj[key] &&
+					key !== filingDate.field &&
+					key !== yearQueryField
+				) {
+					constructedQueryObj[key] = val;
+				}
+
+				// add date permission to constructedQueryObj if none exist or an alternative date query doesn't exist
+				if (
+					(key === filingDate.field &&
+						!constructedQueryObj[key] &&
+						!constructedQueryObj[yearQueryField]) ||
+					(key === yearQueryField &&
+						!constructedQueryObj[yearQueryField] &&
+						!constructedQueryObj[filingDate.field])
+				) {
+					constructedQueryObj[key] = val;
+				}
+			}
+		}
+	} else {
+		returnObj.isConstructed = true;
+	}
+
+	// handle date query
+	if (
+		returnObj.isConstructed &&
+		(constructedQueryObj[filingDate.field] ||
+			constructedQueryObj[yearQueryField])
+	) {
+		const { filingDateQuery, dateMessage, dateConstructed } =
+			constructDateQuery(constructedQueryObj, queryConfig);
 
 		returnObj.query = { ...returnObj.query, ...filingDateQuery };
 		returnObj.queryMessage = dateMessage;
 		returnObj.isConstructed = dateConstructed;
 	}
 
+	// handle geometry query
+	if (returnObj.isConstructed && constructedQueryObj.geometry) {
+		returnObj.query.geometry = {
+			$geoWithin: { $geometry: constructedQueryObj.geometry }
+		};
+	}
+
 	return returnObj;
 };
 
 const authenticateRequest = async req => {
-	const obj = { isAuthenticated: false, authMessage: '' };
+	const returnObj = { isAuthenticated: false, apiKey: {}, authMessage: '' };
 
 	if (req.headers.authorization) {
-		obj.authMessage = auth.tokenAttempt;
+		returnObj.authMessage = auth.tokenAttempt;
 	} else if (req.query.apiKey) {
 		const apiKeyDoc = await db.apiKey
 			.findOne({ apiKey: req.query.apiKey })
-			.select('global permissions')
+			.select('permissions global history')
 			.lean();
 
 		if (apiKeyDoc) {
-			obj.isAuthenticated = true;
-
-			if (apiKeyDoc.global || apiKeyDoc.admin) {
-				obj.permissions = { global: true };
-			} else {
-				obj.permissions = apiKeyDoc.permissions;
-			}
+			returnObj.isAuthenticated = true;
+			returnObj.apiKey = { ...apiKeyDoc };
 		} else {
-			obj.authMessage = auth.invalidApiKey;
+			returnObj.authMessage = auth.invalidApiKey;
 		}
 	} else {
-		obj.authMessage = auth.noApiKey;
+		returnObj.authMessage = auth.noApiKey;
 	}
-	return obj;
+
+	return returnObj;
 };
 
 module.exports = { authenticateRequest, constructQuery };

@@ -46,6 +46,7 @@ const objToCsvRow = async ({ dbObj, flattenConfig, csvHeaders, fields }) => {
 
 const ArrayToCsvString = async ({ array, model }) => {
 	const modelConfig = config[model];
+	// setting fields from first item in array ensures that only selected fields will be used in CSV
 	const fields = Object.keys(array[0]);
 
 	const csvObj = {

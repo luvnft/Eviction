@@ -10,12 +10,10 @@ const RestQueryConstructor = async ({ req, model }) => {
 
 	const returnObj = {
 		authorized: false,
-		authenticated: !queryConfig.authenticate,
-		permissions: {},
+		authenticated: false,
 		query: {},
 		limit: Number(req.query.limit) || 0,
 		errMessage: '',
-		// Fields that will be left off of the return
 		deselectString: '',
 		sortString:
 			req.query.sort && queryConfig.filingDate
@@ -25,40 +23,32 @@ const RestQueryConstructor = async ({ req, model }) => {
 					? `-${queryConfig.filingDate.iso}`
 					: ''
 				: '',
-		type: req.query.type && req.query.type === 'csv' ? 'csv' : 'json'
+		type: req.query.type && req.query.type === 'csv' ? 'csv' : 'json',
+		apiKeyObj: {}
 	};
 
-	if (!returnObj.authenticated) {
-		const { isAuthenticated, authMessage, permissions } =
-			await authenticateRequest(req);
-
-		queryConfig.permissions = permissions;
-
-		if (!permissions.global) {
-			// no global permissions so protected fields will be added to deselect string
-			const protectedFieldsDeselectArr = queryConfig.queryableFields
-				? queryConfig.queryableFields
-						.filter(item => item.protected)
-						.map(({ field }) => field)
-				: [];
-
-			if (protectedFieldsDeselectArr[0]) {
-				deselectArray.push(...protectedFieldsDeselectArr);
-			}
-		}
-
+	if (queryConfig.authenticate) {
+		const { isAuthenticated, authMessage, apiKey } = await authenticateRequest(
+			req
+		);
 		returnObj.authenticated = isAuthenticated;
 		returnObj.errMessage = authMessage;
+		returnObj.apiKeyObj.id = apiKey._id;
+		returnObj.apiKeyObj.history = apiKey.history;
 
-		if (
-			(permissions.limit && returnObj.limit > permissions.limit) ||
-			(permissions.limit && returnObj.limit === 0)
-		) {
-			returnObj.limit = permissions.limit;
+		queryConfig.apiKey = apiKey;
+		returnObj.apiKeyObj.id = apiKey._id;
+
+		if (!apiKey.global && apiKey.permissions.deselectedFields[0]) {
+			queryConfig.queryableFields = queryConfig.queryableFields.filter(
+				field => !apiKey.permissions.deselectedFields.includes(field)
+			);
+
+			deselectArray.push(...apiKey.permissions.deselectedFields);
 		}
 	} else {
 		returnObj.authenticated = true;
-		queryConfig.permissions = { global: true };
+		queryConfig.apiKey = { global: true };
 	}
 
 	if (returnObj.authenticated) {
@@ -76,6 +66,7 @@ const RestQueryConstructor = async ({ req, model }) => {
 		deselectArray.push(...queryConfig.csvDeselectFields);
 	}
 
+	// removes duplicates and creates a deselect string for mongoose
 	returnObj.deselectString = deselectArray[0]
 		? [...new Set(deselectArray)].map(item => `-${item}`).join(' ')
 		: '';

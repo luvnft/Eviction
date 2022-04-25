@@ -19,8 +19,8 @@ const morgan = require('morgan');
 // require('./config/passport');
 
 // Define middleware here
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(compression());
 app.use(cookieParser());
 app.use(morgan('dev'));
@@ -54,7 +54,9 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connect to the Mongo DB
 mongoose
-	.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+	.connect(MONGODB_URI, 
+		{ useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
+	)
 	.then(() => {
 		console.log('DB Connected');
 	})
