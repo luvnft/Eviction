@@ -2,40 +2,7 @@ module.exports = {
 	modelQueryConfig: {
 		cases: {
 			authenticate: true,
-			queryableFields: [
-				'_id',
-				'fileDate',
-				'answer',
-				'latitude',
-				'longitude',
-				'services',
-				'dismiss',
-				'defaultJudgment',
-				'judgment',
-				'answerDate',
-				'servicesDate',
-				'dismissDate',
-				'defaultJudgmentDate',
-				'judgmentDate',
-				'tractID',
-				'blockGroupID',
-				'id',
-				'streetAddress',
-				'city',
-				'zip',
-				'county',
-				'geometry',
-				'caseID',
-				'plaintiff',
-				'defendantName1',
-				'defendantName2',
-				'attorney',
-				'judgmentType',
-				'judgmentFor',
-				'caseStatus',
-				'address',
-				'year'
-			],
+			nonQueryFields: ['apiKey', 'limit', 'sort', 'type'],
 			globalDeselectFields: [
 				'answerDateISO',
 				'defaultJudgmentDateISO',
@@ -52,44 +19,33 @@ module.exports = {
 		},
 		filingsByTractDaily: {
 			authenticate: false,
-			queryableFields: ['_id', 'FilingDate', 'TractID', 'CountyID', 'Year'],
+			nonQueryFields: ['limit', 'sort', 'type'],
 			filingDate: { field: 'FilingDate', iso: 'FilingDateISO' },
 			yearQueryField: 'Year',
 			globalDeselectFields: ['FilingDateISO', '__v']
 		},
 		filingsByTractMonth: {
 			authenticate: false,
-			queryableFields: ['_id', 'TractID', 'CountyID'],
+			nonQueryFields: ['limit', 'sort', 'type'],
 			globalDeselectFields: ['__v']
 		},
 		filingsByCountyMonth: {
 			authenticate: false,
-			queryableFields: ['_id', 'FilingMonth', 'CountyID', 'Year'],
+			nonQueryFields: ['limit', 'sort', 'type'],
 			filingDate: { field: 'FilingMonth', iso: 'FilingMonthISO' },
 			globalDeselectFields: ['FilingMonthISO', '__v'],
 			yearQueryField: 'Year'
 		},
 		filingsByCountyWeek: {
 			authenticate: false,
-			queryableFields: ['_id', 'FilingWeek', 'CountyID', 'Year'],
+			nonQueryFields: ['limit', 'sort', 'type'],
 			filingDate: { field: 'FilingWeek', iso: 'FilingWeekISO' },
 			globalDeselectFields: ['FilingWeekISO', '__v'],
 			yearQueryField: 'Year'
 		},
 		buildings: {
 			authenticate: false,
-			queryableFields: [
-				'_id',
-				'street',
-				'latitude',
-				'longitude',
-				'county',
-				'geometry',
-				'tractid',
-				'blockgroupid',
-				'city',
-				'zip'
-			],
+			nonQueryFields: ['limit', 'sort', 'type'],
 			globalDeselectFields: ['__v'],
 			csvDeselectFields: ['geometry', 'filings', 'monthlyfilings']
 		}

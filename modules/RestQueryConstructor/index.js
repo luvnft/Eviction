@@ -28,6 +28,7 @@ const RestQueryConstructor = async ({ req, model }) => {
 	};
 
 	if (queryConfig.authenticate) {
+		// Authenticate API Key
 		const { isAuthenticated, authMessage, apiKey } = await authenticateRequest(
 			req
 		);
@@ -40,10 +41,8 @@ const RestQueryConstructor = async ({ req, model }) => {
 		returnObj.apiKeyObj.id = apiKey._id;
 
 		if (!apiKey.global && apiKey.permissions.deselectedFields[0]) {
-			queryConfig.queryableFields = queryConfig.queryableFields.filter(
-				field => !apiKey.permissions.deselectedFields.includes(field)
-			);
-
+			// Add deselected fields to nonQueryFields
+			queryConfig.nonQueryFields.push(...apiKey.permissions.deselectedFields);
 			deselectArray.push(...apiKey.permissions.deselectedFields);
 		}
 	} else {

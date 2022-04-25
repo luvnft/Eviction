@@ -51,7 +51,6 @@ module.exports = {
 
 				if (type === 'csv' && data[0]) {
 					const fileName = `arc_eviction_tracker_cases_${todaysDate}-${apiKeyObj.history[todaysDate]}.csv`;
-					console.log(fileName);
 					const csvStr = await ArrayToCsvString({
 						array: data,
 						model: 'cases'

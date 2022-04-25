@@ -136,7 +136,7 @@ const verifyNonDateQuery = ({ key, queryVal, permissionVal }) => {
 };
 
 const verifyQuery = (queryObj, queryConfig) => {
-	const { yearQueryField, filingDate, apiKey, countyField } = queryConfig;
+	const { yearQueryField, filingDate, apiKey } = queryConfig;
 	const permissionsQuery = apiKey.permissions.query;
 
 	const returnObj = {
@@ -211,8 +211,7 @@ const verifyQuery = (queryObj, queryConfig) => {
 };
 
 const constructDateQuery = (queryObj, queryConfig) => {
-	const { filingDate, yearQueryField, dateRangeQueryLimit, apiKey } =
-		queryConfig;
+	const { filingDate, yearQueryField } = queryConfig;
 
 	const returnObj = {
 		filingDateQuery: {},
@@ -288,8 +287,7 @@ const constructDateQuery = (queryObj, queryConfig) => {
 };
 
 const constructQuery = (queryObj, queryConfig) => {
-	const { queryableFields, filingDate, yearQueryField, countyField, apiKey } =
-		queryConfig;
+	const { nonQueryFields, filingDate, yearQueryField, apiKey } = queryConfig;
 
 	const returnObj = {
 		isConstructed: false,
@@ -297,24 +295,30 @@ const constructQuery = (queryObj, queryConfig) => {
 		queryMessage: ''
 	};
 
+	const filingDateField = filingDate ? filingDate.field : '';
+
 	// Temp query object that will be used to configure query correctly before sending out
 	const constructedQueryObj = {};
 
-	for (const field of queryableFields) {
-		if (queryObj[field]) {
-			// Include everything except date queries in the returned query
-			if (field !== yearQueryField && field !== filingDate.field) {
-				returnObj['query'][field] = queryObj[field];
-			}
-
-			// constructed query obj will be used to further evaluate requests
-			constructedQueryObj[field] = queryObj[field];
+	for (const [key, val] of Object.entries(queryObj)) {
+		// Add fields except: date queries & non query fields to the returned query
+		if (
+			key !== yearQueryField &&
+			key !== filingDateField &&
+			!nonQueryFields.includes(key)
+		) {
+			returnObj['query'][key] = val;
 		}
+
+		// constructed query obj will include dates that will be evaluated later
+		constructedQueryObj[key] = val;
 	}
 
-	const permissionsQueryArr = Object.entries(apiKey.permissions.query);
+	const permissionsQueryArr =
+		apiKey && !apiKey.global ? Object.entries(apiKey.permissions.query) : [];
 
-	if (!apiKey.global && permissionsQueryArr[0]) {
+	if (permissionsQueryArr[0]) {
+		console.log('hit');
 		// verifies requested query by comparing to permissions query
 		const { verified, verifyMessage } = verifyQuery(
 			constructedQueryObj,
@@ -325,8 +329,8 @@ const constructQuery = (queryObj, queryConfig) => {
 		returnObj.queryMessage = verifyMessage;
 
 		if (verified) {
-			for (const [key, val] of permissionsQueryArr) {
-				// add all permissions to final query except dates and geometry
+			for (const [key, val] of Object.entries(apiKey.permissions.query)) {
+				// add all permissions to final query except: existing verified queries, dates and geometry
 				if (
 					!returnObj.query[key] &&
 					key !== filingDate.field &&
@@ -336,7 +340,7 @@ const constructQuery = (queryObj, queryConfig) => {
 					returnObj.query[key] = val;
 				}
 
-				// add all permissions to constructedQueryObj except dates
+				// add all permissions to constructedQueryObj except: existing verified queries and dates
 				if (
 					!constructedQueryObj[key] &&
 					key !== filingDate.field &&
@@ -365,7 +369,7 @@ const constructQuery = (queryObj, queryConfig) => {
 	// handle date query
 	if (
 		returnObj.isConstructed &&
-		(constructedQueryObj[filingDate.field] ||
+		(constructedQueryObj[filingDateField] ||
 			constructedQueryObj[yearQueryField])
 	) {
 		const { filingDateQuery, dateMessage, dateConstructed } =
