@@ -37,7 +37,7 @@ module.exports = {
 					const fileName = `atlanta_region_eviction_tracker_county-weekly_${Date.now()}.csv`;
 					const csvStr = await ArrayToCsvString({
 						array: data,
-						model: 'filingsByCountyWeek'
+						model: 'filingsByCountyMonth'
 					});
 
 					return res.status(200).attachment(fileName).send(csvStr);

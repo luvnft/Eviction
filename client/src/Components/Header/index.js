@@ -1,10 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Dropdown } from "semantic-ui-react";
 import "./style.css";
 
 const Header = (props) => {
   return (
     <div id="header">
+      {/* API Docs Link */}
+      <Link className="api-link" to="/api" aria-label="api-documentation">API</Link>
       <h1>ATLANTA REGION EVICTION TRACKER</h1>
       <div id="county-dropdown-container">
         {props.smallScreen ? (

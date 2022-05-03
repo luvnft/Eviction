@@ -71,7 +71,6 @@ const verifyDateQuery = ({ permissions, requested }) => {
 		) {
 			switch (`${`${permissions.type}-${requested.type}`}`) {
 				case 'year-date':
-					console.log(requested.value);
 					if (
 						requested.value.every(
 							item => item.split('/')[2] === permissions.value
@@ -318,7 +317,6 @@ const constructQuery = (queryObj, queryConfig) => {
 		apiKey && !apiKey.global ? Object.entries(apiKey.permissions.query) : [];
 
 	if (permissionsQueryArr[0]) {
-		console.log('hit');
 		// verifies requested query by comparing to permissions query
 		const { verified, verifyMessage } = verifyQuery(
 			constructedQueryObj,
