@@ -2,17 +2,22 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const CasesSchema = new Schema({
-	id: { type: String },
-	streetAddress: { type: String },
-	city: { type: String },
-	zip: { type: String },
-	fileDate: { type: String },
+	id: { type: String }, // legacy property
+  caseID: { type: String },
+  county: { type: String },
+  fileDate: { type: String },
 	fileDateISO: { type: Date },
+  caseStatus: { type: String },
+  events: [{ type: Object }],
+	plaintiff: { type: Object }, // flatten
+	defendantName1: { type: String },
+	defendantName2: { type: String },
+  attorney: { type: String },
+  street: { type: String }, //cast from streetAddress if not in data
+	city: { type: String }, // remove commas and / ga/i and numbers
+	zip: { type: String },
+  address: { type: String }, // concat `street, city, GA zip`
 	answer: { type: String },
-	county: { type: String },
-	latitude: { type: Number },
-	longitude: { type: Number },
-	geometry: { type: Object },
 	services: { type: String },
 	dismiss: { type: String },
 	defaultJudgment: { type: String },
@@ -27,19 +32,14 @@ const CasesSchema = new Schema({
 	defaultJudgmentDateISO: { type: Date },
 	judgmentDate: { type: String },
 	judgmentDateISO: { type: Date },
-	tractID: { type: String },
-	blockGroupID: { type: String },
-	caseID: { type: String },
-	events: [{ type: Object }],
-	caseStatus: { type: String },
-	plaintiff: { type: Object },
-	defendantName1: { type: String },
-	defendantName2: { type: String },
-	attorney: { type: String },
 	judgmentType: { type: String },
 	judgmentFor: { type: String },
 	judgmentComp: { type: String },
-	address: { type: String },
+  tractID: { type: String },
+	blockGroupID: { type: String },
+  latitude: { type: Number },
+	longitude: { type: Number },
+	geometry: { type: Object },
 	addedOn: { type: Date },
 	updatedOn: { type: Date, default: Date.now() }
 });
