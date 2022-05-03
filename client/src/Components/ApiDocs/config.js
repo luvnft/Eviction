@@ -17,69 +17,6 @@ const config = {
     baseURL: 'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest',
     endpointData: [
         {
-            title: 'Individual Cases',
-            endpoint: '/cases',
-            description: 'GET case level data for the metro Atlanta area',
-            apiCall: 'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}',
-            tableData: [
-                {
-                    param: 'apiKey',
-                    permission: 'Required',
-                    description: 'Your unique API Key. If you do not have an API key please visit the Request API Key section below.'
-                },
-                {
-                    param: 'fileDate',
-                    permission: 'Optional',
-                    description: 'A specific date, multiple dates or range of dates in the MM/DD/YYYY format (e.g., fileDate=01/01/2022, fileDate=01/01/2022&fileDate=02/01/2022 or fileDate=01/01/2022-01/31/2022).'
-                },
-                {
-                    param: 'year',
-                    permission: 'Optional',
-                    description: 'A specific year in the YYYY format (e.g., year=2022). Cannot be combined with a fileDate parameter or be a range of years.'
-                },
-                {
-                    param: 'county',
-                    permission: 'Optional',
-                    description: 'The last three digits of a county FIPS code (e.g., county=121 will query Fulton County)'
-                },
-                {
-                    param: 'tractID',
-                    permission: 'Optional',
-                    description: 'A specific census tract ID.'
-                },
-                {
-                    param: 'blockGroupID',
-                    permission: 'Optional',
-                    description: 'A specific census block group ID.'
-                },
-                {
-                    param: 'city, zip',
-                    permission: 'Optional',
-                    description: 'A specific value (e.g., city=atlanta).'
-                },
-                {
-                    param: 'longitude, latitude',
-                    permission: 'Optional',
-                    description: 'An exact latitude and/or longitude of a location.'
-                },
-                {
-                    param: 'caseStatus',
-                    permission: 'Optional',
-                    description: 'The status of a case (e.g., caseStatus=Open).'
-                },
-                {
-                    param: 'answer, services, judgment, defaultJudgment, dismiss',
-                    permission: 'Optional',
-                    description: 'A 1 or 0 that represents the status of the field (e.g., answer=1 or answer=0). 1 = true and 0 = false. If dismiss=1 this will mean the case has been dismissed.'
-                },
-                globalTableData.sort,
-                globalTableData.type
-            ],
-            sampleRequest: 'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}&fileDate={File Date}&county={County Code}',
-            requestKey: 'To request an API Key, please contact {a person} at {an email}.',
-            note: 'Unless provided global access, your API Key will come with preset permissions. These permissions will serve as a base query and not allow documents outside of the permissions to be queried. You may still narrow your search within your provided permissions by adding a query to your request.'
-        },
-        {
             title: 'Daily Filings By Census Tract',
             endpoint: '/tractdaily',
             description: 'GET daily eviction data by census tract.',
@@ -222,8 +159,69 @@ const config = {
             ],
             sampleRequest: 'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/buildings?city=atlanta'
         },
-
-
+        {
+          title: 'Individual Cases',
+          endpoint: '/cases',
+          description: 'GET case level data for the metro Atlanta area',
+          apiCall: 'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}',
+          tableData: [
+              {
+                  param: 'apiKey',
+                  permission: 'Required',
+                  description: 'Your unique API Key. If you do not have an API key please visit the Request API Key section below.'
+              },
+              {
+                  param: 'fileDate',
+                  permission: 'Optional',
+                  description: 'A specific date, multiple dates or range of dates in the MM/DD/YYYY format (e.g., fileDate=01/01/2022, fileDate=01/01/2022&fileDate=02/01/2022 or fileDate=01/01/2022-01/31/2022).'
+              },
+              {
+                  param: 'year',
+                  permission: 'Optional',
+                  description: 'A specific year in the YYYY format (e.g., year=2022). Cannot be combined with a fileDate parameter or be a range of years.'
+              },
+              {
+                  param: 'county',
+                  permission: 'Optional',
+                  description: 'The last three digits of a county FIPS code (e.g., county=121 will query Fulton County)'
+              },
+              {
+                  param: 'tractID',
+                  permission: 'Optional',
+                  description: 'A specific census tract ID.'
+              },
+              {
+                  param: 'blockGroupID',
+                  permission: 'Optional',
+                  description: 'A specific census block group ID.'
+              },
+              {
+                  param: 'city, zip',
+                  permission: 'Optional',
+                  description: 'A specific value (e.g., city=atlanta).'
+              },
+              {
+                  param: 'longitude, latitude',
+                  permission: 'Optional',
+                  description: 'An exact latitude and/or longitude of a location.'
+              },
+              {
+                  param: 'caseStatus',
+                  permission: 'Optional',
+                  description: 'The status of a case (e.g., caseStatus=Open).'
+              },
+              {
+                  param: 'answer, services, judgment, defaultJudgment, dismiss',
+                  permission: 'Optional',
+                  description: 'A 1 or 0 that represents the status of the field (e.g., answer=1 or answer=0). 1 = true and 0 = false. If dismiss=1 this will mean the case has been dismissed.'
+              },
+              globalTableData.sort,
+              globalTableData.type
+          ],
+          sampleRequest: 'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}&fileDate={File Date}&county={County Code}',
+          requestKey: 'To request an API Key, please contact {a person} at {an email}.',
+          note: 'Unless provided global access, your API Key will come with preset permissions. These permissions will serve as a base query and not allow documents outside of the permissions to be queried. You may still narrow your search within your provided permissions by adding a query to your request.'
+      }
     ]
 }
 
