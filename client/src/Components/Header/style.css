@@ -6,6 +6,11 @@
 
 .viz-tab > h3 {
   line-height: 5vh;
+  /* color: white; */
+}
+
+.viz-tab:hover > h3 {
+  color: white;
 }
 
 #header > h1 {

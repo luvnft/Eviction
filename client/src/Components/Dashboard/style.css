@@ -268,7 +268,7 @@ h5 {
 }
 
 .viz-tab {
-    background-color: lightgrey;
+    background-color: lightgray;
     height: 100%;
     line-height: 5vh;
     z-index: 99998;
@@ -538,6 +538,10 @@ h5 {
 
   #viz-toggle {
     height: 10vh;
+  }
+
+  #viz-toggle > h3{
+    color: white
   }
 
   .viz-tab > h3 {

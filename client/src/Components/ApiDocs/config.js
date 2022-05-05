@@ -270,8 +270,8 @@ const config = {
 			sampleRequest:
 				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}&fileDate={File Date}&county={County Code}',
 			requestKey:
-				'To request an API Key, please contact {a person} at {an email}.',
-			note: 'Unless provided global access, your API Key will come with preset permissions. These permissions will serve as a base query and not allow documents outside of the permissions to be queried. You may still narrow your search within your provided permissions by adding a query to your request.'
+				'To request an API Key, please contact Erik Woodworth at ewoodworth@atlantaregional.org.  Include "Eviction Data API Key Request" in the subject line and a brief explanation of your intended use(s) of the data in the body of the email.  All requests will require follow-up to provide additional details, and simply submitting a request does not insure a key will be granted.  Once your request has been vetted and approved, a Data Use Aggreement (DUA) will need to completed and signed before a key is issued.',
+			note: 'Unless provided global access, your API Key will come with preset permissions limiting accessible records and/or fields. These permissions will serve as a base query and not allow documents and fields outside of the permissions to be queried. You may still narrow your search within your provided permissions by adding a query to your request.'
 		}
 	]
 };
