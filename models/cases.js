@@ -16,7 +16,7 @@ const CasesSchema = new Schema({
 	defendantName1: { type: String },
 	defendantName2: { type: String },
 	attorney: { type: String },
-	street: { type: String }, //cast from streetAddress if not in data
+	street: { type: String },
 	city: { type: String }, // remove commas and / ga/i and numbers
 	zip: { type: String },
 	address: { type: String }, // concat `street, city, GA zip`
