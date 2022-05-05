@@ -6,8 +6,7 @@ import "./style.css";
 const Header = (props) => {
   return (
     <div id="header">
-      {/* API Docs Link */}
-      {/* <Link className="api-link" to="/api" aria-label="api-documentation">API</Link> */}
+      <Link className="api-link" to="/api" aria-label="api-documentation">API</Link>
       <h1>ATLANTA REGION EVICTION TRACKER</h1>
       <div id="county-dropdown-container">
         {props.smallScreen ? (

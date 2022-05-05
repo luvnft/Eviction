@@ -16,14 +16,14 @@ const globalTableData = {
 const config = {
 	title: 'Atlanta Region Eviction API',
 	description: `Based on the GET principle, the Atlanta Region Eviction API returns eviction data on individual cases, filings by building, daily filings by census tract, monthly filings by census tract, weekly filings by county and monthly filings by county. The API provides a set of endpoints, each with it's own path.`,
-	baseURL: 'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest',
+	baseURL: 'https://atl-eviction-tracker.herokuapp.com/rest',
 	endpointData: [
 		{
 			title: 'Daily Filings By Census Tract',
 			endpoint: '/tractdaily',
 			description: 'GET daily eviction data by census tract.',
 			apiCall:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/tractdaily',
+				'https://atl-eviction-tracker.herokuapp.com/rest/tractdaily',
 			tableData: [
 				{
 					param: 'FilingDate',
@@ -52,14 +52,14 @@ const config = {
 				globalTableData.type
 			],
 			sampleRequest:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/tractdaily?Year=2021&sort=asc'
+				'https://atl-eviction-tracker.herokuapp.com/rest/tractdaily?Year=2021&sort=asc'
 		},
 		{
 			title: 'Monthly Filings By Census Tract',
 			endpoint: '/tractbymonth',
 			description: 'GET monthly eviction data by census tract.',
 			apiCall:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/tractbymonth',
+				'https://atl-eviction-tracker.herokuapp.com/rest/tractbymonth',
 			tableData: [
 				{
 					param: 'TractID',
@@ -75,14 +75,14 @@ const config = {
 				globalTableData.type
 			],
 			sampleRequest:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/tractbymonth?CountyID=089&type=csv'
+				'https://atl-eviction-tracker.herokuapp.com/rest/tractbymonth?CountyID=089&type=csv'
 		},
 		{
 			title: 'Weekly Filings By County',
 			endpoint: '/countyweekly',
 			description: 'GET weekly eviction data by county.',
 			apiCall:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/countyweekly',
+				'https://atl-eviction-tracker.herokuapp.com/rest/countyweekly',
 			tableData: [
 				{
 					param: 'FilingWeek',
@@ -106,14 +106,14 @@ const config = {
 				globalTableData.type
 			],
 			sampleRequest:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/countyweekly?CountyID=135&FilingWeek=01/02/2022-01/30/2022&sort=asc'
+				'https://atl-eviction-tracker.herokuapp.com/rest/countyweekly?CountyID=135&FilingWeek=01/02/2022-01/30/2022&sort=asc'
 		},
 		{
 			title: 'Monthly Filings By County',
 			endpoint: '/countymonthly',
 			description: 'GET monthly eviction data by county.',
 			apiCall:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/countymonthly',
+				'https://atl-eviction-tracker.herokuapp.com/rest/countymonthly',
 			tableData: [
 				{
 					param: 'FilingMonth',
@@ -137,14 +137,14 @@ const config = {
 				globalTableData.type
 			],
 			sampleRequest:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/countymonthly?Year=2021&sort=desc&type=csv'
+				'https://atl-eviction-tracker.herokuapp.com/rest/countymonthly?Year=2021&sort=desc&type=csv'
 		},
 		{
 			title: 'Filings By Building',
 			endpoint: '/buildings',
 			description: 'GET eviction data by building.',
 			apiCall:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/buildings',
+				'https://atl-eviction-tracker.herokuapp.com/rest/buildings',
 			tableData: [
 				{
 					param: 'city, zip',
@@ -182,14 +182,14 @@ const config = {
 				globalTableData.type
 			],
 			sampleRequest:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/buildings?city=atlanta'
+				'https://atl-eviction-tracker.herokuapp.com/rest/buildings?city=atlanta'
 		},
 		{
 			title: 'Individual Cases',
 			endpoint: '/cases',
 			description: 'GET case level data for the metro Atlanta area',
 			apiCall:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}',
+				'https://atl-eviction-tracker.herokuapp.com/rest/cases?apiKey={API Key}',
 			tableData: [
 				{
 					param: 'apiKey',
@@ -268,7 +268,7 @@ const config = {
 				globalTableData.type
 			],
 			sampleRequest:
-				'https://metroatlhousing.org/atlanta-region-eviction-tracker/rest/cases?apiKey={API Key}&fileDate={File Date}&county={County Code}',
+				'https://atl-eviction-tracker.herokuapp.com/rest/cases?apiKey={API Key}&fileDate={File Date}&county={County Code}',
 			requestKey:
 				'To request an API Key, please contact Erik Woodworth at ewoodworth@atlantaregional.org.  Include "Eviction Data API Key Request" in the subject line and a brief explanation of your intended use(s) of the data in the body of the email.  All requests will require follow-up to provide additional details, and simply submitting a request does not insure a key will be granted.  Once your request has been vetted and approved, a Data Use Aggreement (DUA) will need to completed and signed before a key is issued.',
 			note: 'Unless provided global access, your API Key will come with preset permissions limiting accessible records and/or fields. These permissions will serve as a base query and not allow documents and fields outside of the permissions to be queried. You may still narrow your search within your provided permissions by adding a query to your request.'
