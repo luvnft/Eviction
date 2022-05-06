@@ -46,7 +46,7 @@ module.exports = {
 		buildings: {
 			authenticate: false,
 			nonQueryFields: ['limit', 'sort', 'type'],
-			globalDeselectFields: ['__v'],
+			globalDeselectFields: ['__v', 'pandemicratio'],
 			csvDeselectFields: ['geometry', 'filings', 'monthlyfilings']
 		}
 	},
