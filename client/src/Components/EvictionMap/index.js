@@ -182,11 +182,7 @@ const EvictionMap = ({
             ? buildings
                 .filter(
                   (building) =>
-                    building.filings.filter(
-                      (filing) =>
-                        new Date(filing["filingdate"]).getTime() >=
-                        new Date("04/01/2020").getTime()
-                    ).length >= evictionThreshold
+                    building.pandemicfilings >= evictionThreshold
                 )
                 .map((building) => {
                   const monthlyFilings = building.monthlyfilings.map((item) => ({
