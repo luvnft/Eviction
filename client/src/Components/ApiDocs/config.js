@@ -161,7 +161,7 @@ const config = {
 					param: 'latitude, longitude',
 					permission: 'Optional',
 					description:
-						'An exact latitude and/or longitude of a building (e.g.: latitude={some value}&longitude={some value}).'
+						'A latitude and/or longitude of a building (e.g.: latitude={some value}&longitude={some value}).'
 				},
 				{
 					param: 'tractid',

@@ -285,8 +285,53 @@ const constructDateQuery = (queryObj, queryConfig) => {
 	return returnObj;
 };
 
+const constructCoordinateRange = coordinate => {
+	const decimalDigits = 13;
+	let start = +coordinate;
+	let end = start;
+
+	const splitNum = coordinate.split('.');
+
+	if (splitNum[1]) {
+		const numDec = splitNum[1].length;
+		const decimalsToAdd = decimalDigits - numDec;
+		console.log('dec', decimalDigits, numDec);
+
+		if (decimalsToAdd > 0) {
+			console.log('hit');
+			const numToAdd = +`0.${splitNum[1]}${'9'.repeat(decimalsToAdd)}`;
+			console.log({ numToAdd });
+
+			// handle negative coordinate
+			if (start < 0) {
+				end = start;
+				start = +splitNum[0] - numToAdd;
+			} else {
+				end = +splitNum[0] + numToAdd;
+			}
+		}
+	} else {
+		// handle negative coordinate
+		if (start < 0) {
+			end = start;
+			start = start - 0.99999999999999;
+		} else {
+			end = start + 0.99999999999999;
+		}
+	}
+
+	return { start, end };
+};
+
 const constructQuery = (queryObj, queryConfig) => {
-	const { nonQueryFields, filingDate, yearQueryField, apiKey } = queryConfig;
+	const {
+		nonQueryFields,
+		filingDate,
+		yearQueryField,
+		apiKey,
+		regexQueryFields,
+		stringCase
+	} = queryConfig;
 
 	const returnObj = {
 		isConstructed: false,
@@ -301,16 +346,23 @@ const constructQuery = (queryObj, queryConfig) => {
 
 	for (const [key, val] of Object.entries(queryObj)) {
 		// Add fields except: date queries & non query fields to the returned query
+		const value =
+			stringCase && stringCase === 'lowercase' && typeof val === 'string'
+				? val.toLowerCase()
+				: stringCase && stringCase === 'uppercase' && typeof val === 'string'
+				? val.toUpperCase()
+				: val;
+
 		if (
 			key !== yearQueryField &&
 			key !== filingDateField &&
 			!nonQueryFields.includes(key)
 		) {
-			returnObj['query'][key] = val;
+			returnObj['query'][key] = value;
 		}
 
 		// constructed query obj will include dates that will be evaluated later
-		constructedQueryObj[key] = val;
+		constructedQueryObj[key] = value;
 	}
 
 	const permissionsQueryArr =
@@ -385,6 +437,33 @@ const constructQuery = (queryObj, queryConfig) => {
 		};
 	}
 
+	// handle regex search queries
+	if (regexQueryFields) {
+		for (const { field, type } of regexQueryFields) {
+			if (returnObj.query[field]) {
+				if (type === 'string') {
+					returnObj.query[field] = {
+						$regex: returnObj.query[field],
+						$options: 'i'
+					};
+				}
+
+				// LONGITUDE & LATITUDE
+				if (type === 'coordinate') {
+					// Simulates a string search by creating a range from the query value to that same number with trailing 9's as decimal digits
+					// Will not create range for exact coordinates
+					const { start, end } = constructCoordinateRange(
+						returnObj.query[field]
+					);
+
+					returnObj.query[field] = {
+						$gte: start,
+						$lte: end
+					};
+				}
+			}
+		}
+	}
 	return returnObj;
 };
 

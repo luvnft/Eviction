@@ -2,7 +2,19 @@ module.exports = {
 	modelQueryConfig: {
 		cases: {
 			authenticate: true,
+			stringCase: 'uppercase',
 			nonQueryFields: ['apiKey', 'limit', 'sort', 'type'],
+			regexQueryFields: [
+				{ field: 'caseStatus', type: 'string' },
+				{ field: 'plaintiffName', type: 'string' },
+				{ field: 'plaintiffStreetAddress', type: 'string' },
+				{ field: 'plaintiffCity', type: 'string' },
+				{ field: 'plaintiffAttorney', type: 'string' },
+				{ field: 'street', type: 'string' },
+				{ field: 'address', type: 'string' },
+				{ field: 'latitude', type: 'coordinate' },
+				{ field: 'longitude', type: 'coordinate' }
+			],
 			globalDeselectFields: [
 				'answerDateISO',
 				'defaultJudgmentDateISO',
@@ -45,7 +57,13 @@ module.exports = {
 		},
 		buildings: {
 			authenticate: false,
+			stringCase: 'lowercase',
 			nonQueryFields: ['limit', 'sort', 'type'],
+			regexQueryFields: [
+				{ field: 'street', type: 'string' },
+				{ field: 'latitude', type: 'coordinate' },
+				{ field: 'longitude', type: 'coordinate' }
+			],
 			globalDeselectFields: ['__v', 'pandemicratio'],
 			csvDeselectFields: ['geometry', 'filings', 'monthlyfilings']
 		}
