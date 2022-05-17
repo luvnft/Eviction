@@ -157,12 +157,12 @@ const config = {
 					description:
 						'The last three digits of a county FIPS code (e.g., county=135 will query Gwinnett County).'
 				},
-				{
-					param: 'latitude, longitude',
-					permission: 'Optional',
-					description:
-						'A latitude and/or longitude of a building (e.g.: latitude={some value}&longitude={some value}).'
-				},
+				// {
+				// 	param: 'latitude, longitude',
+				// 	permission: 'Optional',
+				// 	description:
+				// 		'A latitude and/or longitude of a building (e.g.: latitude={some value}&longitude={some value}).'
+				// },
 				{
 					param: 'tractid',
 					permission: 'Optional',
@@ -241,11 +241,11 @@ const config = {
 					description:
 						'A specific value. All spaces should be replaced with a "+" (e.g.: street=123+SOMETHING+ST+NE, address=123+SOMETHING+ST+NE,+ATLANTA,+GA+12345'
 				},
-				{
-					param: 'longitude, latitude',
-					permission: 'Optional',
-					description: 'An exact latitude and/or longitude of a location (e.g.: latitude={some value}&longitude={some value}).'
-				},
+				// {
+				// 	param: 'longitude, latitude',
+				// 	permission: 'Optional',
+				// 	description: 'An exact latitude and/or longitude of a location (e.g.: latitude={some value}&longitude={some value}).'
+				// },
 				{
 					param: 'caseStatus',
 					permission: 'Optional',

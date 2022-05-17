@@ -5,15 +5,15 @@ module.exports = {
 			stringCase: 'uppercase',
 			nonQueryFields: ['apiKey', 'limit', 'sort', 'type'],
 			regexQueryFields: [
-				{ field: 'caseStatus', type: 'string' },
-				{ field: 'plaintiffName', type: 'string' },
-				{ field: 'plaintiffStreetAddress', type: 'string' },
-				{ field: 'plaintiffCity', type: 'string' },
-				{ field: 'plaintiffAttorney', type: 'string' },
-				{ field: 'street', type: 'string' },
-				{ field: 'address', type: 'string' },
-				{ field: 'latitude', type: 'coordinate' },
-				{ field: 'longitude', type: 'coordinate' }
+				'caseStatus',
+				'plaintiffName',
+				'plaintiffStreetAddress',
+				'plaintiffCity',
+				'plaintiffAttorney',
+				'street',
+				'address',
+				'latitude',
+				'longitude'
 			],
 			globalDeselectFields: [
 				'answerDateISO',
@@ -59,11 +59,7 @@ module.exports = {
 			authenticate: false,
 			stringCase: 'lowercase',
 			nonQueryFields: ['limit', 'sort', 'type'],
-			regexQueryFields: [
-				{ field: 'street', type: 'string' },
-				{ field: 'latitude', type: 'coordinate' },
-				{ field: 'longitude', type: 'coordinate' }
-			],
+			regexQueryFields: ['street', 'latitude', 'longitude'],
 			globalDeselectFields: ['__v', 'pandemicratio'],
 			csvDeselectFields: ['geometry', 'filings', 'monthlyfilings']
 		}

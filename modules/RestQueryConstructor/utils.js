@@ -285,44 +285,6 @@ const constructDateQuery = (queryObj, queryConfig) => {
 	return returnObj;
 };
 
-const constructCoordinateRange = coordinate => {
-	const decimalDigits = 13;
-	let start = +coordinate;
-	let end = start;
-
-	const splitNum = coordinate.split('.');
-
-	if (splitNum[1]) {
-		const numDec = splitNum[1].length;
-		const decimalsToAdd = decimalDigits - numDec;
-		console.log('dec', decimalDigits, numDec);
-
-		if (decimalsToAdd > 0) {
-			console.log('hit');
-			const numToAdd = +`0.${splitNum[1]}${'9'.repeat(decimalsToAdd)}`;
-			console.log({ numToAdd });
-
-			// handle negative coordinate
-			if (start < 0) {
-				end = start;
-				start = +splitNum[0] - numToAdd;
-			} else {
-				end = +splitNum[0] + numToAdd;
-			}
-		}
-	} else {
-		// handle negative coordinate
-		if (start < 0) {
-			end = start;
-			start = start - 0.99999999999999;
-		} else {
-			end = start + 0.99999999999999;
-		}
-	}
-
-	return { start, end };
-};
-
 const constructQuery = (queryObj, queryConfig) => {
 	const {
 		nonQueryFields,
@@ -439,31 +401,16 @@ const constructQuery = (queryObj, queryConfig) => {
 
 	// handle regex search queries
 	if (regexQueryFields) {
-		for (const { field, type } of regexQueryFields) {
+		for (const field of regexQueryFields) {
 			if (returnObj.query[field]) {
-				if (type === 'string') {
-					returnObj.query[field] = {
-						$regex: returnObj.query[field],
-						$options: 'i'
-					};
-				}
-
-				// LONGITUDE & LATITUDE
-				if (type === 'coordinate') {
-					// Simulates a string search by creating a range from the query value to that same number with trailing 9's as decimal digits
-					// Will not create range for exact coordinates
-					const { start, end } = constructCoordinateRange(
-						returnObj.query[field]
-					);
-
-					returnObj.query[field] = {
-						$gte: start,
-						$lte: end
-					};
-				}
+				returnObj.query[field] = {
+					$regex: returnObj.query[field],
+					$options: 'i'
+				};
 			}
 		}
 	}
+	// console.log(returnObj);
 	return returnObj;
 };
 
