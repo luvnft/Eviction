@@ -10,10 +10,14 @@ module.exports = {
 				'plaintiffStreetAddress',
 				'plaintiffCity',
 				'plaintiffAttorney',
+        'defendantName1',
+        'defendantName2',
 				'street',
 				'address',
 				'latitude',
-				'longitude'
+				'longitude',
+        'city',
+        'caseID'
 			],
 			globalDeselectFields: [
 				'answerDateISO',

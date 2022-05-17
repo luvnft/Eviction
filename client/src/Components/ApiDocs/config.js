@@ -200,7 +200,7 @@ const config = {
 				{
 					param: 'caseID',
 					permission: 'Optional',
-					description: 'A specific ID provided by the court for the case.'
+					description: 'A specific or search (case insensitive) value (e.g.: caseID=2022CM012345, caseID=012345) provided by the court unique to each case.'
 				},
 				{
 					param: 'fileDate',
@@ -218,7 +218,7 @@ const config = {
 					param: 'county',
 					permission: 'Optional',
 					description:
-						'The last three digits of a county FIPS code (e.g., county=121 will query Fulton County)'
+						'The last three digits of a county FIPS code (e.g., county=121 will query Fulton County).'
 				},
 				{
 					param: 'tractID',
@@ -233,13 +233,13 @@ const config = {
 				{
 					param: 'city, zip',
 					permission: 'Optional',
-					description: 'A specific value. (e.g.: city=ATLANTA, zip=12345).'
+					description: 'A specific or search (case insensitive) value (e.g.: city=ATLANTA, city=atl, zip=12345).'
 				},
 				{
 					param: 'street, address',
 					permission: 'Optional',
 					description:
-						'A specific value. All spaces should be replaced with a "+" (e.g.: street=123+SOMETHING+ST+NE, address=123+SOMETHING+ST+NE,+ATLANTA,+GA+12345'
+						'A specific or search (case insensitive) value. All spaces should be replaced with a "+" (e.g.: street=123+SOMETHING+ST+NE, street=something+ave, address=123+SoMEtHInG+ST+NE,+atlanta,+ga+12345)'
 				},
 				// {
 				// 	param: 'longitude, latitude',
@@ -249,14 +249,21 @@ const config = {
 				{
 					param: 'caseStatus',
 					permission: 'Optional',
-					description: 'The status of a case (e.g.: caseStatus=OPEN).'
+					description: 'The status or search (case insensitive) value (e.g.: caseStatus=OPEN, caseStatus=closed).'
+				},
+        {
+					param:
+						'defendantName1, defendantName2',
+					permission: 'Optional',
+					description:
+						'A specific or search (case insensitive) for defendants. All spaces should be replaced with a "+" (e.g.: defendantName=SOME+VALUE)'
 				},
 				{
 					param:
 						'plaintiffName, plaintiffStreetAddress, plaintiffCity, plaintiffAttorney',
 					permission: 'Optional',
 					description:
-						'A specific value for a plaintiff. All spaces should be replaced with a "+" (e.g.: plaintiffName=SOME+VALUE)'
+						'A specific or search (case insensitive) for a plaintiff. Note that the plaintiffCity value includes state and zip.  All spaces should be replaced with a "+" (e.g.: plaintiffName=SOME+VALUE, plaintiffCity=Rochester+NY)'
 				},
 				{
 					param: 'answer, services, judgment, defaultJudgment, dismiss',
