@@ -195,12 +195,12 @@ const config = {
 					param: 'apiKey',
 					permission: 'Required',
 					description:
-						'Your unique API Key. If you do not have an API key please visit the Request API Key section below.'
+						'Your unique API Key. If you do not have an API key please see the Request API Key section below.'
 				},
 				{
 					param: 'caseID',
 					permission: 'Optional',
-					description: 'A specific or search (case insensitive) value (e.g.: caseID=2022CM012345, caseID=012345) provided by the court unique to each case.'
+					description: 'A case-insensitive search value (e.g.: caseID=2022CM012345, caseID=012345) provided by the court unique to each case.'
 				},
 				{
 					param: 'fileDate',
@@ -223,23 +223,23 @@ const config = {
 				{
 					param: 'tractID',
 					permission: 'Optional',
-					description: 'A specific census tract ID.'
+					description: 'A specific 11-digit census tract ID (e.g., tractID=13063040518).'
 				},
 				{
 					param: 'blockGroupID',
 					permission: 'Optional',
-					description: 'A specific census block group ID.'
+					description: 'A specific 12-digit census block group ID (e.g., blockGroupID=130630405183).'
 				},
 				{
 					param: 'city, zip',
 					permission: 'Optional',
-					description: 'A specific or search (case insensitive) value (e.g.: city=ATLANTA, city=atl, zip=12345).'
+					description: 'A case-insensitive search value (e.g.: city=ATLANTA, city=atl, zip=12345).'
 				},
 				{
 					param: 'street, address',
 					permission: 'Optional',
 					description:
-						'A specific or search (case insensitive) value. All spaces should be replaced with a "+" (e.g.: street=123+SOMETHING+ST+NE, street=something+ave, address=123+SoMEtHInG+ST+NE,+atlanta,+ga+12345)'
+						'A case-insensitive search value. All spaces should be replaced with a "+" (e.g.: street=123+SOMETHING+ST+NE, street=something+ave, address=123+SoMEtHInG+ST+NE,+atlanta,+ga+12345)'
 				},
 				// {
 				// 	param: 'longitude, latitude',
@@ -249,27 +249,27 @@ const config = {
 				{
 					param: 'caseStatus',
 					permission: 'Optional',
-					description: 'The status or search (case insensitive) value (e.g.: caseStatus=OPEN, caseStatus=closed).'
+					description: 'A case-insensitive search value (e.g.: caseStatus=OPEN, caseStatus=closed).'
 				},
         {
 					param:
 						'defendantName1, defendantName2',
 					permission: 'Optional',
 					description:
-						'A specific or search (case insensitive) for defendants. All spaces should be replaced with a "+" (e.g.: defendantName=SOME+VALUE)'
+						'A case-insensitive search value. All spaces should be replaced with a "+" (e.g.: defendantName=SOME+VALUE)'
 				},
 				{
 					param:
 						'plaintiffName, plaintiffStreetAddress, plaintiffCity, plaintiffAttorney',
 					permission: 'Optional',
 					description:
-						'A specific or search (case insensitive) for a plaintiff. Note that the plaintiffCity value includes state and zip.  All spaces should be replaced with a "+" (e.g.: plaintiffName=SOME+VALUE, plaintiffCity=Rochester+NY)'
+						'A case-insentive search value. Note that the plaintiffCity value includes state and zip.  All spaces should be replaced with a "+" (e.g.: plaintiffName=SOME+VALUE, plaintiffCity=Rochester+NY)'
 				},
 				{
 					param: 'answer, services, judgment, defaultJudgment, dismiss',
 					permission: 'Optional',
 					description:
-						'A 1 or 0 that represents the status of the field (e.g.: answer=1 or answer=0). 1 = true and 0 = false. If dismiss=1 this will mean the case has been dismissed.'
+						'A 1 or 0 that represents the status of the field (e.g.: answer=1 or dismiss=0). 1 = true and 0 = false. If dismiss=1 this will mean the case has been dismissed.'
 				},
 				globalTableData.sort,
 				globalTableData.type
