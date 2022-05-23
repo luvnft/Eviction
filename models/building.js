@@ -15,7 +15,7 @@ const buildingSchema = new Schema({
 	totalfilings: { type: Number, required: true },
 	pandemicfilings: { type: Number, required: true },
 	pandemicratio: { type: Number, required: true },
-	monthlyfilings: { type: Object || Array, required: false },
+	monthlyfilings: { type: Object || Array, required: true },
 	filings: { type: Array, required: true }
 });
 
