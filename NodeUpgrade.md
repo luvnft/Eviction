@@ -33,3 +33,11 @@ npx npm-check-updates -u
 #### export 'Map' (imported as 'LeafletMap') was not found in 'react-leaflet'
 
 - Import is now MapContainer and not Map
+
+#### Spinner SVG's not centered
+
+- targeted svg's in css and applied margin: auto
+
+#### Leaflet map layers not in correct order
+
+- add all event handlers to one property named eventHandlers

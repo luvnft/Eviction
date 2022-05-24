@@ -133,20 +133,6 @@ const EvictionMap = ({
                   ? setClickID(e.propagatedFrom.feature.properties.GEOID)
                   : setClickID()
             }}
-            // onAdd={(e) => e.target.bringToBack()}
-            // onmouseover={e => e.propagatedFrom.feature.properties.GEOID
-            //   ? setHoverID(e.propagatedFrom.feature.properties.GEOID)
-            //   : setHoverID()}
-            // onmouseout={e => {
-            //   e.target.closePopup();
-            //   setClickID();
-            //   setHoverID();
-            // }}
-            // onclick={(e) =>
-            //   e.propagatedFrom.feature.properties.GEOID
-            //     ? setClickID(e.propagatedFrom.feature.properties.GEOID)
-            //     : setClickID()
-            // }
             filter={(feature) =>
               countyFilter !== 999 && countyFilter !== "999"
                 ? feature.properties["GEOID"].slice(2, 5) ===
