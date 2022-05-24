@@ -1,4 +1,4 @@
-export default {
+const config = {
   countyFIPS: ["13067", "13063", "13089", "13121", "13135"],
   countyBounds: (smallScreen) => ({
     999: {
@@ -80,3 +80,5 @@ export default {
     backgroundColor: "rgba(191, 253, 0, .5)",
   },
 };
+
+export default config;

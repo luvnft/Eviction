@@ -1,4 +1,4 @@
-export default {
+const config = {
   countyOptions: [
     { key: "999", text: "5-County Region", value: 999 },
     { key: "063", text: "Clayton County", value: 63 },
@@ -14,7 +14,9 @@ export default {
     bottom: "50vh",
     width: "100%",
     textAlign: "center",
-    type: "Circles",
+    type: "Circles"
   },
   geoURL: `https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel='Tract' AND PlanningRegion='Atlanta Regional Commission'&SR=4326&outFields=GEOID&f=geojson`,
 };
+
+export default config;

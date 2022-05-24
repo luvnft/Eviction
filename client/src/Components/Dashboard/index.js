@@ -150,7 +150,7 @@ const Dashboard = () => {
               )}
               counties={countyOptions}
             />
-          : <div style={config.loaderStyle}>
+          : <div className="spinner-container" style={config.loaderStyle}>
               <h1>{vizView === "map" ? "Map is" : "Chart is"} Loading...</h1>
               <Circles
                 id="loader-box"
@@ -166,7 +166,7 @@ const Dashboard = () => {
       </div>
     </div>
   ) : (
-    <div style={config.loaderStyle}>
+    <div className="spinner-container" style={config.loaderStyle}>
       <h1>Atlanta Eviction Tracker is Loading...</h1>
       <Circles
         id="loader-box"

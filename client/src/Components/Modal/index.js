@@ -32,7 +32,7 @@ const Modal = (props) => {
               {util.AboutContent.Sources({type: "Other Data"}, props.content)}
             </>
           ) : (
-            <div style={config.loaderStyle}>
+            <div className="spinner-container" style={config.loaderStyle}>
               <h1>Loading...</h1>
               <Circles
                 id="loader-box"

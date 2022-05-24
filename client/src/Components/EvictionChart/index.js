@@ -190,7 +190,7 @@ const EvictionChart = ({county, chartDataWeekly, chartDataMonthly, dateRange, co
           </ComposedChart>
         </ResponsiveContainer>
       ) : (
-        <div style={config.loaderStyle}>
+        <div className="spinner-container" style={config.loaderStyle}>
           <h1>Chart is Loading...</h1>
           <Circles
             id="loader-box"

@@ -169,7 +169,7 @@ const EvictionMap = ({
             </Popup>
           </GeoJSON>
         ) : (
-          <div style={config.loaderStyle}>
+          <div className="spinner-container" style={config.loaderStyle}>
             <Circles
               id="loader-box"
               color={config.loaderStyle.color}
