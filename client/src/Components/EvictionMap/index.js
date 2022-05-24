@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Map as LeafletMap,
+  MapContainer as LeafletMap,
   TileLayer,
   GeoJSON,
   CircleMarker,
@@ -11,7 +11,7 @@ import { Dropdown, Icon, Radio } from "semantic-ui-react";
 import { BarChart, Bar, XAxis, ReferenceArea, Label, YAxis } from "recharts";
 import CSVExportButton from "../CSVExportButton";
 import moment from "moment";
-import Loader from "react-loader-spinner";
+import { Circles } from "react-loader-spinner";
 import TextFormatter from "../../utils/TextFormatter";
 import config from "./config";
 import MapTooltip from "../MapTooltip";
@@ -170,7 +170,7 @@ const EvictionMap = ({
           </GeoJSON>
         ) : (
           <div style={config.loaderStyle}>
-            <Loader
+            <Circles
               id="loader-box"
               color={config.loaderStyle.color}
               type={config.loaderStyle.type}

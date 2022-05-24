@@ -20,15 +20,14 @@ import CSVExportButton from "../CSVExportButton";
 import ChartTooltip from "../ChartTooltip";
 import moment from "moment";
 import numeral from "numeral";
-import Loader from "react-loader-spinner";
+import { Circles } from "react-loader-spinner";
 import config from "./config";
 import utils from "./utils";
 import SortByDate from "../../utils/SortByDate";
 
 import "./style.css";
 
-export default ({county, chartDataWeekly, chartDataMonthly, dateRange, countyFilter, smallScreen, referenceAreas }) => {
-
+const EvictionChart = ({county, chartDataWeekly, chartDataMonthly, dateRange, countyFilter, smallScreen, referenceAreas }) => {
   const [chartData, setChartData] = useState();
   const [csvData, setCSVData] = useState();
   const [timeScale, setTimeScale] = useState(config.initTimescale);
@@ -193,7 +192,7 @@ export default ({county, chartDataWeekly, chartDataMonthly, dateRange, countyFil
       ) : (
         <div style={config.loaderStyle}>
           <h1>Chart is Loading...</h1>
-          <Loader
+          <Circles
             id="loader-box"
             color={config.loaderStyle.color}
             type={config.loaderStyle.type}
@@ -248,3 +247,5 @@ export default ({county, chartDataWeekly, chartDataMonthly, dateRange, countyFil
     </div>
   );
 };
+
+export default EvictionChart;

@@ -1,54 +1,54 @@
 {
-  "name": "atlevtrakr",
-  "version": "0.1.0",
-  "description": "Eviction data visualization and mapping portal",
-  "main": "server.js",
-  "scripts": {
-    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
-    "start:prod": "node server.js && npm run client",
-    "start:dev": "nodemon server.js | npm run client",
-    "client": "cd client && npm run start",
-    "seed": "node seed/seedDB.js",
-    "install": "cd client && npm install",
-    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
-  },
-  "engines": {
-    "node": "12.14.1",
-    "npm": "6.13.4"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/spinozist/ARC-Eviction-Tracker"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/spinozist/ARC-Eviction-Tracker"
-  },
-  "homepage": "https://github.com/spinozist/ARC-Eviction-Tracker#readme",
-  "dependencies": {
-    "axios": "^0.19.2",
-    "bcrypt-nodejs": "0.0.3",
-    "body-parser": "^1.17.2",
-    "compression": "^1.7.4",
-    "concurrently": "^5.0.2",
-    "connect-mongo": "^3.2.0",
-    "cookie-parser": "^1.4.3",
-    "csvtojson": "^2.0.10",
-    "dotenv": "^8.2.0",
-    "express": "^4.15.4",
-    "express-flash": "0.0.2",
-    "express-session": "^1.15.6",
-    "hex-generator": "^1.0.1",
-    "if-env": "^1.0.4",
-    "json2csv": "^5.0.6",
-    "moment": "^2.29.1",
-    "mongoose": "^5.7.5",
-    "morgan": "^1.10.0",
-    "node-cron": "^2.0.3",
-    "nodemon": "^2.0.2",
-    "passport": "^0.4.0",
-    "passport-local": "^1.0.0",
-    "path": "^0.12.7"
-  }
+	"name": "atlevtrakr",
+	"version": "0.1.0",
+	"description": "Eviction data visualization and mapping portal",
+	"main": "server.js",
+	"scripts": {
+		"start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+		"start:prod": "node server.js && npm run client",
+		"start:dev": "nodemon server.js | npm run client",
+		"client": "cd client && npm run start",
+		"seed": "node seed/seedDB.js",
+		"install": "cd client && npm install",
+		"heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+	},
+	"engines": {
+		"node": "18.0.0",
+		"npm": "8.6.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/spinozist/ARC-Eviction-Tracker"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/spinozist/ARC-Eviction-Tracker"
+	},
+	"homepage": "https://github.com/spinozist/ARC-Eviction-Tracker#readme",
+	"dependencies": {
+		"axios": "^0.27.2",
+		"bcrypt-nodejs": "0.0.3",
+		"body-parser": "^1.20.0",
+		"compression": "^1.7.4",
+		"concurrently": "^7.2.1",
+		"connect-mongo": "^4.6.0",
+		"cookie-parser": "^1.4.6",
+		"csvtojson": "^2.0.10",
+		"dotenv": "^16.0.1",
+		"express": "^4.18.1",
+		"express-flash": "0.0.2",
+		"express-session": "^1.17.3",
+		"hex-generator": "^1.0.1",
+		"if-env": "^1.0.4",
+		"json2csv": "^5.0.7",
+		"moment": "^2.29.3",
+		"mongoose": "^6.3.4",
+		"morgan": "^1.10.0",
+		"node-cron": "^3.0.0",
+		"nodemon": "^2.0.16",
+		"passport": "^0.6.0",
+		"passport-local": "^1.0.0",
+		"path": "^0.12.7"
+	}
 }

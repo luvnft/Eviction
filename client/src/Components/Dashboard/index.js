@@ -6,7 +6,7 @@ import Header from "../Header/index.js";
 import Modal from "../Modal/index.js";
 import { Icon } from "semantic-ui-react";
 import API from "../../utils/API.js";
-import Loader from "react-loader-spinner";
+import { Circles } from "react-loader-spinner";
 import util from "../../util";
 import config from "../../config";
 import "./style.css";
@@ -152,7 +152,7 @@ const Dashboard = () => {
             />
           : <div style={config.loaderStyle}>
               <h1>{vizView === "map" ? "Map is" : "Chart is"} Loading...</h1>
-              <Loader
+              <Circles
                 id="loader-box"
                 color={config.loaderStyle.color}
                 type={config.loaderStyle.type}
@@ -168,7 +168,7 @@ const Dashboard = () => {
   ) : (
     <div style={config.loaderStyle}>
       <h1>Atlanta Eviction Tracker is Loading...</h1>
-      <Loader
+      <Circles
         id="loader-box"
         color={config.loaderStyle.color}
         type={config.loaderStyle.type}

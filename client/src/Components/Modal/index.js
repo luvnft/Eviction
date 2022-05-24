@@ -1,5 +1,5 @@
 import React from "react";
-import Loader from "react-loader-spinner";
+import { Circles } from "react-loader-spinner";
 import { Button } from "semantic-ui-react";
 import config from "./config.js";
 import util from "./util";
@@ -34,7 +34,7 @@ const Modal = (props) => {
           ) : (
             <div style={config.loaderStyle}>
               <h1>Loading...</h1>
-              <Loader
+              <Circles
                 id="loader-box"
                 color={config.loaderStyle.color}
                 type={config.loaderStyle.type}
