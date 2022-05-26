@@ -83,7 +83,7 @@ const EvictionMap = ({
   return (
     <>
       <LeafletMap
-        key={"leaflet-map-" + name}
+        key={"leaflet-map-" + name + countyFilter}
         center={countyBounds(smallScreen)[countyFilter].center}
         zoom={countyBounds(smallScreen)[countyFilter].zoom}
         maxZoom={18}
