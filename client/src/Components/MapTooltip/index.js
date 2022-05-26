@@ -4,7 +4,7 @@ import numeral from "numeral";
 const MapTooltip = (propObj) => (
   <div className="tooltip-content">
     <div>
-      {propObj.selectedMonth !== "During the Pandemic**" ? "In " : ""}{" "}
+      {!propObj.selectedMonth.includes('Pandemic') ? "In " : ""}{" "}
       <span className="tooltip-data">
         {
           propObj.monthOptions.find(
