@@ -65,5 +65,5 @@ export default {
     textAlign: "center",
     type: "Circles",
   },
-  initTimescale: "weekly",
+  initTimescale: "monthly",
 };
