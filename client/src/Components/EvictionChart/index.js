@@ -90,25 +90,36 @@ const EvictionChart = ({county, chartDataWeekly, chartDataMonthly, dateRange, co
             }
           >
             <CartesianGrid strokeDasharray="3 3" />
-          {
-            referenceAreas
-            ? referenceAreas.map(referenceArea =>
-              (timeScale === 'weekly' && referenceArea.weekly) ||
-              (timeScale === 'monthly' && referenceArea.monthly)
-                ? <ReferenceArea
-                    x1={utils.referenceAreaStart(timeScale, brushDomain.start, referenceArea)} 
-                    x2={utils.referenceAreaEnd(timeScale, brushDomain.end, referenceArea)} 
-                    y1={0}
-                    fill={referenceArea.color}
-                  >
-                    <Label  position='insideTop' fontSize={referenceArea.size}>
-                      {referenceArea.label}
-                    </Label>
-                  </ReferenceArea>
-                : null            
-            )
-            : null
-          }
+            {
+              referenceAreas
+                ? referenceAreas.map(referenceArea =>
+                    (timeScale === 'weekly' && referenceArea.weekly) ||
+                    (timeScale === 'monthly' && referenceArea.monthly) ? (
+                      <ReferenceArea
+                        x1={utils.referenceAreaDate({
+                          type: 'start',
+                          timeScale: timeScale,
+                          brushDomainDate: brushDomain.start,
+                          config: referenceArea,
+                          county: county.key
+                        })}
+                        x2={utils.referenceAreaDate({
+                          type: 'end',
+                          timeScale: timeScale,
+                          brushDomainDate: brushDomain.end,
+                          config: referenceArea,
+                          county: county.key
+                        })}
+                        y1={0}
+                        fill={referenceArea.color}>
+                        <Label position="insideTop" fontSize={referenceArea.size}>
+                          {referenceArea.label}
+                        </Label>
+                      </ReferenceArea>
+                    ) : null
+                  )
+                : null
+            }
             <XAxis
               // scale='time'
               height={50}

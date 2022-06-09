@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export default {
+const utils = {
   dataObjectForCSV: ({
     item,
     timeScale,
@@ -37,24 +37,27 @@ export default {
       ? new Date(key).getTime() !==
         new Date(moment(endDate).startOf("month")).getTime()
       : true,
-  referenceAreaStart: (timeScale, brushDomainStart, config) =>
-    timeScale === "weekly"
-      ? new Date(brushDomainStart).getTime() <
-        new Date(config.weekly.start).getTime()
-        ? config.weekly.start
-        : null
-      : new Date(brushDomainStart).getTime() <
-        new Date(config.monthly.start).getTime()
-      ? config.monthly.start
-      : null,
-  referenceAreaEnd: (timeScale, brushDomainEnd, config) =>
-    timeScale === "weekly"
-      ? new Date(brushDomainEnd).getTime() >
-        new Date(config.weekly.end).getTime()
-        ? config.weekly.end
-        : null
-      : new Date(brushDomainEnd).getTime() >
-        new Date(config.monthly.end).getTime()
-      ? config.monthly.end
-      : null,
+  referenceAreaDate: ({
+    timeScale,
+    brushDomainDate,
+    config,
+    county,
+    type
+  }) => {
+    const configDate =
+      config[timeScale]['byCounty'] && config[timeScale]['byCounty'][county]
+        ? config[timeScale]['byCounty'][county][type]
+        : config[timeScale][type];
+    
+    const useConfigDate =
+        type === 'start'
+          ? new Date(brushDomainDate).getTime() < new Date(configDate).getTime()
+          : type === 'end'
+          ? new Date(brushDomainDate).getTime() > new Date(configDate).getTime()
+          : false;
+    
+    return useConfigDate ? configDate : null;
+  }
 };
+
+export default utils;
