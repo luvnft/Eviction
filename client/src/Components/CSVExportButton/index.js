@@ -1,55 +1,70 @@
-import React from "react";
-import { ExportToCsv } from "export-to-csv";
-import { Button, Icon } from "semantic-ui-react";
-import moment from "moment";
-import "./style.css";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { ExportToCsv } from 'export-to-csv';
+import { Button, Icon } from 'semantic-ui-react';
+import moment from 'moment';
+import './style.css';
 
-const CSVExportButton = (props) => {
-  const csvTitle = props.csvTitle ? props.csvTitle : null;
-  const csvFilename = props.csvFilename
-    ? props.csvFilename
-    : `download-${moment().format()}`;
-  const csvHeaders = props.csvHeaders ? props.csvHeaders : null;
-  const data = props.data ? Object.values(props.data) : null;
+const CSVExportButton = ({
+  content,
+  csvFilename,
+  csvTitle,
+  csvHeaders,
+  data,
+  smallScreen
+}) => {
+  const title = csvTitle ? csvTitle : null;
+  const filename = csvFilename ? csvFilename : `download-${moment().format()}`;
+  const headers = csvHeaders ? csvHeaders : null;
+  const dataArray = data ? Object.values(data) : null;
   const csvOptions = {
-    fieldSeparator: ",",
+    fieldSeparator: ',',
     quoteStrings: '"',
-    decimalSeparator: ".",
-    filename: csvFilename,
+    decimalSeparator: '.',
+    filename: filename,
     showTitle: true,
     showLabels: true,
-    title: csvTitle,
+    title: title,
     useTextFile: false,
-    useKeysAsHeaders: csvHeaders ? false : true,
-    headers: csvHeaders,
+    useKeysAsHeaders: headers ? false : true,
+    headers: headers
   };
   const csvExporter = new ExportToCsv(csvOptions);
 
-  return props.data ? (
-    !props.smallScreen ? (
+  return dataArray ? (
+    !smallScreen ? (
       <Button
-        id="csv-button"
-        color={"black"}
+        id='csv-button'
+        color={'black'}
         onClick={() =>
-          data
-            ? csvExporter.generateCsv(data)
-            : console.log("No Data for CSV Button")
+          dataArray
+            ? csvExporter.generateCsv(dataArray)
+            : console.log('No Data for CSV Button')
         }
       >
-        <Icon id="csv-button" name="download" /> {props.content}
+        <Icon id='csv-button' name='download' /> {content}
       </Button>
     ) : (
       <Icon
-        id="csv-button"
-        name="download"
+        id='csv-button'
+        name='download'
         onClick={
-          data
-            ? () => csvExporter.generateCsv(data)
-            : console.log("No Data for CSV Button")
+          dataArray
+            ? () => csvExporter.generateCsv(dataArray)
+            : console.log('No Data for CSV Button')
         }
       />
     )
   ) : null;
+};
+
+CSVExportButton.propTypes = {
+  content: PropTypes.string,
+  csvFilename: PropTypes.string,
+  csvTitle: PropTypes.string,
+  csvHeaders: PropTypes.array,
+  data: PropTypes.array,
+  smallScreen: PropTypes.bool
 };
 
 export default CSVExportButton;

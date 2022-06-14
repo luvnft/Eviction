@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-  getData: async (url) => {
+  getData: async url => {
     const res = await axios.get(url);
     return res.data;
-  },
+  }
 };

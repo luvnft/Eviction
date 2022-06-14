@@ -1,60 +1,79 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Dropdown } from "semantic-ui-react";
-import "./style.css";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { Dropdown } from 'semantic-ui-react';
+import './style.css';
 
-const Header = (props) => {
+const Header = ({
+  countyFilter,
+  countyOptions,
+  setCountyFilter,
+  setVizView,
+  smallScreen,
+  vizView
+}) => {
   return (
-    <div id="header">
-      <Link className="api-link" to="/api" aria-label="api-documentation">API</Link>
+    <div id='header'>
+      <Link className='api-link' to='/api' aria-label='api-documentation'>
+        API
+      </Link>
       <h1>ATLANTA REGION EVICTION TRACKER</h1>
-      <div id="county-dropdown-container">
-        {props.smallScreen ? (
+      <div id='county-dropdown-container'>
+        {smallScreen ? (
           <select
-            value={props.countyFilter}
-            onChange={(e) => props.setCountyFilter(e.target.value)}
+            value={countyFilter}
+            onChange={e => setCountyFilter(e.target.value)}
           >
-            {props.countyOptions
-              ? props.countyOptions.map((county) => (
-                  <option
-                    key={county.text}
-                    value={county.value}
-                    id={`option-${county.text}`}
-                  >
-                    {county.text}
-                  </option>
-                ))
+            {countyOptions
+              ? countyOptions.map(county => (
+                <option
+                  key={county.text}
+                  value={county.value}
+                  id={`option-${county.text}`}
+                >
+                  {county.text}
+                </option>
+              ))
               : null}
           </select>
         ) : (
           <Dropdown
-            placeholder="Filter by County"
+            placeholder='Filter by County'
             fluid
             selection
-            value={props.countyFilter}
-            options={props.countyOptions}
-            onChange={(e, data) => props.setCountyFilter(data.value)}
+            value={countyFilter}
+            options={countyOptions}
+            onChange={(e, data) => setCountyFilter(data.value)}
           />
         )}
       </div>
-      <div id="viz-toggle">
+      <div id='viz-toggle'>
         <div
-          className="viz-tab"
-          id={props.vizView === "map" ? "active-viz-tab" : null}
-          onClick={() => props.setVizView("map")}
+          className='viz-tab'
+          id={vizView === 'map' ? 'active-viz-tab' : null}
+          onClick={() => setVizView('map')}
         >
           <h3>MAP</h3>
         </div>
         <div
-          className="viz-tab"
-          id={props.vizView === "chart" ? "active-viz-tab" : null}
-          onClick={() => props.setVizView("chart")}
+          className='viz-tab'
+          id={vizView === 'chart' ? 'active-viz-tab' : null}
+          onClick={() => setVizView('chart')}
         >
           <h3>CHART</h3>
         </div>
       </div>
     </div>
   );
+};
+
+Header.propTypes = {
+  countyFilter: PropTypes.number,
+  countyOptions: PropTypes.array,
+  setCountyFilter: PropTypes.func,
+  setVizView: PropTypes.func,
+  vizView: PropTypes.string,
+  smallScreen: PropTypes.bool
 };
 
 export default Header;

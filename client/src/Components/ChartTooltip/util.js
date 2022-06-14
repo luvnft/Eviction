@@ -1,33 +1,33 @@
-import React from "react";
-import moment from "moment";
+import React from 'react';
+import moment from 'moment';
 
 export default {
   dateInfo(propObj) {
-    return propObj.timeScale === "weekly" ? (
+    return propObj.timeScale === 'weekly' ? (
       <span>
-        between{" "}
-        <span className="tooltip-data">
-          {moment(propObj.label).format("M/D/YY")}
-        </span>{" "}
-        and{" "}
-        <span className="tooltip-data">
-          {moment(propObj.label).endOf("week").format("M/D/YY")}
+        between{' '}
+        <span className='tooltip-data'>
+          {moment(propObj.label, 'MM/DD/YYYY').format('M/D/YY')}
+        </span>{' '}
+        and{' '}
+        <span className='tooltip-data'>
+          {moment(propObj.label, 'MM/DD/YYYY').endOf('week').format('M/D/YY')}
         </span>
       </span>
-    ) : propObj.timeScale === "monthly" ? (
+    ) : propObj.timeScale === 'monthly' ? (
       <span>
-        in{" "}
-        <span className="tooltip-data">
-          {moment(propObj.label).format("MMMM YYYY")}
+        in{' '}
+        <span className='tooltip-data'>
+          {moment(propObj.label, 'MM/DD/YYYY').format('MMMM YYYY')}
         </span>
       </span>
-    ) : propObj.timeScale === "daily" ? (
+    ) : propObj.timeScale === 'daily' ? (
       <span>
-        on{" "}
-        <span className="tooltip-data">
-          {moment(propObj.label).format("dddd, MMMM Do YYYY")}
+        on{' '}
+        <span className='tooltip-data'>
+          {moment(propObj.label, 'MM/DD/YYYY').format('dddd, MMMM Do YYYY')}
         </span>
       </span>
     ) : null;
-  },
+  }
 };

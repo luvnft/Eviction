@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 
 export default {
   handleCSVData({
@@ -12,27 +12,25 @@ export default {
     const dataArray =
       tractData && geojson
         ? geojson.features
-          .filter((feature) =>
-            countyFilter !== 999 && countyFilter !== "999"
-              ? feature.properties["GEOID"].slice(2, 5) ===
-              countyFilter.toString().padStart(3, "0")
-              : counties.includes(
-                feature.properties["GEOID"].slice(2, 5)
-              )
+          .filter(feature =>
+            countyFilter !== 999 && countyFilter !== '999'
+              ? feature.properties['GEOID'].slice(2, 5) ===
+                  countyFilter.toString().padStart(3, '0')
+              : counties.includes(feature.properties['GEOID'].slice(2, 5))
           )
           .filter(
-            (feature) =>
-              rawTractData[feature.properties["GEOID"]] &&
-              tractData[feature.properties["GEOID"]]
+            feature =>
+              rawTractData[feature.properties['GEOID']] &&
+              tractData[feature.properties['GEOID']]
           )
-          .map((feature) => ({
-            TractID: feature.properties["GEOID"],
-            Month: `${selectedMonth}`,
-            "Total Eviction Filings":
-              rawTractData[feature.properties["GEOID"]],
-            "Eviction Filing Rate": Number.parseFloat(
-              tractData[feature.properties["GEOID"]] / 100
-            ).toPrecision(3),
+          .map(feature => ({
+            'TractID': feature.properties['GEOID'],
+            'Month': `${selectedMonth}`,
+            'Total Eviction Filings':
+              rawTractData[feature.properties['GEOID']],
+            'Eviction Filing Rate': Number.parseFloat(
+              tractData[feature.properties['GEOID']] / 100
+            ).toPrecision(3)
           }))
         : null;
 
@@ -47,52 +45,54 @@ export default {
   }) {
     const dataObject = {};
     const rawDataObject = {};
-  
+
     [...data].forEach(item =>
       Object.entries(item[selectedMeasure])
-        .filter(([key, val]) =>
+        .filter(([key]) =>
           selectedMonth !== 'During the Pandemic'
             ? key === selectedMonth
             : key === 'During the Pandemic'
         )
-        .forEach(([key, val]) => (rawDataObject[item.TractID] = parseFloat(val)))
+        .forEach(
+          ([, val]) => (rawDataObject[item.TractID] = parseFloat(val))
+        )
     );
-  
+
     normalizeData.forEach(item => {
       if (rawDataObject[item['GEOID']] > 0 && item[tractDenominator] > 0) {
         dataObject[item['GEOID']] =
           (rawDataObject[item['GEOID']] * 100) / item[tractDenominator];
       }
     });
-  
+
     return { dataObject: dataObject, rawDataObject: rawDataObject };
   },
-  buildingList({ buildings, evictionThreshold, TextFormatter}) {
+  buildingList({ buildings, evictionThreshold, TextFormatter }) {
     const array = [];
     buildings
       .filter(
-        (building) =>
+        building =>
           building.filings.filter(
-            (filing) =>
-              moment(filing["filingdate"]).valueOf() >=
-              moment("04/01/2020").valueOf()
+            filing =>
+              moment(filing['filingdate'], 'MM/DD/YYYY').valueOf() >=
+              moment('04/01/2020', 'MM/DD/YYYY').valueOf()
           ).length >= evictionThreshold
       )
-      .forEach((building) => {
+      .forEach(building => {
         const obj = {
-          Street: TextFormatter.firstCharToUpper(building.street),
-          City: TextFormatter.firstCharToUpper(building.city),
-          Zip: building.zip,
-          countyFIPS: building.county,
-          tractID: building.tractid,
-          "Filings since 1/1/2020": building.totalfilings,
-          "Filings since 4/1/2020": building.pandemicfilings,
+          'Street': TextFormatter.firstCharToUpper(building.street),
+          'City': TextFormatter.firstCharToUpper(building.city),
+          'Zip': building.zip,
+          'countyFIPS': building.county,
+          'tractID': building.tractid,
+          'Filings since 1/1/2020': building.totalfilings,
+          'Filings since 4/1/2020': building.pandemicfilings
         };
 
         building.monthlyfilings.forEach(
-          (month) =>
-          (obj[`Filings in ${moment(month.date).format("MMM YYYY")}`] =
-            month.count)
+          month =>
+            (obj[`Filings in ${moment(month.date, 'MM/DD/YYYY').format('MMM YYYY')}`] =
+              month.count)
         );
 
         array.push(obj);
@@ -100,47 +100,41 @@ export default {
     return array;
   },
   featureStyler({ feature, tractData, bins, colors, hoverID }) {
-    const geoid = feature.properties["GEOID"];
+    const geoid = feature.properties['GEOID'];
     const value = tractData[geoid];
     let color = null;
 
     bins.forEach((bin, i) =>
-      value < bin.top && value >= bin.bottom
-        ? (color = colors[i])
-        : null
+      value < bin.top && value >= bin.bottom ? (color = colors[i]) : null
     );
 
     return {
-      color: color || "lightgrey",
+      color: color || 'lightgrey',
       weight: hoverID === geoid ? 0 : 1,
-      fillColor: color || "lightgrey",
-      fillOpacity: hoverID === geoid ? .1 : .8,
+      fillColor: color || 'lightgrey',
+      fillOpacity: hoverID === geoid ? 0.1 : 0.8
     };
   },
   createBins({ binningType, binsArray, valueArray, colorArray }) {
     const bins = [];
-    binningType === "quantile"
+    binningType === 'quantile'
       ? colorArray.map((color, j) =>
         bins.push({
           top: valueArray[
-            Math.floor(
-              (j * valueArray.length) / colorArray.length
-            )
+            Math.floor((j * valueArray.length) / colorArray.length)
           ],
           bottom:
-            valueArray[
-            Math.floor(
-              ((j + 1) * valueArray.length) /
-              colorArray.length
-            ) - 1
-            ],
+              valueArray[
+                Math.floor(((j + 1) * valueArray.length) / colorArray.length) -
+                  1
+              ]
         })
       )
-      : binningType === "defined"
+      : binningType === 'defined'
         ? binsArray.map((bin, i) =>
           bins.push({
             bottom: i !== 0 ? binsArray[i - 1] : 0,
-            top: bin,
+            top: bin
           })
         )
         : bins.push(null);
@@ -148,26 +142,26 @@ export default {
   },
   calcStats({ dataObject, selectedMonth, colors }) {
     const valueArray = Object.values(dataObject)
-      .filter((a) => a > 0)
+      .filter(a => a > 0)
       .sort((a, b) => (a > b ? -1 : 1));
     const max = Math.max(...valueArray);
     const min = Math.min(...valueArray);
     const bins = this.createBins({
-      binningType: "defined",
+      binningType: 'defined',
       binsArray:
-        selectedMonth === "During the Pandemic"
+        selectedMonth === 'During the Pandemic'
           ? [10, 25, 50, max + 1]
           : [1, 5, 10, max > 15 ? max : 15],
       valueArray: valueArray,
-      colorArray: colors,
+      colorArray: colors
     });
     return {
       statsObj: {
         max: max,
         min: min,
-        range: max - min,
+        range: max - min
       },
-      bins: bins,
+      bins: bins
     };
-  },
+  }
 };

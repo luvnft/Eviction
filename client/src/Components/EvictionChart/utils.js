@@ -1,6 +1,6 @@
-import moment from "moment";
+import moment from 'moment';
 
-const utils = {
+export default {
   dataObjectForCSV: ({
     item,
     timeScale,
@@ -10,54 +10,47 @@ const utils = {
     baselineIndicator
   }) => {
     const timeLabel =
-      timeScale === "weekly"
-        ? "Week of"
-        : timeScale === "monthly"
-        ? "Month"
-        : "Filing Date";
+      timeScale === 'weekly'
+        ? 'Week of'
+        : timeScale === 'monthly'
+          ? 'Month'
+          : 'Filing Date';
 
     return {
-      [timeLabel]: moment(item[dateField]).format(
-        timeScale === "monthly" ? "MMMM YYYY" : "M/D/YYYY"
+      [timeLabel]: moment(item[dateField], 'MM/DD/YYYY').format(
+        timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'
       ),
-      "Total Filings": item[totalFilingsIndicator],
-      "Answered Filings": item[answeredFilingsIndicator],
-      "Answer Rate":
+      'Total Filings': item[totalFilingsIndicator],
+      'Answered Filings': item[answeredFilingsIndicator],
+      'Answer Rate':
         item[answeredFilingsIndicator] / item[totalFilingsIndicator],
-      "Baseline (Total Filings, 2019)":
-        item[baselineIndicator],
+      'Baseline (Total Filings, 2019)': item[baselineIndicator]
     };
   },
   filterDataToEndOfLastWeek: (key, endDate) =>
     new Date(key).getTime() <=
-    new Date(moment(endDate).endOf("week")).getTime(),
+    new Date(moment(endDate, 'MM/DD/YYYY').endOf('week')).getTime(),
   filterDataToEndOfLastFullMonth: (key, endDate) =>
     new Date(endDate).getTime() <
-    new Date(moment(endDate).endOf("month").subtract({ days: 2 })).getTime()
+    new Date(
+      moment(endDate, 'MM/DD/YYYY').endOf('month').subtract({ days: 2 })
+    ).getTime()
       ? new Date(key).getTime() !==
-        new Date(moment(endDate).startOf("month")).getTime()
+        new Date(moment(endDate, 'MM/DD/YYYY').startOf('month')).getTime()
       : true,
-  referenceAreaDate: ({
-    timeScale,
-    brushDomainDate,
-    config,
-    county,
-    type
-  }) => {
+  referenceAreaDate: ({ timeScale, brushDomainDate, config, county, type }) => {
     const configDate =
       config[timeScale]['byCounty'] && config[timeScale]['byCounty'][county]
         ? config[timeScale]['byCounty'][county][type]
         : config[timeScale][type];
-    
+
     const useConfigDate =
-        type === 'start'
-          ? new Date(brushDomainDate).getTime() < new Date(configDate).getTime()
-          : type === 'end'
+      type === 'start'
+        ? new Date(brushDomainDate).getTime() < new Date(configDate).getTime()
+        : type === 'end'
           ? new Date(brushDomainDate).getTime() > new Date(configDate).getTime()
           : false;
-    
+
     return useConfigDate ? configDate : null;
   }
 };
-
-export default utils;
