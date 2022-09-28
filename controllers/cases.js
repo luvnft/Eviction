@@ -1,4 +1,5 @@
 const moment = require('moment');
+const JSONStream = require('JSONStream');
 const db = require('../models');
 const RestQueryConstructor = require('../modules/RestQueryConstructor');
 const ArrayToCsvString = require('../modules/ArrayToCsvString');
@@ -23,17 +24,19 @@ module.exports = {
 
 			if (authorized && authenticated) {
 				const data = sortString
-					? await db.cases
+					? db.cases
 							.find(query)
 							.limit(limit)
 							.sort(sortString)
 							.select(deselectString)
-							.lean()
-					: await db.cases
+              .cursor()
+							// .lean()
+					: db.cases
 							.find(query)
 							.limit(limit)
 							.select(deselectString)
-							.lean();
+              .cursor()
+							// .lean();
 
 				const todaysDate = moment().format('MM/DD/YYYY');
 
@@ -58,7 +61,8 @@ module.exports = {
 
 					return res.status(200).attachment(fileName).send(csvStr);
 				} else {
-					return res.status(200).json(data);
+					return data.pipe(JSONStream.stringify()).pipe(res.type('json'));
+          // (res.status(200).json(data))
 				}
 			} else {
 				return res.status(422).json(errMessage);
