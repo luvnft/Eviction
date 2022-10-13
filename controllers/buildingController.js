@@ -20,13 +20,17 @@ module.exports = {
 			});
 
 			if (authorized && authenticated) {
-				const data = deselectString
-					? await db.building
-							.find(query)
-							.limit(limit)
-							.select(deselectString)
-							.lean()
-					: await db.building.find(query).limit(limit).lean();
+				const data = {
+          "message": "Building data is not currently being served.  Your patience is appreciated as we work to improve our building aggregator."
+        };
+        
+        // deselectString
+				// 	? await db.building
+				// 			.find(query)
+				// 			.limit(limit)
+				// 			.select(deselectString)
+				// 			.lean()
+				// 	: await db.building.find(query).limit(limit).lean();
 
 				if (type === 'csv' && data[0]) {
 					const fileName = `atlanta_region_eviction_tracker_buildings_${Date.now()}.csv`;

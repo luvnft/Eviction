@@ -94,12 +94,12 @@ const Dashboard = () => {
                   tract.CountyID.toString().padStart(3, '0')
                 : true
             )}
-            buildings={buildings.filter(building =>
+            buildings={buildings[0] ? buildings.filter(building =>
               countyFilter.toString().padStart(3, '0') !== '999'
                 ? countyFilter.toString().padStart(3, '0') ===
                   building.county.toString().padStart(3, '0')
                 : true
-            )}
+            ) : []}
             normalizeData={normalizeData}
             dateRange={dateRange}
             monthOptions={monthOptions}

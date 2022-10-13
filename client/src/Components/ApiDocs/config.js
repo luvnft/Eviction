@@ -136,50 +136,50 @@ const config = {
       sampleRequest:
         'https://atl-eviction-tracker.herokuapp.com/rest/countymonthly?Year=2021&sort=desc&type=csv'
     },
-    {
-      title: 'Filings By Building',
-      endpoint: '/buildings',
-      description: 'GET eviction data by building.',
-      apiCall: 'https://atl-eviction-tracker.herokuapp.com/rest/buildings',
-      tableData: [
-        {
-          param: 'city, zip',
-          permission: 'Optional',
-          description: 'A specific value (e.g.: city=atlanta or zip=30308).'
-        },
-        {
-          param: 'county',
-          permission: 'Optional',
-          description:
-            'The last three digits of a county FIPS code (e.g., county=135 will query Gwinnett County).'
-        },
-        // {
-        // 	param: 'latitude, longitude',
-        // 	permission: 'Optional',
-        // 	description:
-        // 		'A latitude and/or longitude of a building (e.g.: latitude={some value}&longitude={some value}).'
-        // },
-        {
-          param: 'tractid',
-          permission: 'Optional',
-          description: 'A specific census tract ID.'
-        },
-        {
-          param: 'blockgroupid',
-          permission: 'Optional',
-          description: 'A specific census block group ID.'
-        },
-        {
-          param: 'street',
-          permission: 'Optional',
-          description:
-            'A street address for the building (e.g., street=123%somewhere%dr).'
-        },
-        globalTableData.type
-      ],
-      sampleRequest:
-        'https://atl-eviction-tracker.herokuapp.com/rest/buildings?city=atlanta'
-    },
+    // {
+    //   title: 'Filings By Building',
+    //   endpoint: '/buildings',
+    //   description: 'GET eviction data by building.',
+    //   apiCall: 'https://atl-eviction-tracker.herokuapp.com/rest/buildings',
+    //   tableData: [
+    //     {
+    //       param: 'city, zip',
+    //       permission: 'Optional',
+    //       description: 'A specific value (e.g.: city=atlanta or zip=30308).'
+    //     },
+    //     {
+    //       param: 'county',
+    //       permission: 'Optional',
+    //       description:
+    //         'The last three digits of a county FIPS code (e.g., county=135 will query Gwinnett County).'
+    //     },
+    //     // {
+    //     // 	param: 'latitude, longitude',
+    //     // 	permission: 'Optional',
+    //     // 	description:
+    //     // 		'A latitude and/or longitude of a building (e.g.: latitude={some value}&longitude={some value}).'
+    //     // },
+    //     {
+    //       param: 'tractid',
+    //       permission: 'Optional',
+    //       description: 'A specific census tract ID.'
+    //     },
+    //     {
+    //       param: 'blockgroupid',
+    //       permission: 'Optional',
+    //       description: 'A specific census block group ID.'
+    //     },
+    //     {
+    //       param: 'street',
+    //       permission: 'Optional',
+    //       description:
+    //         'A street address for the building (e.g., street=123%somewhere%dr).'
+    //     },
+    //     globalTableData.type
+    //   ],
+    //   sampleRequest:
+    //     'https://atl-eviction-tracker.herokuapp.com/rest/buildings?city=atlanta'
+    // },
     {
       title: 'Individual Cases',
       endpoint: '/cases',

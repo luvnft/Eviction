@@ -157,14 +157,14 @@
 
 #map-data-export-button {
     position: fixed;
-    bottom: calc(17vh + 100px);
+    bottom: calc(17vh + 50px);
     z-index: 999999;
     left: 20px;
 }
 
 #map-building-list-export-button {
   position: fixed;
-  bottom: calc(17vh + 50px);
+  bottom: calc(17vh + 100px);
   z-index: 999999;
   left: 20px;
 }

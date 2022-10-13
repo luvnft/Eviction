@@ -176,7 +176,7 @@ const EvictionMap = ({
             />
           </div>
         )}
-        {showBuildings && dateRange
+        {buildings[0] && showBuildings && dateRange
           ? buildings
             .filter(building => building.pandemicfilings >= evictionThreshold)
             .map(building => {
@@ -288,50 +288,53 @@ const EvictionMap = ({
           <Icon inverted name='close' />
         </div>
       ) : null}
-      <div id='building-toggle'>
-        <Radio
-          toggle
-          checked={showBuildings}
-          onChange={() => setShowBuildings(!showBuildings)}
-        />
-        <div className='building-toggle-label'>Show Buildings</div>
-        {showBuildings ? (
-          <>
-            <div className='building-toggle-sublabel'>
-              with{' '}
-              <Dropdown
-                inline
-                style={config.dropdownStyle}
-                value={evictionThreshold}
-                options={[10, 50, 100].map(option => ({
-                  text: option,
-                  value: option,
-                  key: `threshold-option-${option}`
-                }))}
-                onChange={(e, data) => setEvictionThreshold(data.value)}
-              />
-              or more eviction filings during the COVID-19 pandemic**
-            </div>
-            <div id='building-symbology-box'>
-              {[10, 50, 100, 200].map((bin, i) => (
-                <div key={`bin-${bin}-${i}`}>
-                  <div
-                    className='building-symbology'
-                    style={{
-                      width: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
-                      height: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
-                      border: config.buildingSymbologyColor.border,
-                      backgroundColor:
-                        config.buildingSymbologyColor.backgroundColor
-                    }}
-                  />
-                  <div>{bin}</div>
-                </div>
-              ))}
-            </div>
-          </>
-        ) : null}
-      </div>
+      {buildings[0] 
+        ? <div id='building-toggle'>
+          <Radio
+            toggle
+            checked={showBuildings}
+            onChange={() => setShowBuildings(!showBuildings)}
+          />
+          <div className='building-toggle-label'>Show Buildings</div>
+          {showBuildings ? (
+            <>
+              <div className='building-toggle-sublabel'>
+                with{' '}
+                <Dropdown
+                  inline
+                  style={config.dropdownStyle}
+                  value={evictionThreshold}
+                  options={[10, 50, 100].map(option => ({
+                    text: option,
+                    value: option,
+                    key: `threshold-option-${option}`
+                  }))}
+                  onChange={(e, data) => setEvictionThreshold(data.value)}
+                />
+                or more eviction filings during the COVID-19 pandemic**
+              </div>
+              <div id='building-symbology-box'>
+                {[10, 50, 100, 200].map((bin, i) => (
+                  <div key={`bin-${bin}-${i}`}>
+                    <div
+                      className='building-symbology'
+                      style={{
+                        width: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
+                        height: 2 * Math.sqrt(bin / Math.PI) * buildingScaler,
+                        border: config.buildingSymbologyColor.border,
+                        backgroundColor:
+                          config.buildingSymbologyColor.backgroundColor
+                      }}
+                    />
+                    <div>{bin}</div>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : null}
+        </div>
+        : null
+      }
       {legendVisible ? (
         <div className='legend'>
           <div id='legend-header'>
@@ -443,7 +446,7 @@ const EvictionMap = ({
           content={'Census Tract Data'}
         />
       </div>
-      {!smallScreen ? (
+      {buildings[0] && !smallScreen ? (
         <div id='map-building-list-export-button'>
           <CSVExportButton
             csvTitle={
