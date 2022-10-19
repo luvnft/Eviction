@@ -192,6 +192,7 @@ const EvictionChart = ({
             />
             <Brush
               height={20}
+              travellerWidth={smallScreen ? 15 : 10}
               startIndex={
                 timeScale === 'weekly'
                   ? chartData.length - 52
