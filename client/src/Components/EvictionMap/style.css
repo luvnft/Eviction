@@ -1,9 +1,9 @@
 
 .legend {
     display: grid;
-    grid-template-rows: 10% 10% 60% 20%;
+    grid-template-rows: 10% 10% 65% 15%;
     width: 280px;
-    height: 38vh;
+    height: 35vh;
     z-index: 999;
     position: fixed;
     bottom: 18vh;
@@ -198,11 +198,11 @@
 @media only screen and  (max-width: 850px) {
     .legend {
         font-size: .8rem;
-        grid-template-rows: 10% 16% 51% auto;
+        grid-template-rows: 10% 16% 58% auto;
         width: 250px;
         height: 35vh;
         z-index: 9999998;
-        padding: 5px;
+        padding: 10px;
         position: fixed;
         bottom: 23vh;
         overflow: auto;

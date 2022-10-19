@@ -405,9 +405,7 @@ const EvictionMap = ({
               of renter-occupied housing units
             </p>
             <p>
-              <span>**</span>From 4/1/2020 to the most current update, with the
-              exception of Fulton County where building- and census tract-level
-              data has been unavailable since 9/15/2020.
+              <span>**</span>4/1/2020 to the most current update
             </p>
           </div>
         </div>
