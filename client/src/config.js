@@ -4,7 +4,7 @@ export default {
     { key: '063', text: 'Clayton County', value: 63 },
     { key: '067', text: 'Cobb County', value: 67 },
     { key: '089', text: 'Dekalb County', value: 89 },
-    { key: '121', text: 'Fulton County', value: 121 },
+    //{ key: '121', text: 'Fulton County', value: 121 },
     { key: '135', text: 'Gwinnett County', value: 135 }
   ],
   loaderStyle: {
