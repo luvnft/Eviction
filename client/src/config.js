@@ -1,6 +1,6 @@
 export default {
   countyOptions: [
-    { key: '999', text: '5-County Region', value: 999 },
+    { key: '999', text: '4-County Region', value: 999 },
     { key: '063', text: 'Clayton County', value: 63 },
     { key: '067', text: 'Cobb County', value: 67 },
     { key: '089', text: 'Dekalb County', value: 89 },
