@@ -181,7 +181,7 @@ const EvictionMap = ({
             .filter(building => building.pandemicfilings >= evictionThreshold)
             .map(building => {
               const monthlyFilings = building.monthlyfilings.map(item => ({
-                date: moment(new Date(item.date)).format('MM/DD/YYYY'),
+                date: item.date,
                 count: item.count
               }));
               return (
@@ -190,7 +190,7 @@ const EvictionMap = ({
                   center={[building.latitude, building.longitude]}
                   radius={
                     Math.sqrt(building.totalfilings / Math.PI) *
-                      buildingScaler
+                    buildingScaler
                   }
                   color={'rgb(191, 253, 0)'}
                   fillOpacity={0.6}
@@ -202,51 +202,52 @@ const EvictionMap = ({
                       {TextFormatter.firstCharToUpper(building.city)}, GA{' '}
                       {building.zip}
                     </div>
-                    {monthlyFilings[0] ? (
-                      <div className='building-popup-chart'>
-                        <BarChart
-                          width={220}
-                          height={100}
-                          margin={{
-                            top: 25,
-                            right: 0,
-                            left: 0,
-                            bottom: 0
-                          }}
-                          data={monthlyFilings.map(item => ({
-                            date: moment(item.date).valueOf(),
-                            count: item.count
-                          }))}
-                        >
-                          <ReferenceArea
-                            x1={moment('04/01/2020').valueOf()}
-                            x2={moment('7/01/2020').valueOf()}
+                    {monthlyFilings[0]
+                      ? (
+                        <div className='building-popup-chart'>
+                          <BarChart
+                            width={220}
+                            height={100}
+                            margin={{
+                              top: 25,
+                              right: 0,
+                              left: 0,
+                              bottom: 0
+                            }}
+                            data={monthlyFilings.map(item => ({
+                              date: moment(new Date(item.date)).valueOf(),
+                              count: item.count
+                            }))}
                           >
-                            <Label position='top'>CARES</Label>
-                          </ReferenceArea>
-                          <ReferenceArea
-                            x1={moment('08/01/2020').valueOf()}
-                            x2={moment('9/01/2021').valueOf()}
-                          >
-                            <Label position='top'>CDC</Label>
-                          </ReferenceArea>
-                          <Bar dataKey='count' fill={'red'} />
-                          <YAxis width={25} />
-                          <XAxis
-                            dataKey='date'
-                            type='category'
-                            // scale='time'
-                            domain={[
-                              moment('1/1/2020').valueOf(),
-                              moment(dateRange.end).startOf('month').valueOf()
-                            ]}
-                            tickFormatter={tick =>
-                              moment(tick).format('M/YY')
-                            }
-                          />
-                        </BarChart>
-                      </div>
-                    ) : null}
+                            <ReferenceArea
+                              x1={moment(new Date('04/01/2020')).valueOf()}
+                              x2={moment(new Date('07/01/2020')).valueOf()}
+                            >
+                              <Label position='top'>CARES</Label>
+                            </ReferenceArea>
+                            <ReferenceArea
+                              x1={moment(new Date('08/01/2020')).valueOf()}
+                              x2={moment(new Date('09/01/2021')).valueOf()}
+                            >
+                              <Label position='top'>CDC</Label>
+                            </ReferenceArea>
+                            <Bar dataKey='count' fill={'red'} />
+                            <YAxis width={25} />
+                            <XAxis
+                              dataKey='date'
+                              type='category'
+                              // scale='time'
+                              domain={[
+                                moment(new Date('1/1/2020')).valueOf(),
+                                moment(new Date(dateRange.end)).startOf('month').valueOf()
+                              ]}
+                              tickFormatter={tick =>
+                                moment(tick).format('M/YY')
+                              }
+                            />
+                          </BarChart>
+                        </div>
+                      ) : null}
                     <div className='building-popup-summary'>
                       <span className='building-popup-value'>
                         {building.totalfilings}
@@ -256,11 +257,7 @@ const EvictionMap = ({
                     <div className='building-popup-summary'>
                       <span className='building-popup-value'>
                         {
-                          building.filings.filter(
-                            filing =>
-                              moment(filing['filingdate']).valueOf() >=
-                              moment('04/01/2020').valueOf()
-                          ).length
+                          building.pandemicfilings
                         }
                       </span>{' '}
                       eviction filings during the COVID-19 pandemic**
@@ -288,7 +285,7 @@ const EvictionMap = ({
           <Icon inverted name='close' />
         </div>
       ) : null}
-      {buildings[0] 
+      {buildings[0]
         ? <div id='building-toggle'>
           <Radio
             toggle
@@ -390,11 +387,9 @@ const EvictionMap = ({
                     key={`legend-label-${bin.bottom}-to-${bin.top}`}
                     className='legend-label'
                   >
-                    {`${numeral(bin.bottom).format('0,0')}${
-                      bin.bottom === 0 ? '.1' : ''
-                    }% to < ${numeral(bin.top).format('0,0')}%`}
+                    {`${numeral(bin.bottom).format('0,0')}${bin.bottom === 0 ? '.1' : ''}% to < ${numeral(bin.top).format('0,0')}%`}
                   </div>
-                )) 
+                ))
                 : null}
               <div className='legend-label'>No Data</div>
             </div>
@@ -423,16 +418,12 @@ const EvictionMap = ({
         <CSVExportButton
           smallScreen={smallScreen}
           csvTitle={
-            `Title: ${selectedMonth} Eviction Filings by Census Tracts in ${
-              countyInfo.find(item => item.key === countyFilter).text
-            } as of ${
-              dateRange ? moment(dateRange.end).format('M/D/YYYY') : null
+            `Title: ${selectedMonth} Eviction Filings by Census Tracts in ${countyInfo.find(item => item.key === countyFilter).text
+            } as of ${dateRange ? moment(dateRange.end).format('M/D/YYYY') : null
             }` +
             '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
           }
-          csvFilename={`Eviction-Filings-by-Census-Tract-${selectedMonth}-2020-${
-            countyInfo.find(item => item.key === countyFilter).text
-          }`}
+          csvFilename={`Eviction-Filings-by-Census-Tract-${selectedMonth}-2020-${countyInfo.find(item => item.key === countyFilter).text}`}
           data={util.handleCSVData({
             geojson: geojson,
             counties: counties,
@@ -448,16 +439,12 @@ const EvictionMap = ({
         <div id='map-building-list-export-button'>
           <CSVExportButton
             csvTitle={
-              `Title: List of Buildings in ${
-                countyInfo.find(item => item.key === countyFilter).text
-              } with ${evictionThreshold} or eviction filings since 4/1/2020 (as of ${
-                dateRange ? moment(dateRange.end).format('M/D/YYYY') : null
+              `Title: List of Buildings in ${countyInfo.find(item => item.key === countyFilter).text
+              } with ${evictionThreshold} or eviction filings since 4/1/2020 (as of ${dateRange ? moment(dateRange.end).format('M/D/YYYY') : null
               })` +
               '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
             }
-            csvFilename={`ATL-Eviction-Tracker-Buildings-List-${evictionThreshold}-plus-filings-${
-              countyInfo.find(item => item.key === countyFilter).text
-            }`}
+            csvFilename={`ATL-Eviction-Tracker-Buildings-List-${evictionThreshold}-plus-filings-${countyInfo.find(item => item.key === countyFilter).text}`}
             data={util.buildingList({
               buildings: buildings,
               evictionThreshold: evictionThreshold,

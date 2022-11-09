@@ -72,11 +72,7 @@ export default {
     buildings
       .filter(
         building =>
-          building.filings.filter(
-            filing =>
-              moment(filing['filingdate'], 'MM/DD/YYYY').valueOf() >=
-              moment('04/01/2020', 'MM/DD/YYYY').valueOf()
-          ).length >= evictionThreshold
+          building.pandemicfilings >= evictionThreshold
       )
       .forEach(building => {
         const obj = {
