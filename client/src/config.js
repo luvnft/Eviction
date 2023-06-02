@@ -16,6 +16,6 @@ export default {
     textAlign: 'center',
     type: 'Circles'
   },
-  geoURL : 'http://mahs-api-server.herokuapp.com/api/geo/?_id=647a06b768775a38dbc13d5b'
+  geoURL : 'https://mahs-api-server.herokuapp.com/api/geo/?_id=647a06b768775a38dbc13d5b'
   // geoURL: 'https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/ACS2018AllGeo/FeatureServer/0/query?where=SumLevel=\'Tract\' AND PlanningRegion=\'Atlanta Regional Commission\'&SR=4326&outFields=GEOID&f=geojson'
 };
