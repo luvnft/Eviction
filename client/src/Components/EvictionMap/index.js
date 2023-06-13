@@ -301,7 +301,7 @@ const EvictionMap = ({
                   inline
                   style={config.dropdownStyle}
                   value={evictionThreshold}
-                  options={[10, 50, 100].map(option => ({
+                  options={[100, 250, 500].map(option => ({
                     text: option,
                     value: option,
                     key: `threshold-option-${option}`
@@ -311,7 +311,7 @@ const EvictionMap = ({
                 or more eviction filings during the COVID-19 pandemic**
               </div>
               <div id='building-symbology-box'>
-                {[10, 50, 100, 200].map((bin, i) => (
+                {[100, 250, 500].map((bin, i) => (
                   <div key={`bin-${bin}-${i}`}>
                     <div
                       className='building-symbology'
