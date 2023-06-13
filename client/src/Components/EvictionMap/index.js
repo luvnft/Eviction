@@ -180,7 +180,7 @@ const EvictionMap = ({
           ? buildings
             .filter(building => building.pandemicfilings >= evictionThreshold)
             .map(building => {
-              const monthlyFilings = building.monthlyfilings.map(item => ({
+              const monthlyFilings = building.monthlyfilings?.map(item => ({
                 date: item.date,
                 count: item.count
               }));
@@ -202,7 +202,7 @@ const EvictionMap = ({
                       {TextFormatter.firstCharToUpper(building.city)}, GA{' '}
                       {building.zip}
                     </div>
-                    {monthlyFilings[0]
+                    {monthlyFilings?.[0]
                       ? (
                         <div className='building-popup-chart'>
                           <BarChart

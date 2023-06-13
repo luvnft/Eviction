@@ -18,11 +18,17 @@ module.exports = {
 				model: 'buildings',
 				req
 			});
+      // console.log(query);
 
 			if (authorized && authenticated) {
 				const data = deselectString
 					? await db.building
-							.find(query)
+							.find({
+                ...query,
+                totalfilings: {
+                  $gte:  100
+                }
+              })
 							.limit(limit)
 							.select(deselectString)
 							.lean()
