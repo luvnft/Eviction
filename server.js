@@ -1,14 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const compression = require('compression');
-// var path = require('path');
+var path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 // const session = require('express-session');
 const mongoose = require('mongoose');
 const routes = require('./routes');
-// const passport = require('passport');
-// const MongoStore = require('connect-mongo')(session);
 const flash = require('express-flash');
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -26,8 +24,13 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 // Serve up static assets (usually on heroku)
-if (process.env.NODE_ENV === 'production') {
-	app.use(express.static('client/build'));
+if (process.env.NODE_ENV === 'production' || true) {
+  app.use(express.static('client/dist'));
+
+  // SPA fallback
+  app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+  });
 }
 
 //using the store: new MongoStore creates a new colection in our dB to store the sessions info (cookie)

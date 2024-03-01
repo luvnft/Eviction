@@ -3,7 +3,16 @@ import PropTypes from 'prop-types';
 import { Circles } from 'react-loader-spinner';
 import { Button } from 'semantic-ui-react';
 import config from './config.js';
-import util from './util';
+import {
+  Alert,
+  Mission,
+  Data,
+  Team,
+  Resources,
+  Citations,
+  DataRequest,
+  Sources
+} from './AboutContent.jsx';
 import './style.css';
 
 const Modal = ({ content, setModalStatus }) => {
@@ -19,18 +28,15 @@ const Modal = ({ content, setModalStatus }) => {
         <div id='modal-body'>
           {content ? (
             <>
-              {content.alert ? util.AboutContent.Alert(content) : null}
-              {util.AboutContent.Mission(content)}
-              {util.AboutContent.Data(content)}
-              {util.AboutContent.Team(content)}
-              {util.AboutContent.Resources(content)}
-              {util.AboutContent.Citations(content)}
-              {util.AboutContent.DataRequest(content)}
-              {util.AboutContent.Sources(
-                { type: 'Court Record Data' },
-                content
-              )}
-              {util.AboutContent.Sources({ type: 'Other Data' }, content)}
+              {content.alert ? <Alert {...content} /> : null}
+              <Mission {...content}/>
+              <Data {...content}/>
+              <Team {...content}/>
+              <Resources {...content}/>
+              <Citations {...content}/>
+              <DataRequest {...content}/>
+              <Sources {...content} type={'Court Record Data'} />
+              <Sources {...content} type={'Other Data'} />
             </>
           ) : (
             <div className='spinner-container' style={config.loaderStyle}>

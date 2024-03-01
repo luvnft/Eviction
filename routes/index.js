@@ -24,7 +24,7 @@ router.use("/rest/apikeys", apiKeyRoutes);
 
 // If no API routes are hit, send the React app
 router.use((req, res) =>
-  res.sendFile(path.join(__dirname, "../client/build/index.html"))
+  res.sendFile(path.join(__dirname, "/client/dist/index.html"))
 );
 
 router.use((err, req, res, next) => {

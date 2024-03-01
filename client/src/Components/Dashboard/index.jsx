@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import EvictionMap from '../EvictionMap';
-import EvictionChart from '../EvictionChart';
-import Footer from '../Footer/index.js';
-import Header from '../Header/index.js';
-import Modal from '../Modal/index.js';
+import EvictionMap from '../EvictionMap/index.jsx';
+import EvictionChart from '../EvictionChart/index.jsx';
+import Footer from '../Footer/index.jsx';
+import Header from '../Header/index.jsx';
+import Modal from '../Modal/index.jsx';
 import { Icon } from 'semantic-ui-react';
 import API from '../../utils/API.js';
 import { Circles } from 'react-loader-spinner';
 import util from '../../util';
 import config from '../../config';
 import './style.css';
+import normalizeData from '../../Data/RentHHsByTract.json';
+import countyBoundary from '../../Data/countyboundaries.json';
 
 const Dashboard = () => {
-  const normalizeData = require('../../Data/RentHHsByTract.json');
-  const countyBoundary = require('../../Data/countyboundaries.json');
   const vh = window.innerHeight * 0.01;
   const smallScreen = window.innerWidth < 850;
   const [geoJSON, setGeoJSON] = useState();
@@ -66,6 +66,7 @@ const Dashboard = () => {
   useEffect(() => {
     document.documentElement.style.setProperty('--vh', `${vh}px`);
     handleData();
+    console.log(chartDataMonthly);
   }, []);
 
   return content ? (

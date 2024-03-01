@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "18.0.0",
-    "npm": "8.6.0"
+    "node": "20.10.0",
+    "npm": "10.2.3"
   },
   "proxy": "http://localhost:3001",
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^1.6.7",
     "colormap": "^2.3.2",
     "d3": "^7.4.4",
     "export-to-csv": "^0.2.1",
@@ -22,15 +22,12 @@
     "react-leaflet": "^4.0.0",
     "react-loader-spinner": "^5.1.4",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "^5.0.1",
     "recharts": "^2.1.10",
     "semantic-ui-react": "^2.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,5 +37,9 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.1.4"
+  }
 }

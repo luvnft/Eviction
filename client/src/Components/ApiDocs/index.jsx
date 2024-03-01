@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Tab, Dropdown, Icon } from 'semantic-ui-react';
 
-import ApiDocBody from '../ApiDocBody';
+import ApiDocBody from '../ApiDocBody/index.jsx';
 import config from './config';
 import './style.css';
 

@@ -12,10 +12,10 @@
 		"install": "cd client && npm install",
 		"heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
 	},
-	"engines": {
-		"node": "18.16.0",
-		"npm": "9.5.1"
-	},
+  "engines": {
+    "node": "20.10.0",
+    "npm": "10.2.3"
+  },
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/spinozist/ARC-Eviction-Tracker"
@@ -27,12 +27,11 @@
 	},
 	"homepage": "https://github.com/spinozist/ARC-Eviction-Tracker#readme",
 	"dependencies": {
-		"axios": "^0.27.2",
+		"axios": "^1.6.7",
 		"bcrypt-nodejs": "0.0.3",
 		"body-parser": "^1.20.0",
 		"compression": "^1.7.4",
 		"concurrently": "^7.2.1",
-		"connect-mongo": "^4.6.0",
 		"cookie-parser": "^1.4.6",
 		"csvtojson": "^2.0.10",
 		"dotenv": "^16.0.1",
@@ -48,8 +47,5 @@
 		"morgan": "^1.10.0",
 		"node-cron": "^3.0.0",
 		"path": "^0.12.7"
-	},
-	"devDependencies": {
-		"nodemon": "^2.0.16"
 	}
 }

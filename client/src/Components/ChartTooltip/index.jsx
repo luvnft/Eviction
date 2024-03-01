@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import numeral from 'numeral';
-import util from './util';
+// import util from './util';
+import DateInfo from './DateInfo.jsx';
 
 const ChartTooltip = (
   { active, payload, label },
@@ -15,10 +16,6 @@ const ChartTooltip = (
   }
 ) => {
   const info = payload[0] ? payload[0].payload : {};
-  const dateInfo = util.dateInfo({
-    timeScale: timeScale,
-    label: label
-  });
 
   const totalFilings = info[totalFilingsIndicator]
     ? numeral(info[totalFilingsIndicator]).format('0,0')
@@ -43,7 +40,8 @@ const ChartTooltip = (
     <div className='tooltip-content chart-tooltip-content'>
       <div>
         In {countyFilter === 999 || countyFilter === '999' ? 'the ' : ''}{' '}
-        <span className='tooltip-data'>{county.text}</span> {dateInfo}, there
+        <span className='tooltip-data'>{county.text}</span>   
+        <DateInfo timeScale={timeScale} label={label}  />, there
         were <span className='tooltip-data'>{totalFilings}</span> reported
         eviction filings of which{' '}
         <span className='tooltip-data'>
