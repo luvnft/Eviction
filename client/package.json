@@ -23,9 +23,7 @@
     "react-loader-spinner": "^5.1.4",
     "react-router-dom": "^6.3.0",
     "recharts": "^2.1.10",
-    "semantic-ui-react": "^2.1.2",
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.1.4"
+    "semantic-ui-react": "^2.1.2"
   },
   "scripts": {
     "start": "vite",
