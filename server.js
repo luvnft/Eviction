@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 // Serve up static assets (usually on heroku)
-if (process.env.NODE_ENV === 'production' || true) {
+if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/dist'));
 
   // SPA fallback
