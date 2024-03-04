@@ -45,7 +45,7 @@ const EvictionChart = ({
   const dateField = timeScale === 'weekly' ? 'FilingWeek' : 'FilingMonth';
 
   const addBarDifferenceField = arr =>
-    arr.map(item => ({
+    arr?.map(item => ({
       ...item,
       BarDifference: item.TotalFilings - item.AnsweredFilings
     }));
@@ -53,8 +53,8 @@ const EvictionChart = ({
   useEffect(() => {
     const dataArray =
       timeScale === 'weekly'
-        ? chartDataWeekly.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
-        : chartDataMonthly.sort((a, b) => SortByDate(a, b, 'FilingMonth'));
+        ? chartDataWeekly?.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
+        : chartDataMonthly?.sort((a, b) => SortByDate(a, b, 'FilingMonth'));
     // .filter((month, i) =>
     //   new Date(dateRange.end).getTime() > new Date(moment(dateRange.end).endOf('month').subtract({days: 3})).getTime()
     //     ? true
@@ -73,16 +73,21 @@ const EvictionChart = ({
     );
     const brushConfig = {
       start:
-        dataArray[
+        dataArray?.[
           timeScale === 'weekly' ? dataArray.length - 52 : dataArray.length - 12
         ][dateField],
-      end: dataArray[dataArray.length - 1][dateField]
+      end: dataArray?.[dataArray.length - 1][dateField]
     };
 
     setChartData(addBarDifferenceField(dataArray));
     setCSVData(dataForCSV);
     setBrushDomain(brushConfig);
-  }, [countyFilter, timeScale, chartDataMonthly, chartDataWeekly]);
+  }, [
+    countyFilter, 
+    timeScale, 
+    chartDataMonthly, 
+    chartDataWeekly
+  ]);
 
   return (
     <div id='chart-responsive-container'>
@@ -195,21 +200,22 @@ const EvictionChart = ({
               travellerWidth={smallScreen ? 15 : 10}
               startIndex={
                 timeScale === 'weekly'
-                  ? chartData.length - 52
-                  : chartData.length - 12
+                  ? chartData?.length - 52
+                  : chartData?.length - 12
               }
               tickFormatter={index =>
-                chartData[index][dateField]
-                  ? moment(chartData[index][dateField]).format(
+                chartData?.[index][dateField]
+                  ? moment(chartData?.[index][dateField]).format(
                     timeScale === 'weekly' ? 'M/D/YY' : 'MMM YYYY'
                   )
                   : ''
               }
-              onChange={data =>
+              onChange={data =>{
+                // console.log(chartData[data.startIndex][dateField]);
                 setBrushDomain({
-                  start: chartData[data.startIndex][dateField],
-                  end: chartData[data.endIndex][dateField]
-                })
+                  start: chartData?.[data.startIndex][dateField],
+                  end: chartData?.[data.endIndex][dateField]
+                })}
               }
             />
           </ComposedChart>

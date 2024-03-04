@@ -32,6 +32,10 @@ const Dashboard = () => {
   const countyOptions = config.countyOptions;
 
   const handleData = () => {
+    API.getData('/content')
+    .then(res => setContent(res[0]))
+    .catch(err => console.log('error getting content', err));
+
     API.getData('/rest/tractbymonth')
       .then(res => {
         setMapData(res);
@@ -40,9 +44,6 @@ const Dashboard = () => {
         // setDateRange({start, end});
       })
       .catch(err => console.log('error on getting tract by month', err));
-    API.getData('/content')
-      .then(res => setContent(res[0]))
-      .catch(err => console.log('error getting content', err));
     API.getData('/rest/buildings')
       .then(res => setBuildings(res))
       .catch(err => console.log('error getting buildings', err));
@@ -66,7 +67,7 @@ const Dashboard = () => {
   useEffect(() => {
     document.documentElement.style.setProperty('--vh', `${vh}px`);
     handleData();
-    console.log(chartDataMonthly);
+    // console.log(chartDataMonthly);
   }, []);
 
   return content ? (
