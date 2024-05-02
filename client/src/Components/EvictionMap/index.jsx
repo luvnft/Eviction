@@ -221,16 +221,16 @@ const EvictionMap = ({
                           >
                             <ReferenceArea
                               x1={moment(new Date('04/01/2020')).valueOf()}
-                              x2={moment(new Date('07/01/2020')).valueOf()}
+                              x2={moment(new Date('09/01/2021')).valueOf()}
                             >
-                              <Label position='top'>CARES</Label>
+                              <Label position='top'>Moratoria</Label>
                             </ReferenceArea>
-                            <ReferenceArea
+                            {/* <ReferenceArea
                               x1={moment(new Date('08/01/2020')).valueOf()}
                               x2={moment(new Date('09/01/2021')).valueOf()}
                             >
                               <Label position='top'>CDC</Label>
-                            </ReferenceArea>
+                            </ReferenceArea> */}
                             <Bar dataKey='count' fill={'red'} />
                             <YAxis width={25} />
                             <XAxis
@@ -248,7 +248,7 @@ const EvictionMap = ({
                           </BarChart>
                         </div>
                       ) : null}
-                    <div className='building-popup-summary'>
+                    {/* <div className='building-popup-summary'>
                       <span className='building-popup-value'>
                         {building.totalfilings}
                       </span>{' '}
@@ -261,7 +261,7 @@ const EvictionMap = ({
                         }
                       </span>{' '}
                       eviction filings during the COVID-19 pandemic**
-                    </div>
+                    </div> */}
                     {building.county === '121' ? (
                       <div className='popup-data-warning'>
                         <b>***WARNING***</b>
@@ -308,7 +308,7 @@ const EvictionMap = ({
                   }))}
                   onChange={(e, data) => setEvictionThreshold(data.value)}
                 />
-                or more eviction filings during the COVID-19 pandemic**
+                or more eviction filings since 4/1/2020.
               </div>
               <div id='building-symbology-box'>
                 {[100, 250, 500].map((bin, i) => (
@@ -399,9 +399,9 @@ const EvictionMap = ({
               <span>*</span>calculated by dividing total filings by the number
               of renter-occupied housing units
             </p>
-            <p>
+            {/* <p>
               <span>**</span>4/1/2020 to the most current update
-            </p>
+            </p> */}
           </div>
         </div>
       ) : null}
@@ -440,7 +440,7 @@ const EvictionMap = ({
           <CSVExportButton
             csvTitle={
               `Title: List of Buildings in ${countyInfo.find(item => item.key === countyFilter).text
-              } with ${evictionThreshold} or eviction filings since 4/1/2020 (as of ${dateRange ? moment(dateRange.end).format('M/D/YYYY') : null
+              } with ${evictionThreshold} or more eviction filings since 4/1/2020 (as of ${dateRange ? moment(dateRange.end).format('M/D/YYYY') : null
               })` +
               '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
             }

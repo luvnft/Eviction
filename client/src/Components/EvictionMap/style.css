@@ -2,8 +2,8 @@
 .legend {
     display: grid;
     grid-template-rows: 10% 10% 65% 15%;
-    width: 280px;
-    height: 35vh;
+    width: 200px;
+    height: 31vh;
     z-index: 999;
     position: fixed;
     bottom: 18vh;
@@ -30,7 +30,7 @@
   padding: 10px;
   text-align: center;
   color: black;
-  width: 250px;
+  width: 200px;
   /* overflow:; */
 }
 
@@ -199,8 +199,8 @@
     .legend {
         font-size: .8rem;
         grid-template-rows: 10% 16% 58% auto;
-        width: 250px;
-        height: 35vh;
+        width: 200px;
+        height: 30vh;
         z-index: 9999998;
         padding: 10px;
         position: fixed;
@@ -261,9 +261,9 @@
 
     #legend-close-icon {
         position: fixed;
-        bottom: 56vh;
+        bottom: 52vh;
         z-index: 99999999;
-        right: 244px;
+        right: 200px;
         background-color: black;
         height: 20px;
         width: 20px;

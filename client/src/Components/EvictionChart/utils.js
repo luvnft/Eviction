@@ -52,5 +52,22 @@ export default {
           : false;
 
     return useConfigDate ? configDate : null;
+  },
+  getStartIndex: ({chartData, dateField, brushDomain, timeScale}) => {
+    let index = null;
+    console.log({chartData, dateField, brushDomain, timeScale})
+
+    chartData.forEach((obj, i) => {
+      if (obj?.[dateField] === brushDomain?.start) {
+        index = i
+      }
+    })
+
+    console.log(index)
+
+    return index || timeScale === 'weekly' 
+    ? chartData?.length - 12
+    : chartData?.length - 12
+
   }
 };

@@ -84,11 +84,11 @@ export default {
         });
       });
 
-    monthsArr.push({
-      text: 'During the Pandemic**',
-      value: 'During the Pandemic',
-      key: 'month-option-During the Pandemic'
-    });
+    // monthsArr.push({
+    //   text: 'During the Pandemic**',
+    //   value: 'During the Pandemic',
+    //   key: 'month-option-During the Pandemic'
+    // });
 
     return { start, end, monthsArr };
   }

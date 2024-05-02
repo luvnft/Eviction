@@ -74,20 +74,21 @@ const EvictionChart = ({
     const brushConfig = {
       start:
         dataArray?.[
-          timeScale === 'weekly' ? dataArray.length - 52 : dataArray.length - 12
+        timeScale === 'weekly' ? dataArray.length - 52 : dataArray.length - 12
         ][dateField],
       end: dataArray?.[dataArray.length - 1][dateField]
     };
-
+    setBrushDomain(brushConfig);
     setChartData(addBarDifferenceField(dataArray));
     setCSVData(dataForCSV);
-    setBrushDomain(brushConfig);
   }, [
-    countyFilter, 
-    timeScale, 
-    chartDataMonthly, 
+    countyFilter,
+    timeScale,
+    chartDataMonthly,
     chartDataWeekly
   ]);
+
+  console.log(brushDomain, chartData);
 
   return (
     <div id='chart-responsive-container'>
@@ -106,30 +107,30 @@ const EvictionChart = ({
               ? referenceAreas.map(referenceArea =>
                 (timeScale === 'weekly' && referenceArea.weekly) ||
                   (timeScale === 'monthly' && referenceArea.monthly) ? (
-                    <ReferenceArea
-                      key={`${referenceArea.label}-ref-area`}
-                      x1={utils.referenceAreaDate({
-                        type: 'start',
-                        timeScale: timeScale,
-                        brushDomainDate: brushDomain.start,
-                        config: referenceArea,
-                        county: county.key
-                      })}
-                      x2={utils.referenceAreaDate({
-                        type: 'end',
-                        timeScale: timeScale,
-                        brushDomainDate: brushDomain.end,
-                        config: referenceArea,
-                        county: county.key
-                      })}
-                      y1={0}
-                      fill={referenceArea.color}
-                    >
-                      <Label position='insideTop' fontSize={referenceArea.size}>
-                        {referenceArea.label}
-                      </Label>
-                    </ReferenceArea>
-                  ) : null
+                  <ReferenceArea
+                    key={`${referenceArea.label}-ref-area`}
+                    x1={utils.referenceAreaDate({
+                      type: 'start',
+                      timeScale: timeScale,
+                      brushDomainDate: brushDomain?.start,
+                      config: referenceArea,
+                      county: county.key
+                    })}
+                    x2={utils.referenceAreaDate({
+                      type: 'end',
+                      timeScale: timeScale,
+                      brushDomainDate: brushDomain?.end,
+                      config: referenceArea,
+                      county: county.key
+                    })}
+                    y1={0}
+                    fill={referenceArea.color}
+                  >
+                    <Label position='insideTop' fontSize={referenceArea.size}>
+                      {referenceArea.label}
+                    </Label>
+                  </ReferenceArea>
+                ) : null
               )
               : null}
             <XAxis
@@ -150,8 +151,8 @@ const EvictionChart = ({
               tick={{ fontSize: smallScreen ? 8 : 12 }}
               tickFormatter={tick =>
                 timeScale === 'monthly'
-                  ? moment(tick).format(smallScreen ? 'MMM YYYY' : 'MMMM YYYY')
-                  : moment(tick).format('M/D/YY')
+                  ? moment(new Date(tick).getTime()).format(smallScreen ? 'MMM YYYY' : 'MMMM YYYY')
+                  : moment(new Date(tick).getTime()).format('M/D/YY')
               }
             />
             <YAxis tickFormatter={tick => numeral(tick).format('0,0')} />
@@ -195,29 +196,35 @@ const EvictionChart = ({
                 </span>
               )}
             />
-            <Brush
-              height={20}
-              travellerWidth={smallScreen ? 15 : 10}
-              startIndex={
-                timeScale === 'weekly'
-                  ? chartData?.length - 52
-                  : chartData?.length - 12
-              }
-              tickFormatter={index =>
-                chartData?.[index][dateField]
-                  ? moment(chartData?.[index][dateField]).format(
-                    timeScale === 'weekly' ? 'M/D/YY' : 'MMM YYYY'
-                  )
-                  : ''
-              }
-              onChange={data =>{
-                // console.log(chartData[data.startIndex][dateField]);
-                setBrushDomain({
-                  start: chartData?.[data.startIndex][dateField],
-                  end: chartData?.[data.endIndex][dateField]
-                })}
-              }
-            />
+            {
+              chartData && brushDomain
+              ? <Brush
+                height={20}
+                travellerWidth={smallScreen ? 15 : 10}
+                startIndex={brushDomain?.startIndex >= 0 ? brushDomain.startIndex : chartData?.length - 12}
+                data={chartData}
+                dataKey={timeScale === 'weekly' ? 'Filing Week' : 'Filing Month'}
+                tickFormatter={index =>
+                  chartData?.[index][dateField]
+                    ? moment(new Date(chartData?.[index][dateField]).getTime()).format(
+                      timeScale === 'weekly' ? 'M/D/YY' : 'MMM YYYY'
+                    )
+                    : ''
+                }
+                onChange={data => {
+                  // console.log(data);
+                  // console.log(chartData[data.endIndex][dateField]);
+                  setBrushDomain({
+                    start: chartData?.[data.startIndex][dateField],
+                    end: chartData?.[data.endIndex][dateField],
+                    startIndex: data.startIndex,
+                    endIndex: data.endIndex
+                  })
+                }
+                }
+              /> : null
+            }
+
           </ComposedChart>
         </ResponsiveContainer>
       ) : (
@@ -257,8 +264,7 @@ const EvictionChart = ({
             csvTitle={
               `Title: ${timeScale.charAt(0).toUpperCase()}${timeScale.slice(
                 1
-              )} Eviction Filings for ${county.text} as of ${
-                dateRange ? moment(dateRange.end).format('M/D/YYYY') : null
+              )} Eviction Filings for ${county.text} as of ${dateRange ? moment(dateRange.end).format('M/D/YYYY') : null
               }` +
               '\nSource: Atlanta Region Eviction Tracker - https://metroatlhousing.org/atlanta-region-eviction-tracker'
             }

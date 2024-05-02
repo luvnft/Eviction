@@ -11,7 +11,7 @@
     "axios": "^1.6.7",
     "colormap": "^2.3.2",
     "d3": "^7.4.4",
-    "export-to-csv": "^0.2.1",
+    "export-to-csv": "^0.2.2",
     "leaflet": "^1.8.0",
     "moment": "^2.29.3",
     "numeral": "^2.0.6",
@@ -20,7 +20,7 @@
     "react-annotation": "^2.2.1",
     "react-dom": "^18.1.0",
     "react-leaflet": "^4.0.0",
-    "react-loader-spinner": "^5.1.4",
+    "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.3.0",
     "recharts": "^2.1.10",
     "semantic-ui-react": "^2.1.2"

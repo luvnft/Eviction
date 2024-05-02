@@ -17,6 +17,7 @@ const CSVExportButton = ({
   const filename = csvFilename ? csvFilename : `download-${moment().format()}`;
   const headers = csvHeaders ? csvHeaders : null;
   const dataArray = data ? Object.values(data) : null;
+  console.log(headers);
   const csvOptions = {
     fieldSeparator: ',',
     quoteStrings: '"',

@@ -81,8 +81,8 @@ export default {
           'Zip': building.zip,
           'countyFIPS': building.county,
           'tractID': building.tractid,
-          'Filings since 1/1/2020': building.totalfilings,
-          'Filings since 4/1/2020': building.pandemicfilings
+          // 'Filings since 1/1/2020': building.totalfilings,
+          // 'Filings since 4/1/2020': building.pandemicfilings
         };
 
         building.monthlyfilings.forEach(
